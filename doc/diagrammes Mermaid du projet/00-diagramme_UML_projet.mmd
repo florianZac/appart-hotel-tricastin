@@ -1,0 +1,33 @@
+erDiagram
+    LOCALISATION {
+        int id PK
+        string ville
+        string slug
+        string adresse
+        string codePostal
+        text description
+        string telephone
+        string email
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    APPARTEMENT {
+        int id PK
+        int localisation_id FK
+        string nom
+        string slug
+        string type
+        int surface
+        int capaciteMin
+        int capaciteMax
+        text description
+        string imagePrincipale
+        decimal prixParNuit
+        boolean actif
+        int ordre
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    LOCALISATION ||--o{ APPARTEMENT : "1,n possède"

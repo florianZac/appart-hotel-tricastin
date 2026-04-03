@@ -1,11 +1,11 @@
-# 🏨 Appart Hôtel Poitiers — Projet Symfony
+#  Appart Hôtel Tricastin — Projet Symfony
 
-Site vitrine et système de réservation pour un appart-hôtel à Poitiers.  
+Site vitrine et système de réservation pour un appart-hôtel à Montélimar.  
 Projet monolithique **Symfony 7** avec **Bootstrap 5** (front + back dans le même projet).
 
 ---
 
-## 📋 Fonctionnalités
+## Fonctionnalités
 
 ### Front-office (public)
 - **Page d'accueil** : hero, présentation, carrousel d'appartements, avis clients, services
@@ -21,7 +21,7 @@ Projet monolithique **Symfony 7** avec **Bootstrap 5** (front + back dans le mê
 
 ---
 
-## 🛠 Stack technique
+## Stack technique
 
 | Composant      | Technologie                |
 |----------------|----------------------------|
@@ -37,7 +37,7 @@ Projet monolithique **Symfony 7** avec **Bootstrap 5** (front + back dans le mê
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### Prérequis
 - **PHP 8.2+** avec extensions : `pdo_sqlite`, `intl`, `mbstring`, `xml`
@@ -48,8 +48,8 @@ Projet monolithique **Symfony 7** avec **Bootstrap 5** (front + back dans le mê
 
 ```bash
 # 1. Cloner le projet
-git clone <votre-repo> appart-hotel-poitiers
-cd appart-hotel-poitiers
+git clone <votre-repo> appart-hotel-tricastin
+cd appart-hotel-tricastin
 
 # 2. Installer les dépendances
 composer install
@@ -78,7 +78,7 @@ php -S localhost:8000 -t public/
 
 ---
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```
 appart-hotel-symfony/
@@ -147,7 +147,7 @@ appart-hotel-symfony/
 
 ---
 
-## 🎨 Design
+##  Design
 
 Le design s'inspire du site [appart-hotel-poitiers.com](https://appart-hotel-poitiers.com/) avec :
 - **Palette** : tons dorés (`#b8860b`), bleu-gris foncé (`#2c3e50`), crème (`#fdf8f0`)
@@ -157,7 +157,7 @@ Le design s'inspire du site [appart-hotel-poitiers.com](https://appart-hotel-poi
 
 ---
 
-## 🔧 Configuration Base de données
+##  Configuration Base de données
 
 ### SQLite (défaut, rien à configurer)
 ```env
@@ -176,7 +176,7 @@ DATABASE_URL="postgresql://user:password@127.0.0.1:5432/appart_hotel?serverVersi
 
 ---
 
-## 📧 Configuration Email
+##  Configuration Email
 
 Pour le formulaire de contact, configurez `MAILER_DSN` dans `.env.local` :
 
@@ -193,7 +193,7 @@ MAILER_DSN=smtp://localhost:1025
 
 ---
 
-## 🔒 Sécurité (à ajouter)
+##  Sécurité (à ajouter)
 
 Le back-office `/admin` n'est pas protégé par défaut.  
 Pour ajouter l'authentification :
@@ -208,7 +208,7 @@ Puis configurez `config/packages/security.yaml` pour protéger les routes `/admi
 
 ---
 
-## 📸 Images
+## Images
 
 Placez vos images d'appartements dans `public/images/` avec les noms :
 - `imperial.jpg`
@@ -223,6 +223,6 @@ Placez vos images d'appartements dans `public/images/` avec les noms :
 
 ---
 
-## 📜 Licence
+## Licence
 
 Projet privé — Tous droits réservés.
