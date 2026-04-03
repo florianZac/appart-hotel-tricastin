@@ -1,6 +1,6 @@
-# config/packages/framework.yaml
 framework:
     secret: '%env(APP_SECRET)%'
+    default_locale: fr
     handle_all_throwables: true
     session:
         handler_id: null

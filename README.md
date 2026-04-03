@@ -149,7 +149,7 @@ appart-hotel-symfony/
 
 ##  Design
 
-Le design s'inspire du site [appart-hotel-poitiers.com](https://appart-hotel-poitiers.com/) avec :
+Le design s'inspire du site [appart-hotel-tricastin.com](https://appart-hotel-tricastin.com/) avec :
 - **Palette** : tons dorés (`#b8860b`), bleu-gris foncé (`#2c3e50`), crème (`#fdf8f0`)
 - **Typographie** : Cormorant Garamond (titres) + Montserrat (corps)
 - **Composants** : hero plein écran, cards appartements avec hover, carrousel témoignages, formulaires stylisés
@@ -167,11 +167,6 @@ DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db"
 ### MySQL
 ```env
 DATABASE_URL="mysql://user:password@127.0.0.1:3306/appart_hotel?serverVersion=8.0"
-```
-
-### PostgreSQL
-```env
-DATABASE_URL="postgresql://user:password@127.0.0.1:5432/appart_hotel?serverVersion=16&charset=utf8"
 ```
 
 ---

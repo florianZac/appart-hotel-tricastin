@@ -1,0 +1,182 @@
+# =============================================
+# GLOBAL / COMMON
+# =============================================
+site.title: "Appart hostel Tricastin"
+common.from: "From"
+common.per_night: "/night"
+common.people: "people"
+common.surface: "m²"
+back_to_top: "Back to top"
+
+# =============================================
+# NAVIGATION
+# =============================================
+nav.home: "Home"
+nav.apartments: "Apartments"
+nav.contact: "Contact"
+nav.book: "Book"
+
+# =============================================
+# HERO
+# =============================================
+hero.welcome: "Welcome to"
+hero.name: "Appart Hôtel Tricastin"
+hero.subtitle: "Your ideal stay in Drôme Provençale"
+hero.discover: "Discover our locations"
+
+# =============================================
+# LOCALISATIONS
+# =============================================
+loc.badge: "Our residences"
+loc.title: "Choose your destination"
+loc.subtitle: "3 locations in the heart of Drome, 12 apartments at your disposal"
+
+# =============================================
+# FEATURES
+# =============================================
+feature.wifi: "Free Wi-Fi"
+feature.wifi_desc: "High-speed connection in all apartments"
+feature.linen: "Linen provided"
+feature.linen_desc: "Bed linen and bath towels included"
+feature.parking: "Private parking"
+feature.parking_desc: "Secure parking optional"
+feature.location: "Drôme Provencal"
+feature.location_desc: "In the heart of Tricastin and Provence"
+
+# =============================================
+# ABOUT
+# =============================================
+about.badge: "Your ideal stay"
+about.title: "Appart Hôtel Tricastin"
+about.text1: "Discover our furnished apartments spread across 3 locations in the heart of Drôme Provencal and Gard: Pont-Saint-Esprit, Saint-Paul-Trois-Châteaux, and Tulette."
+about.text2: "Whether you are on a business trip, with family, or on vacation, our 12 modern and fully equipped apartments offer all the comfort for a pleasant stay."
+about.btn: "See the apartments"
+
+# =============================================
+# TESTIMONIALS
+# =============================================
+testimonials.badge: "Customer reviews"
+testimonials.title: "They stayed with us"
+
+# =============================================
+# STATS
+# =============================================
+stats.since: "Appart Hostel\nsince 2024"
+stats.capacity: "Capacity\nup to 32 people"
+stats.locations: "Locations\nin Drôme Provencal"
+stats.apartments: "Apartments\navailable"
+
+# =============================================
+# CTA
+# =============================================
+cta.global.title: "Ready to book your stay?"
+cta.global.subtitle: "Choose your location and your apartment"
+cta.global.btn: "Book now"
+cta.apartment.title: "Interested in this stay?"
+cta.apartment.subtitle: "Book your apartment in %ville% now"
+
+# =============================================
+# APARTMENTS PAGE
+# =============================================
+apartments.page_title: "Our Locations"
+apartments.page_subtitle: "Choose your destination in Drôme Provençale"
+
+apartments.available: "Available apartments:"
+
+apartments.available_count: >
+  {0} No apartments available|
+  {1} %count% apartment available|
+  ]1,Inf] %count% apartments available
+
+apartments.units: >
+  {1} %count% unit|
+  ]1,Inf] %count% units
+
+apartments.see_all: >
+  {1} See the apartment|
+  ]1,Inf] See the %count% apartments
+
+apartments.equipment: "Facilities"
+apartments.back: "See other locations"
+
+apartments.page_title_city: "Apartments in %ville% — Appart Hostel Tricastin"
+
+# =============================================
+# APARTMENT DETAIL
+# =============================================
+apartment.detail_title: "%name% - Appart Hostel Tricastin"
+apartment.meta_description: "%name%: %type% of %surface%m², %min% to %max% people. %desc%"
+apartment.header_subtitle: "%type% of %surface%m² — %min% to %max% people"
+apartment.book: "Book"
+apartment.book_this: "Book %name%"
+apartment.contact_us: "Any questions? Contact us"
+
+# =============================================
+# RESERVATION (FRONT)
+# =============================================
+reservation.title: "Book your stay"
+reservation.subtitle: "Choose your location, apartment, and dates"
+reservation.form_title: "Reservation request"
+reservation.step1: "Choose your city"
+reservation.step2: "Choose your apartment"
+reservation.step3: "Your information"
+reservation.step4: "Your stay"
+reservation.submit: "Send my request"
+reservation.success: "Your reservation request has been sent successfully! We will contact you as soon as possible."
+reservation.fast: "Quick response"
+reservation.fast_desc: "We reply within 24h"
+reservation.secure: "Secure payment"
+reservation.secure_desc: "Your data is protected"
+reservation.flexible: "Flexible cancellation"
+reservation.flexible_desc: "Adapted conditions"
+
+# =============================================
+# ADMIN (DASHBOARD + RESERVATIONS)
+# =============================================
+admin.sidebar.title: "Appart Hostel"
+admin.sidebar.dashboard: "Dashboard"
+admin.sidebar.reservations: "Reservations"
+admin.sidebar.view_site: "View site"
+admin.dashboard.title: "Dashboard"
+admin.dashboard.apartments_active: "Active apartments"
+admin.dashboard.total_reservations: "Total reservations"
+admin.dashboard.pending: "Pending"
+admin.dashboard.testimonials: "Testimonials"
+admin.dashboard.last_reservations: "Latest reservations"
+admin.dashboard.view_all: "View all"
+admin.table.client: "Guest"
+admin.table.apartment: "Apartment"
+admin.table.arrival: "Arrival"
+admin.table.departure: "Departure"
+admin.table.people: "People"
+admin.table.status: "Status"
+admin.table.request_date: "Request date"
+admin.empty: "No reservations at the moment"
+admin.status.pending: "Pending"
+admin.status.confirmed: "Confirmed"
+admin.status.cancelled: "Cancelled"
+admin.actions.confirm: "Confirm"
+admin.actions.cancel: "Cancel"
+
+# =============================================
+# CONTACT
+# =============================================
+contact.title: "Contact"
+contact.subtitle: "Any questions? Feel free to write to us!"
+contact.form_title: "Send us a message"
+contact.send: "Send message"
+contact.info_title: "Our contact information"
+contact.address: "Address"
+contact.phone: "Phone"
+contact.email: "Email"
+contact.success: "Your message has been sent successfully. We will reply quickly!"
+
+# =============================================
+# FOOTER
+# =============================================
+footer.title: "Appart Hostel Tricastin"
+footer.locations: "Our Locations"
+footer.follow: "Follow us"
+footer.rights: "All rights reserved."
+footer.legal: "Legal notice"
+footer.contact_us: "Contact us"

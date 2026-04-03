@@ -10,7 +10,7 @@
     <div class="page-header-overlay"></div>
     <div class="container">
         <h1><i class="bi bi-star-fill"></i> Réserver votre séjour</h1>
-        <p class="lead">Remplissez le formulaire ci-dessous et nous vous recontacterons rapidement</p>
+        <p class="lead">Choisissez votre localisation, votre appartement et vos dates</p>
     </div>
 </section>
 
@@ -28,14 +28,30 @@
 
                     {{ form_start(form, {'attr': {'class': 'reservation-form', 'novalidate': 'novalidate'}}) }}
 
-                    {# Appartement #}
-                    <div class="mb-4">
-                        {{ form_label(form.appartement) }}
-                        {{ form_widget(form.appartement) }}
-                        {{ form_errors(form.appartement) }}
+                    {# Étape 1 : Localisation #}
+                    <div class="mb-3">
+                        <h5 class="mb-3"><span class="badge bg-primary rounded-pill">1</span> Choisissez votre ville</h5>
+                        {{ form_label(form.localisation) }}
+                        {{ form_widget(form.localisation, {'attr': {'id': 'reservation_localisation'}}) }}
+                        {{ form_errors(form.localisation) }}
                     </div>
 
-                    {# Nom / Prénom #}
+                    {# Étape 2 : Appartement (filtré dynamiquement) #}
+                    <div class="mb-4">
+                        <h5 class="mb-3"><span class="badge bg-primary rounded-pill">2</span> Choisissez votre appartement</h5>
+                        {{ form_label(form.appartement) }}
+                        {{ form_widget(form.appartement, {'attr': {'id': 'reservation_appartement'}}) }}
+                        {{ form_errors(form.appartement) }}
+                        <div id="appartement-loading" class="text-muted small mt-1" style="display:none;">
+                            <i class="bi bi-hourglass-split"></i> Chargement des appartements...
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    {# Étape 3 : Informations personnelles #}
+                    <h5 class="mb-3"><span class="badge bg-primary rounded-pill">3</span> Vos informations</h5>
+
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             {{ form_label(form.nom) }}
@@ -49,7 +65,6 @@
                         </div>
                     </div>
 
-                    {# Email / Téléphone #}
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             {{ form_label(form.email) }}
@@ -63,7 +78,11 @@
                         </div>
                     </div>
 
-                    {# Dates #}
+                    <hr class="my-4">
+
+                    {# Étape 4 : Dates et personnes #}
+                    <h5 class="mb-3"><span class="badge bg-primary rounded-pill">4</span> Votre séjour</h5>
+
                     <div class="row g-3 mb-4">
                         <div class="col-md-4">
                             {{ form_label(form.dateArrivee) }}
@@ -131,4 +150,65 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const localisationSelect = document.getElementById('reservation_localisation');
+    const appartementSelect = document.getElementById('reservation_appartement');
+    const loadingIndicator = document.getElementById('appartement-loading');
+
+    if (!localisationSelect || !appartementSelect) return;
+
+    localisationSelect.addEventListener('change', function () {
+        const localisationId = this.value;
+
+        // Vider le select appartement
+        appartementSelect.innerHTML = '';
+
+        if (!localisationId) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = '-- Sélectionnez d\'abord une ville --';
+            appartementSelect.appendChild(option);
+            return;
+        }
+
+        // Afficher le loading
+        loadingIndicator.style.display = 'block';
+        appartementSelect.disabled = true;
+
+        // Appel AJAX
+        fetch('/api/appartements-par-localisation/' + localisationId)
+            .then(response => response.json())
+            .then(data => {
+                appartementSelect.innerHTML = '';
+
+                // Placeholder
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = '-- Choisissez un appartement --';
+                appartementSelect.appendChild(placeholder);
+
+                // Ajouter les appartements
+                data.forEach(function (appart) {
+                    const option = document.createElement('option');
+                    option.value = appart.id;
+                    option.textContent = appart.label;
+                    appartementSelect.appendChild(option);
+                });
+
+                appartementSelect.disabled = false;
+                loadingIndicator.style.display = 'none';
+            })
+            .catch(function (error) {
+                console.error('Erreur chargement appartements:', error);
+                appartementSelect.innerHTML = '<option value="">Erreur de chargement</option>';
+                appartementSelect.disabled = false;
+                loadingIndicator.style.display = 'none';
+            });
+    });
+});
+</script>
 {% endblock %}

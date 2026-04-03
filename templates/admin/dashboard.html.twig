@@ -1,119 +1,176 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}
+  {{ 'admin.dashboard.title'|trans }}
+{% endblock %}
 
 {% block admin_body %}
+
 <div class="admin-topbar">
-    <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
-    <span class="text-muted">{{ "now"|date("d/m/Y H:i") }}</span>
+  <h1>
+    <i class="bi bi-speedometer2"></i>
+    {{ 'admin.dashboard.title'|trans }}
+  </h1>
+  <span class="text-muted">{{ "now"|date("d/m/Y H:i") }}</span>
 </div>
 
-{# Statistiques #}
+{# ================================================ #}
+{# STATISTIQUES                                     #}
+{# ================================================ #}
 <div class="row g-4 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-value">{{ totalAppartements }}</div>
-                    <div class="stat-label">Appartements actifs</div>
-                </div>
-                <div class="stat-icon bg-primary bg-opacity-10 text-primary">
-                    <i class="bi bi-house-door"></i>
-                </div>
-            </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="stat-value">{{ totalAppartements }}</div>
+          <div class="stat-label">
+            {{ 'admin.dashboard.apartments_active'|trans }}
+          </div>
         </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-value">{{ totalReservations }}</div>
-                    <div class="stat-label">Total réservations</div>
-                </div>
-                <div class="stat-icon bg-success bg-opacity-10 text-success">
-                    <i class="bi bi-calendar-check"></i>
-                </div>
-            </div>
+        <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+          <i class="bi bi-house-door"></i>
         </div>
+      </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-value text-warning">{{ reservationsEnAttente }}</div>
-                    <div class="stat-label">En attente</div>
-                </div>
-                <div class="stat-icon bg-warning bg-opacity-10 text-warning">
-                    <i class="bi bi-hourglass-split"></i>
-                </div>
-            </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="stat-value">{{ totalReservations }}</div>
+          <div class="stat-label">
+            {{ 'admin.dashboard.total_reservations'|trans }}
+          </div>
         </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-value">{{ totalTemoignages }}</div>
-                    <div class="stat-label">Témoignages</div>
-                </div>
-                <div class="stat-icon bg-info bg-opacity-10 text-info">
-                    <i class="bi bi-chat-quote"></i>
-                </div>
-            </div>
+        <div class="stat-icon bg-success bg-opacity-10 text-success">
+          <i class="bi bi-calendar-check"></i>
         </div>
+      </div>
     </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="stat-value text-warning">{{ reservationsEnAttente }}</div>
+          <div class="stat-label">
+            {{ 'admin.dashboard.pending'|trans }}
+          </div>
+        </div>
+        <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+          <i class="bi bi-hourglass-split"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="stat-value">{{ totalTemoignages }}</div>
+          <div class="stat-label">
+            {{ 'admin.dashboard.testimonials'|trans }}
+          </div>
+        </div>
+        <div class="stat-icon bg-info bg-opacity-10 text-info">
+          <i class="bi bi-chat-quote"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-{# Dernières réservations #}
+{# ================================================ #}
+{# DERNIÈRES RÉSERVATIONS                           #}
+{# ================================================ #}
 <div class="table-card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <span><i class="bi bi-clock-history"></i> Dernières réservations</span>
-        <a href="{{ path('admin_reservations') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Client</th>
-                    <th>Appartement</th>
-                    <th>Arrivée</th>
-                    <th>Départ</th>
-                    <th>Pers.</th>
-                    <th>Statut</th>
-                    <th>Date demande</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for reservation in reservations %}
-                <tr>
-                    <td><strong>{{ reservation.id }}</strong></td>
-                    <td>
-                        {{ reservation.prenom }} {{ reservation.nom }}<br>
-                        <small class="text-muted">{{ reservation.email }}</small>
-                    </td>
-                    <td>{{ reservation.appartement ? reservation.appartement.nom : '—' }}</td>
-                    <td>{{ reservation.dateArrivee|date('d/m/Y') }}</td>
-                    <td>{{ reservation.dateDepart|date('d/m/Y') }}</td>
-                    <td>{{ reservation.nombrePersonnes }}</td>
-                    <td>
-                        {% if reservation.statut == 'en_attente' %}
-                            <span class="badge-statut bg-warning text-dark">En attente</span>
-                        {% elseif reservation.statut == 'confirmee' %}
-                            <span class="badge-statut bg-success text-white">Confirmée</span>
-                        {% elseif reservation.statut == 'annulee' %}
-                            <span class="badge-statut bg-danger text-white">Annulée</span>
-                        {% endif %}
-                    </td>
-                    <td><small>{{ reservation.createdAt|date('d/m/Y H:i') }}</small></td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="8" class="text-center py-4 text-muted">Aucune réservation pour le moment</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>
+      <i class="bi bi-clock-history"></i>
+      {{ 'admin.dashboard.last_reservations'|trans }}
+    </span>
+
+    <a href="{{ path('admin_reservations') }}" class="btn btn-sm btn-outline-primary">
+      {{ 'admin.dashboard.view_all'|trans }}
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover">
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>{{ 'admin.table.client'|trans }}</th>
+          <th>{{ 'admin.table.apartment'|trans }}</th>
+          <th>{{ 'admin.table.arrival'|trans }}</th>
+          <th>{{ 'admin.table.departure'|trans }}</th>
+          <th>{{ 'admin.table.people'|trans }}</th>
+          <th>{{ 'admin.table.status'|trans }}</th>
+          <th>{{ 'admin.table.request_date'|trans }}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for reservation in reservations %}
+        <tr>
+
+          <td><strong>{{ reservation.id }}</strong></td>
+
+          <td>
+            {{ reservation.prenom }} {{ reservation.nom }}<br>
+            <small class="text-muted">{{ reservation.email }}</small>
+          </td>
+
+          <td>
+            {{ reservation.appartement ? reservation.appartement.nom : '—' }}
+          </td>
+
+          <td>{{ reservation.dateArrivee|date('d/m/Y') }}</td>
+          <td>{{ reservation.dateDepart|date('d/m/Y') }}</td>
+          <td>{{ reservation.nombrePersonnes }}</td>
+
+          <td>
+            {% if reservation.statut in ['en_attente', 'pending'] %}
+              <span class="badge-statut bg-warning text-dark">
+                {{ 'admin.status.pending'|trans }}
+              </span>
+
+            {% elseif reservation.statut in ['confirmee', 'confirmed'] %}
+              <span class="badge-statut bg-success text-white">
+                {{ 'admin.status.confirmed'|trans }}
+              </span>
+
+            {% elseif reservation.statut in ['annulee', 'cancelled'] %}
+              <span class="badge-statut bg-danger text-white">
+                {{ 'admin.status.cancelled'|trans }}
+              </span>
+            {% endif %}
+          </td>
+
+          <td>
+            <small>{{ reservation.createdAt|date('d/m/Y H:i') }}</small>
+          </td>
+
+        </tr>
+
+        {% else %}
+        <tr>
+          <td colspan="8" class="text-center py-4 text-muted">
+            {{ 'admin.empty'|trans }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
 </div>
+
 {% endblock %}

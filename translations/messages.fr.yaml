@@ -1,0 +1,180 @@
+# =============================================
+# GLOBAL / COMMON
+# =============================================
+site.title: "Appart Hôtel Tricastin"
+common.from: "À partir de"
+common.per_night: "/nuit"
+common.people: "personnes"
+common.surface: "m²"
+back_to_top: "Retour à l'accueil"
+
+# =============================================
+# NAVIGATION
+# =============================================
+nav.home: "Accueil"
+nav.apartments: "Les Appartements"
+nav.contact: "Contact"
+nav.book: "Réserver"
+
+# =============================================
+# HERO
+# =============================================
+hero.welcome: "Bienvenue à"
+hero.name: "Appart Hôtel Tricastin"
+hero.subtitle: "Votre séjour idéal en Drôme Provençale"
+hero.discover: "Découvrir nos localisations"
+
+# =============================================
+# LOCALISATIONS
+# =============================================
+loc.badge: "Nos résidences"
+loc.title: "Choisissez votre destination"
+loc.subtitle: "3 localisations au cœur de la Drome, 12 appartements à votre disposition"
+
+# =============================================
+# FEATURES
+# =============================================
+feature.wifi: "Wi-Fi gratuit"
+feature.wifi_desc: "Connexion haut débit dans tous les appartements"
+feature.linen: "Linge fourni"
+feature.linen_desc: "Linge de lit et serviettes de bain inclus"
+feature.parking: "Parking privé"
+feature.parking_desc: "Stationnement sécurisé en option"
+feature.location: "Drôme Provençale"
+feature.location_desc: "Au cœur du Tricastin et de la Provence"
+
+# =============================================
+# ABOUT
+# =============================================
+about.badge: "Votre séjour idéal"
+about.title: "Appart Hôtel Tricastin"
+about.text1: "Découvrez nos appartements meublés répartis sur 3 localisations au cœur de la Drôme Provençale et du Gard : Pont-Saint-Esprit, Saint-Paul-Trois-Châteaux et Tulette."
+about.text2: "Que vous soyez en voyage d'affaires, en famille ou en vacances, nos 12 appartements modernes et entièrement équipés vous offrent tout le confort pour un séjour agréable."
+about.btn: "Voir les appartements"
+
+# =============================================
+# TESTIMONIALS
+# =============================================
+testimonials.badge: "Avis clients"
+testimonials.title: "Ils ont séjourné chez nous"
+
+# =============================================
+# STATS
+# =============================================
+stats.since: "Appart Hôtel\ndepuis 2024"
+stats.capacity: "Capacité\njusqu'à 32 personnes"
+stats.locations: "Localisations\nen Drôme Provençale"
+stats.apartments: "Appartements\ndisponibles"
+
+# =============================================
+# CTA
+# =============================================
+cta.global.title: "Prêt à réserver votre séjour ?"
+cta.global.subtitle: "Choisissez votre localisation et votre appartement"
+cta.global.btn: "Réserver maintenant"
+cta.apartment.title: "Ce séjour vous tente ?"
+cta.apartment.subtitle: "Réservez votre appartement à %ville% dès maintenant"
+
+# =============================================
+# APARTMENTS PAGE
+# =============================================
+apartments.page_title: "Nos Localisations"
+apartments.page_subtitle: "Choisissez votre destination en Drôme Provençale"
+apartments.available: "Appartements disponibles :"
+
+apartments.available_count: >
+  {0} Aucun appartement disponible|
+  {1} %count% appartement disponible|
+  ]1,Inf] %count% appartements disponibles
+
+apartments.units: >
+  {1} %count% logement|
+  ]1,Inf] %count% logements
+
+apartments.see_all: >
+  {1} Voir l'appartement|
+  ]1,Inf] Voir les %count% appartements
+
+apartments.equipment: "Équipements"
+apartments.back: "Voir les autres localisations"
+apartments.page_title_city: "Appartements à %ville% — Appart Hôtel Tricastin"
+
+# =============================================
+# APARTMENT DETAIL
+# =============================================
+apartment.detail_title: "%name% - Appart Hôtel Tricastin"
+apartment.meta_description: "%name% : %type% de %surface%m², %min% à %max% personnes. %desc%"
+apartment.header_subtitle: "%type% de %surface%m² — %min% à %max% personnes"
+apartment.book: "Réserver"
+apartment.book_this: "Réserver %name%"
+apartment.contact_us: "Une question ? Contactez-nous"
+
+# =============================================
+# RESERVATION (FRONT)
+# =============================================
+reservation.title: "Réserver votre séjour"
+reservation.subtitle: "Choisissez votre localisation, votre appartement et vos dates"
+reservation.form_title: "Demande de réservation"
+reservation.step1: "Choisissez votre ville"
+reservation.step2: "Choisissez votre appartement"
+reservation.step3: "Vos informations"
+reservation.step4: "Votre séjour"
+reservation.submit: "Envoyer ma demande"
+reservation.success: "Votre demande de réservation a bien été envoyée ! Nous vous recontacterons dans les plus brefs délais."
+reservation.fast: "Réponse rapide"
+reservation.fast_desc: "Nous répondons sous 24h"
+reservation.secure: "Paiement sécurisé"
+reservation.secure_desc: "Vos données sont protégées"
+reservation.flexible: "Annulation flexible"
+reservation.flexible_desc: "Conditions adaptées"
+
+# =============================================
+# ADMIN (DASHBOARD + RESERVATIONS)
+# =============================================
+admin.sidebar.title: "Appart Hôtel"
+admin.sidebar.dashboard: "Dashboard"
+admin.sidebar.reservations: "Réservations"
+admin.sidebar.view_site: "Voir le site"
+admin.dashboard.title: "Dashboard"
+admin.dashboard.apartments_active: "Appartements actifs"
+admin.dashboard.total_reservations: "Total réservations"
+admin.dashboard.pending: "En attente"
+admin.dashboard.testimonials: "Témoignages"
+admin.dashboard.last_reservations: "Dernières réservations"
+admin.dashboard.view_all: "Voir tout"
+admin.table.client: "Client"
+admin.table.apartment: "Appartement"
+admin.table.arrival: "Arrivée"
+admin.table.departure: "Départ"
+admin.table.people: "Pers."
+admin.table.status: "Statut"
+admin.table.request_date: "Date demande"
+admin.empty: "Aucune réservation pour le moment"
+admin.status.pending: "En attente"
+admin.status.confirmed: "Confirmée"
+admin.status.cancelled: "Annulée"
+admin.actions.confirm: "Confirmer"
+admin.actions.cancel: "Annuler"
+
+# =============================================
+# CONTACT
+# =============================================
+contact.title: "Contact"
+contact.subtitle: "Une question ? N'hésitez pas à nous écrire !"
+contact.form_title: "Envoyez-nous un message"
+contact.send: "Envoyer le message"
+contact.info_title: "Nos coordonnées"
+contact.address: "Adresse"
+contact.phone: "Téléphone"
+contact.email: "Email"
+contact.success: "Votre message a bien été envoyé. Nous vous répondrons rapidement !"
+
+# =============================================
+# FOOTER
+# =============================================
+footer.title: "Appart Hôtel Tricastin"
+footer.locations: "Nos Localisations"
+footer.follow: "Suivez-nous"
+footer.rights: "Tous droits réservés."
+footer.legal: "Mentions légales"
+footer.contact_us: "Nous contacter"
