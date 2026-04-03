@@ -1,0 +1,257 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Appart Hôtel Poitiers - Futuroscope | Séjour idéal{% endblock %}
+
+{% block body %}
+{# ================================================ #}
+{# HERO SECTION                                     #}
+{# ================================================ #}
+<section class="hero-section" id="accueil">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">Bienvenue à<br><span>Appart Hôtel Poitiers</span></h1>
+        <p class="hero-subtitle">Réservez votre séjour idéal dès aujourd'hui !</p>
+        <a href="{{ path('app_reservation') }}" class="btn btn-hero">
+            <i class="bi bi-calendar-check"></i> Réserver maintenant
+        </a>
+    </div>
+    <div class="hero-scroll-indicator">
+        <i class="bi bi-chevron-double-down"></i>
+    </div>
+</section>
+
+{# ================================================ #}
+{# INTRODUCTION                                     #}
+{# ================================================ #}
+<section class="intro-section py-5">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="intro-text">
+                    <span class="section-badge">Bienvenue</span>
+                    <h2>6 appartements prêts à vous accueillir</h2>
+                    <p class="lead">
+                        Capacité de <strong>1 à 8 personnes</strong><br>
+                        Linge de lit et serviettes de bain inclus<br>
+                        Parking privé <em>(en option)</em>
+                    </p>
+                    <p class="text-muted">
+                        Sur demande : possibilités de groupe jusqu'à 32 personnes.
+                    </p>
+                    <a href="{{ path('app_appartements') }}" class="btn btn-outline-primary btn-lg mt-3">
+                        <i class="bi bi-house-door"></i> Découvrir les appartements
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="intro-gallery">
+                    <div class="row g-3">
+                        <div class="col-8">
+                            <div class="gallery-item gallery-item-large">
+                                <img src="/images/placeholder-1.jpg" alt="Salon appartement" class="img-fluid rounded-3"
+                                     onerror="this.src='https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=400&fit=crop'">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="gallery-item mb-3">
+                                <img src="/images/placeholder-2.jpg" alt="Chambre" class="img-fluid rounded-3"
+                                     onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300&h=200&fit=crop'">
+                            </div>
+                            <div class="gallery-item">
+                                <img src="/images/placeholder-3.jpg" alt="Salle de bain" class="img-fluid rounded-3"
+                                     onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=300&h=200&fit=crop'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ================================================ #}
+{# APPARTEMENTS CARDS                               #}
+{# ================================================ #}
+<section class="appartements-section py-5" id="appartements">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-badge">Nos logements</span>
+            <h2 class="section-title">Choisissez l'appartement qui correspond à vos besoins</h2>
+        </div>
+
+        <div class="row g-4">
+            {% for appartement in appartements %}
+            <div class="col-md-6 col-lg-4">
+                <a href="{{ path('app_appartements') }}#{{ appartement.slug }}" class="appart-card-link">
+                    <div class="appart-card" id="{{ appartement.slug }}">
+                        <div class="appart-card-img">
+                            <img src="/images/{{ appartement.imagePrincipale }}"
+                                 alt="{{ appartement.nom }}"
+                                 onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop'">
+                            <div class="appart-card-badge">{{ appartement.type }}</div>
+                        </div>
+                        <div class="appart-card-body">
+                            <h3>{{ appartement.nom }}</h3>
+                            <div class="appart-card-meta">
+                                <span><i class="bi bi-rulers"></i> {{ appartement.surface }}m²</span>
+                                <span><i class="bi bi-people"></i> {{ appartement.capaciteMin }} à {{ appartement.capaciteMax }} pers.</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ path('app_appartements') }}" class="btn btn-primary btn-lg">
+                Découvrir tous les appartements <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+{# ================================================ #}
+{# FEATURES / SERVICES                              #}
+{# ================================================ #}
+<section class="features-section py-5">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-wifi"></i>
+                    </div>
+                    <h4>Wi-Fi gratuit</h4>
+                    <p>Connexion haut débit dans tous les appartements</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-basket3"></i>
+                    </div>
+                    <h4>Linge fourni</h4>
+                    <p>Linge de lit et serviettes de bain inclus</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-p-circle"></i>
+                    </div>
+                    <h4>Parking privé</h4>
+                    <p>Stationnement sécurisé en option</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h4>10 min du Futuroscope</h4>
+                    <p>Emplacement idéal près de la gare</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ================================================ #}
+{# ABOUT / PRESENTATION                             #}
+{# ================================================ #}
+<section class="about-section py-5">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 order-lg-2">
+                <div class="about-image">
+                    <img src="/images/poitiers.jpg" alt="Poitiers"
+                         onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=450&fit=crop'"
+                         class="img-fluid rounded-4">
+                    <div class="about-image-badge">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>11 Bd Pont Achard<br>86000 Poitiers</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <span class="section-badge">Votre séjour idéal</span>
+                <h2 class="section-title">Appart Hôtel Poitiers</h2>
+                <p>
+                    Découvrez le confort et la commodité d'Appart Hôtel Poitiers.
+                    Nos appartements modernes et entièrement équipés vous offrent tout ce dont
+                    vous avez besoin pour un séjour agréable, que vous soyez en voyage d'affaires,
+                    en famille ou en vacances.
+                </p>
+                <p>
+                    Profitez du Wi-Fi gratuit, d'un parking sécurisé (en option),
+                    du linge de lit et de bain inclus.
+                    Situé en plein cœur de Poitiers (proche Gare) et à seulement
+                    10 minutes du Futuroscope.
+                </p>
+                <a href="{{ path('app_reservation') }}" class="btn btn-primary btn-lg mt-3">
+                    <i class="bi bi-calendar-check"></i> Réserver maintenant
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ================================================ #}
+{# TEMOIGNAGES                                      #}
+{# ================================================ #}
+{% if temoignages|length > 0 %}
+<section class="testimonials-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-badge">Avis clients</span>
+            <h2 class="section-title">Ils ont séjourné à Appart Hôtel Poitiers</h2>
+        </div>
+
+        <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+            <div class="carousel-inner">
+                {% for temoignage in temoignages %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <div class="testimonial-card mx-auto">
+                        <div class="testimonial-stars">
+                            {% for i in 1..temoignage.note %}
+                                <i class="bi bi-star-fill"></i>
+                            {% endfor %}
+                        </div>
+                        <blockquote class="testimonial-text">
+                            "{{ temoignage.contenu }}"
+                        </blockquote>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <strong>{{ temoignage.auteur }}</strong>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# ================================================ #}
+{# CTA FINAL                                        #}
+{# ================================================ #}
+<section class="cta-section py-5">
+    <div class="container text-center">
+        <h2>Prêt à réserver votre séjour ?</h2>
+        <p class="lead mb-4">Choisissez votre appartement et vos dates dès maintenant</p>
+        <a href="{{ path('app_reservation') }}" class="btn btn-hero btn-lg">
+            <i class="bi bi-star-fill"></i> Réserver maintenant
+        </a>
+    </div>
+</section>
+{% endblock %}

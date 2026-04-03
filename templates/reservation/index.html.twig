@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver - Appart Hôtel Poitiers{% endblock %}
+
+{% block body %}
+{# ================================================ #}
+{# PAGE HEADER                                      #}
+{# ================================================ #}
+<section class="page-header">
+    <div class="page-header-overlay"></div>
+    <div class="container">
+        <h1><i class="bi bi-star-fill"></i> Réserver votre séjour</h1>
+        <p class="lead">Remplissez le formulaire ci-dessous et nous vous recontacterons rapidement</p>
+    </div>
+</section>
+
+{# ================================================ #}
+{# FORMULAIRE DE RESERVATION                        #}
+{# ================================================ #}
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-card p-4 p-md-5 rounded-4">
+                    <h2 class="mb-4 text-center">
+                        <i class="bi bi-calendar-check text-primary"></i> Demande de réservation
+                    </h2>
+
+                    {{ form_start(form, {'attr': {'class': 'reservation-form', 'novalidate': 'novalidate'}}) }}
+
+                    {# Appartement #}
+                    <div class="mb-4">
+                        {{ form_label(form.appartement) }}
+                        {{ form_widget(form.appartement) }}
+                        {{ form_errors(form.appartement) }}
+                    </div>
+
+                    {# Nom / Prénom #}
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            {{ form_label(form.nom) }}
+                            {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.nom) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.prenom) }}
+                            {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.prenom) }}
+                        </div>
+                    </div>
+
+                    {# Email / Téléphone #}
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            {{ form_label(form.email) }}
+                            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.telephone) }}
+                            {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.telephone) }}
+                        </div>
+                    </div>
+
+                    {# Dates #}
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            {{ form_label(form.dateArrivee) }}
+                            {{ form_widget(form.dateArrivee, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.dateArrivee) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_label(form.dateDepart) }}
+                            {{ form_widget(form.dateDepart, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.dateDepart) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_label(form.nombrePersonnes) }}
+                            {{ form_widget(form.nombrePersonnes, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.nombrePersonnes) }}
+                        </div>
+                    </div>
+
+                    {# Message #}
+                    <div class="mb-4">
+                        {{ form_label(form.message) }}
+                        {{ form_widget(form.message, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.message) }}
+                    </div>
+
+                    {# Submit #}
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="bi bi-send"></i> Envoyer ma demande
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+
+        {# Infos complémentaires #}
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-8">
+                <div class="row g-4 text-center">
+                    <div class="col-md-4">
+                        <div class="info-mini-card">
+                            <i class="bi bi-clock text-primary fs-2"></i>
+                            <h6>Réponse rapide</h6>
+                            <small class="text-muted">Nous répondons sous 24h</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-mini-card">
+                            <i class="bi bi-shield-check text-primary fs-2"></i>
+                            <h6>Paiement sécurisé</h6>
+                            <small class="text-muted">Vos données sont protégées</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-mini-card">
+                            <i class="bi bi-x-circle text-primary fs-2"></i>
+                            <h6>Annulation flexible</h6>
+                            <small class="text-muted">Conditions adaptées</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

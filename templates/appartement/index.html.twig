@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les Appartements - Appart Hôtel Poitiers{% endblock %}
+{% block meta_description %}Découvrez nos 6 appartements meublés à Poitiers : du studio au T4, de 1 à 8 personnes. Wi-Fi, linge inclus, proche gare et Futuroscope.{% endblock %}
+
+{% block body %}
+{# ================================================ #}
+{# PAGE HEADER                                      #}
+{# ================================================ #}
+<section class="page-header">
+    <div class="page-header-overlay"></div>
+    <div class="container">
+        <h1>Les Appartements</h1>
+        <p class="lead">6 logements pour tous vos besoins, de 1 à 8 personnes</p>
+    </div>
+</section>
+
+{# ================================================ #}
+{# APPARTEMENTS LISTING                             #}
+{# ================================================ #}
+<section class="py-5">
+    <div class="container">
+        {% for appartement in appartements %}
+        <div class="appart-detail-card mb-5" id="{{ appartement.slug }}">
+            <div class="row g-0 align-items-stretch">
+                {# Image #}
+                <div class="col-lg-6">
+                    <div class="appart-detail-img">
+                        <img src="/images/{{ appartement.imagePrincipale }}"
+                             alt="{{ appartement.nom }}"
+                             onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=500&fit=crop'"
+                             class="img-fluid">
+                        <div class="appart-detail-type">{{ appartement.type }} — {{ appartement.surface }}m²</div>
+                    </div>
+                </div>
+
+                {# Infos #}
+                <div class="col-lg-6">
+                    <div class="appart-detail-body">
+                        <h2>{{ appartement.nom }}</h2>
+                        <div class="appart-detail-meta mb-3">
+                            <span class="badge bg-primary"><i class="bi bi-rulers"></i> {{ appartement.surface }}m²</span>
+                            <span class="badge bg-secondary"><i class="bi bi-people"></i> {{ appartement.capaciteMin }}-{{ appartement.capaciteMax }} pers.</span>
+                            <span class="badge bg-success"><i class="bi bi-tag"></i> À partir de {{ appartement.prixParNuit }}€/nuit</span>
+                        </div>
+
+                        <p>{{ appartement.description }}</p>
+
+                        {# Équipements #}
+                        {% if appartement.equipements|length > 0 %}
+                        <h5 class="mt-4 mb-3"><i class="bi bi-check2-circle"></i> Équipements</h5>
+                        <div class="row g-2">
+                            {% for equipement in appartement.equipements %}
+                            <div class="col-6">
+                                <div class="equip-item">
+                                    <i class="bi bi-check-lg text-success"></i> {{ equipement }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="mt-4">
+                            <a href="{{ path('app_reservation') }}" class="btn btn-primary">
+                                <i class="bi bi-calendar-check"></i> Réserver {{ appartement.nom }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{# ================================================ #}
+{# CTA                                              #}
+{# ================================================ #}
+<section class="cta-section py-5">
+    <div class="container text-center">
+        <h2>Besoin d'aide pour choisir ?</h2>
+        <p class="lead mb-4">Contactez-nous, nous vous conseillerons l'appartement idéal pour votre séjour</p>
+        <a href="{{ path('app_contact') }}" class="btn btn-outline-light btn-lg me-3">
+            <i class="bi bi-chat-dots"></i> Nous contacter
+        </a>
+        <a href="{{ path('app_reservation') }}" class="btn btn-hero btn-lg">
+            <i class="bi bi-star-fill"></i> Réserver
+        </a>
+    </div>
+</section>
+{% endblock %}

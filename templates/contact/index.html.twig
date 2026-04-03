@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact - Appart Hôtel Poitiers{% endblock %}
+
+{% block body %}
+{# ================================================ #}
+{# PAGE HEADER                                      #}
+{# ================================================ #}
+<section class="page-header">
+    <div class="page-header-overlay"></div>
+    <div class="container">
+        <h1><i class="bi bi-chat-dots"></i> Contact</h1>
+        <p class="lead">Une question ? N'hésitez pas à nous écrire !</p>
+    </div>
+</section>
+
+{# ================================================ #}
+{# CONTACT SECTION                                  #}
+{# ================================================ #}
+<section class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            {# Formulaire #}
+            <div class="col-lg-7">
+                <div class="form-card p-4 p-md-5 rounded-4">
+                    <h2 class="mb-4"><i class="bi bi-envelope text-primary"></i> Envoyez-nous un message</h2>
+
+                    {{ form_start(form, {'attr': {'class': 'contact-form', 'novalidate': 'novalidate'}}) }}
+
+                    <div class="mb-3">
+                        {{ form_label(form.nom) }}
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.nom) }}
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            {{ form_label(form.email) }}
+                            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.telephone) }}
+                            {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.telephone) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.sujet) }}
+                        {{ form_widget(form.sujet, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.sujet) }}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.message) }}
+                        {{ form_widget(form.message, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.message) }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-send"></i> Envoyer le message
+                    </button>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+            {# Informations de contact #}
+            <div class="col-lg-5">
+                <div class="contact-info-card p-4 rounded-4 mb-4">
+                    <h3 class="mb-4">Nos coordonnées</h3>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <div>
+                            <h6>Adresse</h6>
+                            <p>{{ site_address }}</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div>
+                            <h6>Téléphone</h6>
+                            <p><a href="tel:{{ site_phone|replace({' ': ''}) }}">{{ site_phone }}</a></p>
+                        </div>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div>
+                            <h6>Email</h6>
+                            <p><a href="mailto:{{ site_email }}">{{ site_email }}</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                {# Google Map embed #}
+                <div class="map-container rounded-4 overflow-hidden">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2760.5!2d0.33087!3d46.5812055!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47fdbf254c117ce5%3A0xb2bb43ed56f81d76!2sAppart%20H%C3%B4tel%20Poitiers!5e0!3m2!1sfr!2sfr!4v1700000000000"
+                        width="100%"
+                        height="300"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

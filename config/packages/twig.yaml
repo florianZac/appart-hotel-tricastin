@@ -1,0 +1,13 @@
+# config/packages/twig.yaml
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    form_themes: ['bootstrap_5_layout.html.twig']
+    globals:
+        site_name: 'Appart Hôtel Poitiers'
+        site_phone: '+33 6 98 48 57 28'
+        site_email: 'hello@appart-hotel-poitiers.com'
+        site_address: '11 Boulevard Pont Achard, 86000 Poitiers'
+
+when@test:
+    twig:
+        strict_variables: true
