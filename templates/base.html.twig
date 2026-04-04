@@ -64,7 +64,19 @@
                             <img src="https://flagcdn.com/w20/gb.png" width="20" height="15" alt="EN">
                         </a>
                     </li>
-
+                    
+                    {# Bouton Admin / Login #}
+                    <li class="nav-item">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a class="nav-link" href="{{ path('admin_dashboard') }}">
+                                <i class="bi bi-speedometer2"></i> Admin
+                            </a>
+                        {% else %}
+                            <a class="nav-link" href="{{ path('app_login') }}">
+                                <i class="bi bi-box-arrow-in-right"></i> {{ app.request.locale == 'fr' ? 'Connexion' : 'Login' }}
+                            </a>
+                        {% endif %}
+                    </li>
                     {# Bouton réserver desktop #}
                     <li class="nav-item ms-lg-3 d-none d-lg-block">
                         <a href="{{ path('app_reservation') }}" class="btn btn-reserve">

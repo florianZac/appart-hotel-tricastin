@@ -127,6 +127,7 @@ admin.sidebar.title: "Appart Hôtel"
 admin.sidebar.dashboard: "Dashboard"
 admin.sidebar.reservations: "Réservations"
 admin.sidebar.view_site: "Voir le site"
+admin.sidebar.deconnexion: "Déconnexion"
 admin.dashboard.title: "Dashboard"
 admin.dashboard.apartments_active: "Appartements actifs"
 admin.dashboard.total_reservations: "Total réservations"
@@ -147,6 +148,8 @@ admin.status.confirmed: "Confirmée"
 admin.status.cancelled: "Annulée"
 admin.actions.confirm: "Confirmer"
 admin.actions.cancel: "Annuler"
+
+
 
 # =============================================
 # CONTACT

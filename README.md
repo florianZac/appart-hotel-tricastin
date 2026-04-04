@@ -193,14 +193,9 @@ MAILER_DSN=smtp://localhost:1025
 Le back-office `/admin` n'est pas protégé par défaut.  
 Pour ajouter l'authentification :
 
-```bash
-composer require symfony/security-bundle
-php bin/console make:user
-php bin/console make:auth
 ```
-
-Puis configurez `config/packages/security.yaml` pour protéger les routes `/admin/*`.
-
+Email admin : admin@appart-hotel-tricastin.com
+Mdp admin : Moncode23+
 ---
 
 ## Images
