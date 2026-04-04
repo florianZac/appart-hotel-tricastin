@@ -1,34 +1,130 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}{{ app.request.locale == 'fr' ? 'Connexion' : 'Login' }} — {{ 'site.title'|trans }}{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
-
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Logout</a>
-        </div>
-    {% endif %}
-
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputEmail">Email</label>
-    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-
-    <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" name="_remember_me"> Remember me
-        </label>
+<section class="page-header">
+    <div class="page-header-overlay"></div>
+    <div class="container">
+        <h1><i class="bi bi-lock"></i> {{ app.request.locale == 'fr' ? 'Connexion' : 'Login' }}</h1>
+        <p class="lead">{{ app.request.locale == 'fr' ? 'Accédez à votre espace administration' : 'Access your admin panel' }}</p>
     </div>
+</section>
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
-</form>
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="form-card p-4 p-md-5 rounded-4">
+
+          <div class="text-center mb-4">
+            <div class="login-icon-circle mx-auto mb-3">
+                <i class="bi bi-person-lock"></i>
+            </div>
+            <h2 class="mb-1">{{ app.request.locale == 'fr' ? 'Connexion' : 'Sign in' }}</h2>
+            <p class="text-muted small">{{ app.request.locale == 'fr' ? 'Espace réservé aux administrateurs' : 'Reserved for administrators' }}</p>
+          </div>
+
+          {% if error %}
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+          {% endif %}
+
+          <form method="post">
+            <div class="mb-3">
+                <label for="inputEmail" class="form-label">
+                  <i class="bi bi-envelope"></i> Email
+                </label>
+                <input type="email"
+                    value="{{ last_username }}"
+                    name="email"
+                    id="inputEmail"
+                    class="form-control form-control-lg"
+                    autocomplete="email"
+                    required
+                    autofocus
+                    placeholder="admin@email.com">
+            </div>
+
+            <div class="mb-3">
+              <label for="inputPassword" class="form-label">
+                <i class="bi bi-key"></i> {{ app.request.locale == 'fr' ? 'Mot de passe' : 'Password' }}
+              </label>
+              <div class="input-group input-group-lg">
+                <input type="password"
+                    name="password"
+                    id="inputPassword"
+                    class="form-control"
+                    autocomplete="current-password"
+                    required
+                    placeholder="••••••••">
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Afficher/masquer le mot de passe">
+                  <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <div class="form-check">
+                <input type="checkbox"
+                  class="form-check-input"
+                  name="_remember_me"
+                  id="rememberMe">
+                <label class="form-check-label" for="rememberMe">
+                  {{ app.request.locale == 'fr' ? 'Se souvenir de moi' : 'Remember me' }}
+                </label>
+              </div>
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+              <i class="bi bi-box-arrow-in-right"></i>
+              {{ app.request.locale == 'fr' ? 'Se connecter' : 'Sign in' }}
+            </button>
+          </form>
+
+          <div class="text-center mt-4">
+            <a href="{{ path('app_home') }}" class="text-muted small">
+              <i class="bi bi-arrow-left"></i>
+              {{ app.request.locale == 'fr' ? 'Retour au site' : 'Back to website' }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  
+  const toggle = document.getElementById('togglePassword');
+  const input = document.getElementById('inputPassword');
+  const icon = document.getElementById('togglePasswordIcon');
+
+  if (toggle && input && icon) {
+    toggle.addEventListener('click', function () {
+    if (input.type === 'password') {
+
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+
+      } else {
+
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+      
+        icon.classList.add('bi-eye');
+      }
+    });
+  }
+});
+
+</script>
 {% endblock %}
