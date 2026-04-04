@@ -1137,6 +1137,60 @@ img {
 }
 
 /* =============================================
+   MENTIONS LEGALES
+   ============================================= */
+.mentions-legales h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--color-secondary);
+    margin-top: 10px;
+    margin-bottom: 16px;
+}
+
+.mentions-legales p {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--color-text);
+}
+
+.mentions-legales hr {
+    border-color: #e8e4de;
+    margin: 30px 0;
+}
+
+.mentions-info-grid {
+    display: grid;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.mentions-info-item {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 18px;
+    background: var(--color-warm-gray);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--color-primary);
+}
+
+.mentions-info-item strong {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-secondary);
+    margin-bottom: 4px;
+}
+
+.mentions-info-item span {
+    font-size: 0.95rem;
+    color: var(--color-text-light);
+}
+
+.mentions-info-item a {
+    color: var(--color-primary);
+}
+
+/* =============================================
    RESPONSIVE
    ============================================= */
 @media (max-width: 991.98px) {
