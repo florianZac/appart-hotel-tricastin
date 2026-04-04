@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Réserver - Appart Hôtel Tricastin{% endblock %}
+{% block title %}{{ 'reservation.title'|trans }} — {{ 'site.title'|trans }}{% endblock %}
 
 {% block body %}
 {# ================================================ #}
@@ -9,8 +9,8 @@
 <section class="page-header">
     <div class="page-header-overlay"></div>
     <div class="container">
-        <h1><i class="bi bi-star-fill"></i> Réserver votre séjour</h1>
-        <p class="lead">Choisissez votre localisation, votre appartement et vos dates</p>
+        <h1><i class="bi bi-star-fill"></i> {{ 'reservation.title'|trans }}</h1>
+        <p class="lead">{{ 'reservation.subtitle'|trans }}</p>
     </div>
 </section>
 
@@ -23,35 +23,31 @@
             <div class="col-lg-8">
                 <div class="form-card p-4 p-md-5 rounded-4">
                     <h2 class="mb-4 text-center">
-                        <i class="bi bi-calendar-check text-primary"></i> Demande de réservation
+                        <i class="bi bi-calendar-check text-primary"></i> {{ 'reservation.form_title'|trans }}
                     </h2>
 
                     {{ form_start(form, {'attr': {'class': 'reservation-form', 'novalidate': 'novalidate'}}) }}
 
-                    {# Étape 1 : Localisation #}
                     <div class="mb-3">
-                        <h5 class="mb-3"><span class="badge bg-primary rounded-pill">1</span> Choisissez votre ville</h5>
+                        <h5 class="mb-3"><span class="badge bg-primary rounded-pill">1</span> {{ 'reservation.step1'|trans }}</h5>
                         {{ form_label(form.localisation) }}
                         {{ form_widget(form.localisation, {'attr': {'id': 'reservation_localisation'}}) }}
                         {{ form_errors(form.localisation) }}
                     </div>
 
-                    {# Étape 2 : Appartement (filtré dynamiquement) #}
                     <div class="mb-4">
-                        <h5 class="mb-3"><span class="badge bg-primary rounded-pill">2</span> Choisissez votre appartement</h5>
+                        <h5 class="mb-3"><span class="badge bg-primary rounded-pill">2</span> {{ 'reservation.step2'|trans }}</h5>
                         {{ form_label(form.appartement) }}
                         {{ form_widget(form.appartement, {'attr': {'id': 'reservation_appartement'}}) }}
                         {{ form_errors(form.appartement) }}
                         <div id="appartement-loading" class="text-muted small mt-1" style="display:none;">
-                            <i class="bi bi-hourglass-split"></i> Chargement des appartements...
+                            <i class="bi bi-hourglass-split"></i> ...
                         </div>
                     </div>
 
                     <hr class="my-4">
 
-                    {# Étape 3 : Informations personnelles #}
-                    <h5 class="mb-3"><span class="badge bg-primary rounded-pill">3</span> Vos informations</h5>
-
+                    <h5 class="mb-3"><span class="badge bg-primary rounded-pill">3</span> {{ 'reservation.step3'|trans }}</h5>
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             {{ form_label(form.nom) }}
@@ -64,7 +60,6 @@
                             {{ form_errors(form.prenom) }}
                         </div>
                     </div>
-
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             {{ form_label(form.email) }}
@@ -80,9 +75,7 @@
 
                     <hr class="my-4">
 
-                    {# Étape 4 : Dates et personnes #}
-                    <h5 class="mb-3"><span class="badge bg-primary rounded-pill">4</span> Votre séjour</h5>
-
+                    <h5 class="mb-3"><span class="badge bg-primary rounded-pill">4</span> {{ 'reservation.step4'|trans }}</h5>
                     <div class="row g-3 mb-4">
                         <div class="col-md-4">
                             {{ form_label(form.dateArrivee) }}
@@ -101,17 +94,15 @@
                         </div>
                     </div>
 
-                    {# Message #}
                     <div class="mb-4">
                         {{ form_label(form.message) }}
                         {{ form_widget(form.message, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.message) }}
                     </div>
 
-                    {# Submit #}
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary btn-lg px-5">
-                            <i class="bi bi-send"></i> Envoyer ma demande
+                            <i class="bi bi-send"></i> {{ 'reservation.submit'|trans }}
                         </button>
                     </div>
 
@@ -120,29 +111,28 @@
             </div>
         </div>
 
-        {# Infos complémentaires #}
         <div class="row justify-content-center mt-5">
             <div class="col-lg-8">
                 <div class="row g-4 text-center">
                     <div class="col-md-4">
                         <div class="info-mini-card">
                             <i class="bi bi-clock text-primary fs-2"></i>
-                            <h6>Réponse rapide</h6>
-                            <small class="text-muted">Nous répondons sous 24h</small>
+                            <h6>{{ 'reservation.fast'|trans }}</h6>
+                            <small class="text-muted">{{ 'reservation.fast_desc'|trans }}</small>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-mini-card">
                             <i class="bi bi-shield-check text-primary fs-2"></i>
-                            <h6>Paiement sécurisé</h6>
-                            <small class="text-muted">Vos données sont protégées</small>
+                            <h6>{{ 'reservation.secure'|trans }}</h6>
+                            <small class="text-muted">{{ 'reservation.secure_desc'|trans }}</small>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-mini-card">
                             <i class="bi bi-x-circle text-primary fs-2"></i>
-                            <h6>Annulation flexible</h6>
-                            <small class="text-muted">Conditions adaptées</small>
+                            <h6>{{ 'reservation.flexible'|trans }}</h6>
+                            <small class="text-muted">{{ 'reservation.flexible_desc'|trans }}</small>
                         </div>
                     </div>
                 </div>
@@ -155,58 +145,41 @@
 {% block javascripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const localisationSelect = document.getElementById('reservation_localisation');
-    const appartementSelect = document.getElementById('reservation_appartement');
-    const loadingIndicator = document.getElementById('appartement-loading');
+    const locSelect = document.getElementById('reservation_localisation');
+    const aptSelect = document.getElementById('reservation_appartement');
+    const loading = document.getElementById('appartement-loading');
 
-    if (!localisationSelect || !appartementSelect) return;
+    if (!locSelect || !aptSelect) return;
 
-    localisationSelect.addEventListener('change', function () {
-        const localisationId = this.value;
+    locSelect.addEventListener('change', function () {
+        const id = this.value;
+        aptSelect.innerHTML = '';
 
-        // Vider le select appartement
-        appartementSelect.innerHTML = '';
-
-        if (!localisationId) {
-            const option = document.createElement('option');
-            option.value = '';
-            option.textContent = '-- Sélectionnez d\'abord une ville --';
-            appartementSelect.appendChild(option);
+        if (!id) {
+            aptSelect.innerHTML = '<option value="">--</option>';
             return;
         }
 
-        // Afficher le loading
-        loadingIndicator.style.display = 'block';
-        appartementSelect.disabled = true;
+        loading.style.display = 'block';
+        aptSelect.disabled = true;
 
-        // Appel AJAX
-        fetch('/api/appartements-par-localisation/' + localisationId)
-            .then(response => response.json())
-            .then(data => {
-                appartementSelect.innerHTML = '';
-
-                // Placeholder
-                const placeholder = document.createElement('option');
-                placeholder.value = '';
-                placeholder.textContent = '-- Choisissez un appartement --';
-                appartementSelect.appendChild(placeholder);
-
-                // Ajouter les appartements
-                data.forEach(function (appart) {
-                    const option = document.createElement('option');
-                    option.value = appart.id;
-                    option.textContent = appart.label;
-                    appartementSelect.appendChild(option);
+        fetch('/api/appartements-par-localisation/' + id)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                aptSelect.innerHTML = '<option value="">--</option>';
+                data.forEach(function(a) {
+                    var opt = document.createElement('option');
+                    opt.value = a.id;
+                    opt.textContent = a.label;
+                    aptSelect.appendChild(opt);
                 });
-
-                appartementSelect.disabled = false;
-                loadingIndicator.style.display = 'none';
+                aptSelect.disabled = false;
+                loading.style.display = 'none';
             })
-            .catch(function (error) {
-                console.error('Erreur chargement appartements:', error);
-                appartementSelect.innerHTML = '<option value="">Erreur de chargement</option>';
-                appartementSelect.disabled = false;
-                loadingIndicator.style.display = 'none';
+            .catch(function() {
+                aptSelect.innerHTML = '<option value="">Erreur</option>';
+                aptSelect.disabled = false;
+                loading.style.display = 'none';
             });
     });
 });

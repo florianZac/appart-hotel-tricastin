@@ -1,113 +1,108 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %} {'reservation.titlepage'|trans }{% endblock %}
+{% block title %}{{ 'admin.sidebar.reservations'|trans }}{% endblock %}
 
 {% block admin_body %}
 <div class="admin-topbar">
-  <h1><i class="bi bi-calendar-check"></i> {{ 'reservation.topbar_topbar'|trans }}</h1>
+    <h1><i class="bi bi-calendar-check"></i> {{ 'admin.sidebar.reservations'|trans }}</h1>
 </div>
 
 <div class="table-card">
-  <div class="card-header">
-    <i class="bi bi-list-ul"></i> {{ 'reservation.cardhover'|trans }} ({{ reservations|length }})
-  </div>
-  <div class="table-responsive">
-      <table class="table table-hover">
-          <thead>
-              <tr>
-                  <th>#</th>
-                  <th>{{ 'reservation.th_client'|trans }}</th>
-                  <th>{{ 'reservation.th_contact'|trans }}</th>
-                  <th>{{ 'reservation.th_apart'|trans }}</th>
-                  <th>{{ 'reservation.th_out'|trans }}</th>
-                  <th>{{ 'reservation.th_in'|trans }}</th>
-                  <th>{{ 'reservation.th_night'|trans }}</th>
-                  <th>{{ 'reservation.th_nb_pers'|trans }}</th>
-                  <th>{{ 'reservation.th_statut'|trans }}</th>
-                  <th>{{ 'reservation.th_msg'|trans }}</th>
-                  <th>{{ 'reservation.th_action'|trans }}</th>
-              </tr>
-          </thead>
-          <tbody>
-              {% for reservation in reservations %}
-              <tr>
-                  <td><strong>{{ reservation.id }}</strong></td>
-                  <td>
-                      <strong>{{ reservation.prenom }} {{ reservation.nom }}</strong>
-                  </td>
-                  <td>
-                      <small>
-                          <i class="bi bi-envelope"></i> {{ reservation.email }}<br>
-                          <i class="bi bi-telephone"></i> {{ reservation.telephone }}
-                      </small>
-                  </td>
-                  <td>{{ reservation.appartement ? reservation.appartement.nom : '—' }}</td>
-                  <td>{{ reservation.dateArrivee|date('d/m/Y') }}</td>
-                  <td>{{ reservation.dateDepart|date('d/m/Y') }}</td>
-                  <td><strong>{{ reservation.nombreNuits }}</strong></td>
-                  <td>{{ reservation.nombrePersonnes }}</td>
-                  <td>
-                      {% if (reservation.statut == 'en_attente' and  reservation.statut == 'pending' )  %}
-                          <span class="badge-statut bg-warning text-dark">{{ 'reservation.statut_warning'|trans }}</span>
-                      {% elseif (reservation.statut == 'confirmee' and  reservation.statut == 'confirmed' ) %}
-                          <span class="badge-statut bg-success text-white">{{ 'reservation.statut_success'|trans }}</span>
-                      {% elseif (reservation.statut == 'annulee' and reservation.statut == 'cancelled' ) %}
-                          <span class="badge-statut bg-danger text-white">{{ 'reservation.statut_danger'|trans }}</span>
-                      {% endif %}
-                  </td>
-                  <td>
-                      {% if reservation.message %}
-                          <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip"
-                                  title="{{ reservation.message }}">
-                              <i class="bi bi-chat-text"></i>
-                          </button>
-                      {% else %}
-                          <span class="text-muted">—</span>
-                      {% endif %}
-                  </td>
-                  <td>
-                      <div class="btn-group btn-group-sm">
-                          {% if (reservation.statut != 'confirmee' and reservation.statut != 'confirmed' )  %}
-                          <form method="POST"
-                                action="{{ path('admin_reservation_statut', {id: reservation.id, statut: 'confirmee'}) }}"
-                                style="display:inline;">
-                              <input type="hidden" name="_token" value="{{ csrf_token('statut_' ~ reservation.id) }}">
-                              <button type="submit" class="btn btn-sm btn-success" title="{{ 'reservation.btn_confirm'|trans }}">
-                                  <i class="bi bi-check-lg"></i>
-                              </button>
-                          </form>
-                          {% endif %}
+    <div class="card-header">
+        <i class="bi bi-list-ul"></i> {{ 'admin.sidebar.reservations'|trans }} ({{ reservations|length }})
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>{{ 'admin.table.client'|trans }}</th>
+                    <th>{{ 'contact.email'|trans }}</th>
+                    <th>{{ 'admin.table.apartment'|trans }}</th>
+                    <th>{{ 'admin.table.arrival'|trans }}</th>
+                    <th>{{ 'admin.table.departure'|trans }}</th>
+                    <th>{{ 'admin.table.people'|trans }}</th>
+                    <th>{{ 'admin.table.status'|trans }}</th>
+                    <th>Message</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                <tr>
+                    <td><strong>{{ reservation.id }}</strong></td>
+                    <td><strong>{{ reservation.prenom }} {{ reservation.nom }}</strong></td>
+                    <td>
+                        <small>
+                            <i class="bi bi-envelope"></i> {{ reservation.email }}<br>
+                            <i class="bi bi-telephone"></i> {{ reservation.telephone }}
+                        </small>
+                    </td>
+                    <td>{{ reservation.appartement ? reservation.appartement.nom : '—' }}</td>
+                    <td>{{ reservation.dateArrivee|date('d/m/Y') }}</td>
+                    <td>{{ reservation.dateDepart|date('d/m/Y') }}</td>
+                    <td>{{ reservation.nombrePersonnes }}</td>
+                    <td>
+                        {% if reservation.statut == 'en_attente' %}
+                            <span class="badge-statut bg-warning text-dark">{{ 'admin.status.pending'|trans }}</span>
+                        {% elseif reservation.statut == 'confirmee' %}
+                            <span class="badge-statut bg-success text-white">{{ 'admin.status.confirmed'|trans }}</span>
+                        {% elseif reservation.statut == 'annulee' %}
+                            <span class="badge-statut bg-danger text-white">{{ 'admin.status.cancelled'|trans }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if reservation.message %}
+                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip"
+                                    title="{{ reservation.message }}">
+                                <i class="bi bi-chat-text"></i>
+                            </button>
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            {% if reservation.statut != 'confirmee' %}
+                            <form method="POST"
+                                  action="{{ path('admin_reservation_statut', {id: reservation.id, statut: 'confirmee'}) }}"
+                                  style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('statut_' ~ reservation.id) }}">
+                                <button type="submit" class="btn btn-sm btn-success" title="{{ 'admin.actions.confirm'|trans }}">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                            </form>
+                            {% endif %}
 
-                          {% if ( reservation.statut != 'annulee' and reservation.statut != 'cancelled')  %}
-                          <form method="POST"
-                                action="{{ path('admin_reservation_statut', {id: reservation.id, statut: 'annulee'}) }}"
-                                style="display:inline;">
-                              <input type="hidden" name="_token" value="{{ csrf_token('statut_' ~ reservation.id) }}">
-                              <button type="submit" class="btn btn-sm btn-danger" title="{{ 'reservation.btn_cancel'|trans }}">
-                                  <i class="bi bi-x-lg"></i>
-                              </button>
-                          </form>
-                          {% endif %}
-                      </div>
-                  </td>
-              </tr>
-              {% else %}
-              <tr>
-                  <td colspan="11" class="text-center py-5 text-muted">
-                      <i class="bi bi-inbox" style="font-size: 2rem;"></i><br>
-                      {{ 'reservation.tr_msg'|trans }}
-                  </td>
-              </tr>
-              {% endfor %}
-          </tbody>
-      </table>
+                            {% if reservation.statut != 'annulee' %}
+                            <form method="POST"
+                                  action="{{ path('admin_reservation_statut', {id: reservation.id, statut: 'annulee'}) }}"
+                                  style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('statut_' ~ reservation.id) }}">
+                                <button type="submit" class="btn btn-sm btn-danger" title="{{ 'admin.actions.cancel'|trans }}">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="10" class="text-center py-5 text-muted">
+                        <i class="bi bi-inbox" style="font-size: 2rem;"></i><br>
+                        {{ 'admin.empty'|trans }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltips.forEach(t => new bootstrap.Tooltip(t));
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(t => new bootstrap.Tooltip(t));
 });
 </script>
 {% endblock %}

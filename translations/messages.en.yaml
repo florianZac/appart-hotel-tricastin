@@ -1,12 +1,14 @@
 # =============================================
 # GLOBAL / COMMON
 # =============================================
-site.title: "Appart hostel Tricastin"
+site.title: "Appart Hostel Tricastin"
 common.from: "From"
 common.per_night: "/night"
 common.people: "people"
 common.surface: "m²"
 back_to_top: "Back to top"
+loc.apartments_count: "apartments"
+loc.units: "units"
 
 # =============================================
 # NAVIGATION
@@ -20,8 +22,8 @@ nav.book: "Book"
 # HERO
 # =============================================
 hero.welcome: "Welcome to"
-hero.name: "Appart Hôtel Tricastin"
-hero.subtitle: "Your ideal stay in Drôme Provençale"
+hero.name: "Appart Hostel Tricastin"
+hero.subtitle: "Your ideal stay in Drôme Provencal"
 hero.discover: "Discover our locations"
 
 # =============================================
@@ -29,7 +31,7 @@ hero.discover: "Discover our locations"
 # =============================================
 loc.badge: "Our residences"
 loc.title: "Choose your destination"
-loc.subtitle: "3 locations in the heart of Drome, 12 apartments at your disposal"
+loc.subtitle: "3 locations in the heart of Drôme, 12 apartments at your disposal"
 
 # =============================================
 # FEATURES
@@ -41,13 +43,13 @@ feature.linen_desc: "Bed linen and bath towels included"
 feature.parking: "Private parking"
 feature.parking_desc: "Secure parking optional"
 feature.location: "Drôme Provencal"
-feature.location_desc: "In the heart of Tricastin and Provence"
+feature.location_desc: "In the heart of Drôme and Provence"
 
 # =============================================
 # ABOUT
 # =============================================
 about.badge: "Your ideal stay"
-about.title: "Appart Hôtel Tricastin"
+about.title: "Appart Hostel Tricastin"
 about.text1: "Discover our furnished apartments spread across 3 locations in the heart of Drôme Provencal and Gard: Pont-Saint-Esprit, Saint-Paul-Trois-Châteaux, and Tulette."
 about.text2: "Whether you are on a business trip, with family, or on vacation, our 12 modern and fully equipped apartments offer all the comfort for a pleasant stay."
 about.btn: "See the apartments"
@@ -61,7 +63,7 @@ testimonials.title: "They stayed with us"
 # =============================================
 # STATS
 # =============================================
-stats.since: "Appart Hostel\nsince 2024"
+stats.since: "Appart Hotel\nsince 2024"
 stats.capacity: "Capacity\nup to 32 people"
 stats.locations: "Locations\nin Drôme Provencal"
 stats.apartments: "Apartments\navailable"
@@ -79,27 +81,15 @@ cta.apartment.subtitle: "Book your apartment in %ville% now"
 # APARTMENTS PAGE
 # =============================================
 apartments.page_title: "Our Locations"
-apartments.page_subtitle: "Choose your destination in Drôme Provençale"
-
+apartments.page_subtitle: "Choose your destination in Drôme Provencal"
 apartments.available: "Available apartments:"
-
-apartments.available_count: >
-  {0} No apartments available|
-  {1} %count% apartment available|
-  ]1,Inf] %count% apartments available
-
-apartments.units: >
-  {1} %count% unit|
-  ]1,Inf] %count% units
-
-apartments.see_all: >
-  {1} See the apartment|
-  ]1,Inf] See the %count% apartments
-
+apartments.available_count: "%count% apartment(s) available"
+apartments.see_all: "See the %count% apartments"
 apartments.equipment: "Facilities"
 apartments.back: "See other locations"
-
-apartments.page_title_city: "Apartments in %ville% — Appart Hostel Tricastin"
+apartments.page_title_city: "Apartments in %ville% — Appart Hotel Tricastin"
+apartments.from: "From"
+apartments.per_night: "/night"
 
 # =============================================
 # APARTMENT DETAIL
@@ -112,7 +102,7 @@ apartment.book_this: "Book %name%"
 apartment.contact_us: "Any questions? Contact us"
 
 # =============================================
-# RESERVATION (FRONT)
+# RESERVATION
 # =============================================
 reservation.title: "Book your stay"
 reservation.subtitle: "Choose your location, apartment, and dates"
@@ -131,7 +121,7 @@ reservation.flexible: "Flexible cancellation"
 reservation.flexible_desc: "Adapted conditions"
 
 # =============================================
-# ADMIN (DASHBOARD + RESERVATIONS)
+# ADMIN
 # =============================================
 admin.sidebar.title: "Appart Hostel"
 admin.sidebar.dashboard: "Dashboard"
@@ -167,9 +157,24 @@ contact.form_title: "Send us a message"
 contact.send: "Send message"
 contact.info_title: "Our contact information"
 contact.address: "Address"
-contact.phone: "Phone"
 contact.email: "Email"
+contact.telephone: "Phone"
 contact.success: "Your message has been sent successfully. We will reply quickly!"
+
+# =============================================
+# CONTACT FORMULAIRE
+# =============================================
+
+contact.nom-form: "Full Name" 
+contact.nom_placeholder: "Your name" 
+contact.email-form: "Email" 
+contact.email_placeholder: "your@email.com" 
+contact.telephone-form: "Phone" 
+contact.telephone_placeholder: "06 00 00 00 00" 
+contact.sujet-form: "Subject" 
+contact.sujet_placeholder: "Subject of your message" 
+contact.message-form: "Message" 
+contact.message_placeholder: "Your message..."
 
 # =============================================
 # FOOTER

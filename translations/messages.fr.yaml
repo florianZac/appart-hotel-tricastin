@@ -7,6 +7,8 @@ common.per_night: "/nuit"
 common.people: "personnes"
 common.surface: "m²"
 back_to_top: "Retour à l'accueil"
+loc.apartments_count: "appartements"
+loc.units: "logements"
 
 # =============================================
 # NAVIGATION
@@ -29,7 +31,7 @@ hero.discover: "Découvrir nos localisations"
 # =============================================
 loc.badge: "Nos résidences"
 loc.title: "Choisissez votre destination"
-loc.subtitle: "3 localisations au cœur de la Drome, 12 appartements à votre disposition"
+loc.subtitle: "3 localisations au cœur de la Drôme, 12 appartements à votre disposition"
 
 # =============================================
 # FEATURES
@@ -41,7 +43,7 @@ feature.linen_desc: "Linge de lit et serviettes de bain inclus"
 feature.parking: "Parking privé"
 feature.parking_desc: "Stationnement sécurisé en option"
 feature.location: "Drôme Provençale"
-feature.location_desc: "Au cœur du Tricastin et de la Provence"
+feature.location_desc: "Au cœur de la Drôme et de la Provence"
 
 # =============================================
 # ABOUT
@@ -81,23 +83,13 @@ cta.apartment.subtitle: "Réservez votre appartement à %ville% dès maintenant"
 apartments.page_title: "Nos Localisations"
 apartments.page_subtitle: "Choisissez votre destination en Drôme Provençale"
 apartments.available: "Appartements disponibles :"
-
-apartments.available_count: >
-  {0} Aucun appartement disponible|
-  {1} %count% appartement disponible|
-  ]1,Inf] %count% appartements disponibles
-
-apartments.units: >
-  {1} %count% logement|
-  ]1,Inf] %count% logements
-
-apartments.see_all: >
-  {1} Voir l'appartement|
-  ]1,Inf] Voir les %count% appartements
-
+apartments.available_count: "%count% appartement(s) disponible(s)"
+apartments.see_all: "Voir les %count% appartements"
 apartments.equipment: "Équipements"
 apartments.back: "Voir les autres localisations"
 apartments.page_title_city: "Appartements à %ville% — Appart Hôtel Tricastin"
+apartments.from: "À partir de"
+apartments.per_night: "/nuit"
 
 # =============================================
 # APARTMENT DETAIL
@@ -110,7 +102,7 @@ apartment.book_this: "Réserver %name%"
 apartment.contact_us: "Une question ? Contactez-nous"
 
 # =============================================
-# RESERVATION (FRONT)
+# RESERVATION
 # =============================================
 reservation.title: "Réserver votre séjour"
 reservation.subtitle: "Choisissez votre localisation, votre appartement et vos dates"
@@ -129,7 +121,7 @@ reservation.flexible: "Annulation flexible"
 reservation.flexible_desc: "Conditions adaptées"
 
 # =============================================
-# ADMIN (DASHBOARD + RESERVATIONS)
+# ADMIN
 # =============================================
 admin.sidebar.title: "Appart Hôtel"
 admin.sidebar.dashboard: "Dashboard"
@@ -165,9 +157,24 @@ contact.form_title: "Envoyez-nous un message"
 contact.send: "Envoyer le message"
 contact.info_title: "Nos coordonnées"
 contact.address: "Adresse"
-contact.phone: "Téléphone"
 contact.email: "Email"
+contact.telephone: "Téléphone"
 contact.success: "Votre message a bien été envoyé. Nous vous répondrons rapidement !"
+
+# =============================================
+# CONTACT FORMULAIRE
+# =============================================
+
+contact.nom-form: "Nom complet" 
+contact.nom_placeholder: "Votre nom" 
+contact.email-form: "Email" 
+contact.email_placeholder: "votre@email.com" 
+contact.telephone-form: "Téléphone" 
+contact.telephone_placeholder: "06 00 00 00 00" 
+contact.sujet-form: "Sujet" 
+contact.sujet_placeholder: "Objet de votre message" 
+contact.message-form: "Message" 
+contact.message_placeholder: "Votre message..."
 
 # =============================================
 # FOOTER

@@ -1,224 +1,226 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Appart Hôtel Tricastin — Séjour idéal en Drôme Provençale{% endblock %}
+{% block title %}{{ 'site.title'|trans }} — {{ 'hero.subtitle'|trans }}{% endblock %}
 
 {% block body %}
 {# ================================================ #}
 {# HERO SECTION                                     #}
 {# ================================================ #}
 <section class="hero-section" id="accueil">
-  <div class="hero-overlay"></div>
-  <div class="container hero-content">
-    <h1 class="hero-title">{{ 'hero.welcome'|trans }}<br><span>{{ 'hero.name'|trans }}</span></h1>
-    <p class="hero-subtitle">{{ 'hero.subtitle'|trans }}</p>
-    <a href="{{ path('app_appartements') }}" class="btn btn-hero">
-      <i class="bi bi-geo-alt"></i> {{ 'hero.discover'|trans }}
-    </a>
-  </div>
-  <div class="hero-scroll-indicator">
-    <i class="bi bi-chevron-double-down"></i>
-  </div>
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">{{ 'hero.welcome'|trans }}<br><span>{{ 'hero.name'|trans }}</span></h1>
+        <p class="hero-subtitle">{{ 'hero.subtitle'|trans }}</p>
+        <a href="{{ path('app_appartements') }}" class="btn btn-hero">
+            <i class="bi bi-geo-alt"></i> {{ 'hero.discover'|trans }}
+        </a>
+    </div>
+    <div class="hero-scroll-indicator">
+        <i class="bi bi-chevron-double-down"></i>
+    </div>
 </section>
 
 {# ================================================ #}
 {# CHOIX DE LA LOCALISATION                         #}
 {# ================================================ #}
-
 <section class="appartements-section py-5" id="localisations">
-  <div class="container">
-    <div class="text-center mb-5">
-      <span class="section-badge">{{ 'loc.badge'|trans }}</span>
-      <h2 class="section-title">{{ 'loc.title'|trans }}</h2>
-      <p class="text-muted">{{ 'loc.subtitle'|trans }}</p>
-    </div>
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-badge">{{ 'loc.badge'|trans }}</span>
+            <h2 class="section-title">{{ 'loc.title'|trans }}</h2>
+            <p class="text-muted">{{ 'loc.subtitle'|trans }}</p>
+        </div>
 
-    <div class="row g-4">
-      {% for localisation in localisations %}
-      <div class="col-md-4">
-        <a href="{{ path('app_appartements_localisation', {slug: localisation.slug}) }}" class="appart-card-link">
-          <div class="appart-card text-center">
-            <div class="appart-card-img">
-              <img src="/images/{{ localisation.slug }}.jpg"
-                alt="{{ localisation.ville }}"
-                onerror="this.src='https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop'">
-              <div class="appart-card-badge">{{ localisation.appartements|length }} {{ 'loc.apartments_count'|trans }}</div>
+        <div class="row g-4">
+            {% for localisation in localisations %}
+            <div class="col-md-4">
+                <a href="{{ path('app_appartements_localisation', {slug: localisation.slug}) }}" class="appart-card-link">
+                    <div class="appart-card text-center">
+                        <div class="appart-card-img">
+                            <img src="/images/{{ localisation.slug }}.jpg"
+                                 alt="{{ localisation.ville }}"
+                                 onerror="this.src='https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop'">
+                            <div class="appart-card-badge">{{ localisation.appartements|length }} {{ 'loc.apartments_count'|trans }}</div>
+                        </div>
+                        <div class="appart-card-body">
+                            <h3>{{ localisation.ville }}</h3>
+                            <div class="appart-card-meta justify-content-center">
+                                <span><i class="bi bi-geo-alt"></i> {{ localisation.codePostal }}</span>
+                                <span><i class="bi bi-house-door"></i> {{ localisation.appartements|length }} {{ 'loc.units'|trans }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
-            <div class="appart-card-body">
-              <h3>{{ localisation.ville }}</h3>
-              <div class="appart-card-meta justify-content-center">
-                <span><i class="bi bi-geo-alt"></i> {{ localisation.codePostal }}</span>
-                <span><i class="bi bi-house-door"></i> {{ localisation.appartements|length }} {{ 'loc.units'|trans }}</span>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-      {% endfor %}
+            {% endfor %}
+        </div>
     </div>
-  </div>
 </section>
 
 {# ================================================ #}
 {# FEATURES / SERVICES                              #}
 {# ================================================ #}
-
 <section class="features-section py-5">
-  <div class="container">
-    <div class="row g-4 text-center">
-      <div class="col-6 col-lg-3">
-        <div class="feature-card">
-          <div class="feature-icon"><i class="bi bi-wifi"></i></div>
-          <h4>{{ 'feature.wifi'|trans }}</h4>
-          <p>{{ 'feature.wifi_desc'|trans }}</p>
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-wifi"></i></div>
+                    <h4>{{ 'feature.wifi'|trans }}</h4>
+                    <p>{{ 'feature.wifi_desc'|trans }}</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-basket3"></i></div>
+                    <h4>{{ 'feature.linen'|trans }}</h4>
+                    <p>{{ 'feature.linen_desc'|trans }}</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-p-circle"></i></div>
+                    <h4>{{ 'feature.parking'|trans }}</h4>
+                    <p>{{ 'feature.parking_desc'|trans }}</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-sun"></i></div>
+                    <h4>{{ 'feature.location'|trans }}</h4>
+                    <p>{{ 'feature.location_desc'|trans }}</p>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-6 col-lg-3">
-        <div class="feature-card">
-          <div class="feature-icon"><i class="bi bi-basket3"></i></div>
-          <h4>{{ 'feature.linen'|trans }}</h4>
-          <p>{{ 'feature.linen_desc'|trans }}</p>
-        </div>
-      </div>
-      <div class="col-6 col-lg-3">
-        <div class="feature-card">
-          <div class="feature-icon"><i class="bi bi-p-circle"></i></div>
-          <h4>{{ 'feature.parking'|trans }}</h4>
-          <p>{{ 'feature.parking_desc'|trans }}</p>
-        </div>
-      </div>
-      <div class="col-6 col-lg-3">
-        <div class="feature-card">
-          <div class="feature-icon"><i class="bi bi-sun"></i></div>
-          <h4>{{ 'feature.location'|trans }}</h4>
-          <p>{{ 'feature.location_desc'|trans }}</p>
-        </div>
-      </div>
     </div>
-  </div>
 </section>
 
 {# ================================================ #}
 {# ABOUT                                            #}
 {# ================================================ #}
-
 <section class="about-section py-5">
-  <div class="container">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6 order-lg-2">
-        <div class="about-image">
-          <img src="/images/tricastin.jpg" alt="Tricastin"
-            onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=450&fit=crop'"
-            class="img-fluid rounded-4">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 order-lg-2">
+                <div class="about-image">
+                    <img src="/images/tricastin.jpg" alt="Tricastin"
+                         onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=450&fit=crop'"
+                         class="img-fluid rounded-4">
+                </div>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <span class="section-badge">{{ 'about.badge'|trans }}</span>
+                <h2 class="section-title">{{ 'about.title'|trans }}</h2>
+                <p>{{ 'about.text1'|trans }}</p>
+                <p>{{ 'about.text2'|trans }}</p>
+                <a href="{{ path('app_appartements') }}" class="btn btn-primary btn-lg mt-3">
+                    <i class="bi bi-house-door"></i> {{ 'about.btn'|trans }}
+                </a>
+            </div>
         </div>
-      </div>
-      <div class="col-lg-6 order-lg-1">
-        <span class="section-badge">{{ 'about.badge'|trans }}</span>
-        <h2 class="section-title">{{ 'about.title'|trans }}</h2>
-        <p>{{ 'about.text1'|trans }}</p>
-        <p>{{ 'about.text2'|trans }}</p>
-        <a href="{{ path('app_appartements') }}" class="btn btn-primary btn-lg mt-3">
-          <i class="bi bi-house-door"></i> {{ 'about.btn'|trans }}
-        </a>
-      </div>
     </div>
-  </div>
 </section>
 
 {# ================================================ #}
 {# TEMOIGNAGES — Carrousel multi-cards              #}
 {# ================================================ #}
+{% if temoignages|length > 0 %}
 <section class="testimonials-section py-5">
-  <div class="container">
-    <div class="text-center mb-5">
-      <span class="section-badge">{{ 'testimonials.badge'|trans }}</span>
-      <h2 class="section-title">{{ 'testimonials.title'|trans }}</h2>
-    </div>
-    <div class="testimonials-wrapper">
-      <button class="carousel-arrow carousel-arrow-left" id="carouselPrev" type="button">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-      <div class="testimonials-carousel">
-        <div class="testimonials-track" id="testimonialTrack">
-          {% for temoignage in temoignages %}
-          <div class="testimonial-card-multi">
-              <div class="testimonial-avatar-circle">
-                <span>{{ temoignage.auteur|first|upper }}</span>
-              </div>
-              <h6 class="testimonial-name">{{ temoignage.auteur }}</h6>
-              <div class="testimonial-stars">
-                  {% for i in 1..temoignage.note %}
-                    <i class="bi bi-star-fill"></i>
-                  {% endfor %}
-              </div>
-              <p class="testimonial-text-multi">{{ temoignage.contenu }}</p>
-          </div>
-          {% endfor %}
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-badge">{{ 'testimonials.badge'|trans }}</span>
+            <h2 class="section-title">{{ 'testimonials.title'|trans }}</h2>
         </div>
-      </div>
-      <button class="carousel-arrow carousel-arrow-right" id="carouselNext" type="button">
-        <i class="bi bi-chevron-right"></i>
-      </button>
+
+        <div class="testimonials-wrapper">
+            <button class="carousel-arrow carousel-arrow-left" id="carouselPrev" type="button" aria-label="Précédent">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <div class="testimonials-carousel">
+                <div class="testimonials-track" id="testimonialTrack">
+                    {% for temoignage in temoignages %}
+                    <div class="testimonial-card-multi">
+                        <div class="testimonial-avatar-circle">
+                            <span>{{ temoignage.auteur|first|upper }}</span>
+                        </div>
+                        <h6 class="testimonial-name">{{ temoignage.auteur }}</h6>
+                        <div class="testimonial-stars">
+                            {% for i in 1..temoignage.note %}
+                                <i class="bi bi-star-fill"></i>
+                            {% endfor %}
+                        </div>
+                        <p class="testimonial-text-multi">{{ temoignage.contenu }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button class="carousel-arrow carousel-arrow-right" id="carouselNext" type="button" aria-label="Suivant">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        </div>
     </div>
-  </div>
 </section>
+{% endif %}
 
 {# ================================================ #}
-{# BANNIERE STATS — fond image transparente         #}
+{# BANNIERE STATS                                   #}
 {# ================================================ #}
-
 <section class="stats-banner">
-  <div class="stats-banner-overlay"></div>
-  <div class="container position-relative">
-    <div class="row text-center">
-      <div class="col-6 col-md-3">
-        <div class="stats-banner-item">
-          <div class="stats-banner-number">2024</div>
-          <div class="stats-banner-label">{{ 'stats.since'|trans|nl2br }}</div>
+    <div class="stats-banner-overlay"></div>
+    <div class="container position-relative">
+        <div class="row text-center">
+            <div class="col-6 col-md-3">
+                <div class="stats-banner-item">
+                    <div class="stats-banner-number">2024</div>
+                    <div class="stats-banner-label">{{ 'stats.since'|trans|nl2br }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-banner-item">
+                    <div class="stats-banner-number">32</div>
+                    <div class="stats-banner-label">{{ 'stats.capacity'|trans|nl2br }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-banner-item">
+                    <div class="stats-banner-number">3</div>
+                    <div class="stats-banner-label">{{ 'stats.locations'|trans|nl2br }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-banner-item">
+                    <div class="stats-banner-number">12</div>
+                    <div class="stats-banner-label">{{ 'stats.apartments'|trans|nl2br }}</div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stats-banner-item">
-          <div class="stats-banner-number">32</div>
-          <div class="stats-banner-label">{{ 'stats.capacity'|trans|nl2br }}</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stats-banner-item">
-          <div class="stats-banner-number">3</div>
-          <div class="stats-banner-label">{{ 'stats.locations'|trans|nl2br }}</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stats-banner-item">
-          <div class="stats-banner-number">12</div>
-          <div class="stats-banner-label">{{ 'stats.apartments'|trans|nl2br }}</div>
-        </div>
-      </div>
     </div>
-  </div>
 </section>
 
 {# ================================================ #}
 {# CTA                                              #}
 {# ================================================ #}
 <section class="cta-section py-5">
-  <div class="container text-center">
-    <h2>{{ 'cta.title'|trans|nl2br }}</h2>
-    <p class="lead mb-4">{{ 'cta.subtitle'|trans|nl2br }}</p>
-    <a href="{{ path('app_reservation') }}" class="btn btn-hero btn-lg">
-      {{ 'cta.btn'|trans }}
-    </a>
-  </div>
+    <div class="container text-center">
+        <h2>{{ 'cta.global.title'|trans }}</h2>
+        <p class="lead mb-4">{{ 'cta.global.subtitle'|trans }}</p>
+        <a href="{{ path('app_reservation') }}" class="btn btn-hero btn-lg">
+            <i class="bi bi-star-fill"></i> {{ 'cta.global.btn'|trans }}
+        </a>
+    </div>
 </section>
+
 {# ================================================ #}
 {# RETOUR EN HAUT                                   #}
 {# ================================================ #}
 <section class="back-to-top-section py-4">
-  <div class="container text-center">
-    <a href="#accueil" class="back-to-top-link">
-      <i class="bi bi-chevron-up"></i>
-      <span>{{ 'back_to_top'|trans }}</span>
-    </a>
-  </div>
+    <div class="container text-center">
+        <a href="#accueil" class="back-to-top-link">
+            <i class="bi bi-chevron-up"></i>
+            <span>{{ 'back_to_top'|trans }}</span>
+        </a>
+    </div>
 </section>
 {% endblock %}

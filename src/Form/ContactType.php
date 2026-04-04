@@ -17,30 +17,42 @@ class ContactType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'label' => 'Nom complet',
-                'constraints' => [new Assert\NotBlank()],
-                'attr' => ['placeholder' => 'Votre nom'],
+                'label' => 'contact.nom-form',           // clé de traduction pour le label
+                'constraints' => [new Assert\NotBlank()],           
+                'attr' => [
+                    'placeholder' => 'contact.nom_placeholder', // clé de traduction pour le placeholder
+                    'class' => 'form-control'
+                ],
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Email',
+                'label' => 'contact.email-form',
                 'constraints' => [new Assert\NotBlank(), new Assert\Email()],
-                'attr' => ['placeholder' => 'votre@email.com'],
+                'attr' => [ 
+                    'placeholder' => 'contact.email_placeholder',
+                    'class' => 'form-control'],
             ])
             ->add('telephone', TelType::class, [
-                'label' => 'Téléphone',
+                'label' => 'contact.telephone-form',
                 'required' => false,
-                'attr' => ['placeholder' => '06 00 00 00 00'],
+                'attr' => [
+                    'placeholder' => 'contact.telephone_placeholder',
+                    'class' => 'form-control'
+                ],
             ])
             ->add('sujet', TextType::class, [
-                'label' => 'Sujet',
+                'label' => 'contact.sujet-form',
                 'constraints' => [new Assert\NotBlank()],
-                'attr' => ['placeholder' => 'Objet de votre message'],
+                'attr' => [
+                    'placeholder' => 'contact.sujet_placeholder',
+                    'class' => 'form-control'
+                ],
             ])
             ->add('message', TextareaType::class, [
-                'label' => 'Message',
+                'label' => 'contact.message-form',
                 'constraints' => [new Assert\NotBlank(), new Assert\Length(min: 10)],
                 'attr' => [
-                    'placeholder' => 'Votre message...',
+                    'placeholder' => 'contact.message_placeholder',
+                    'class' => 'form-control',
                     'rows' => 6,
                 ],
             ])
