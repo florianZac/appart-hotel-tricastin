@@ -1,4 +1,5 @@
 erDiagram
+
     LOCALISATION {
         int id PK
         string ville
@@ -22,12 +23,51 @@ erDiagram
         int capaciteMin
         int capaciteMax
         text description
+        text equipements
         string imagePrincipale
+        text galerie
         decimal prixParNuit
         boolean actif
         int ordre
-        datetime createdAt
-        datetime updatedAt
     }
 
+    RESERVATION {
+        int id PK
+        int appartement_id FK
+        int user_id FK
+        string nom
+        string prenom
+        string email
+        string telephone
+        date dateArrivee
+        date dateDepart
+        int nombrePersonnes
+        text message
+        string statut
+        datetime createdAt
+    }
+
+    TEMOIGNAGE {
+        int id PK
+        int user_id FK
+        string auteur
+        text contenu
+        int note
+        string avatar
+        boolean actif
+        datetime createdAt
+    }
+
+    USER {
+        int id PK
+        string email UK
+        json roles
+        string password
+    }
+
+    %% Relations avec cardinalités
+
     LOCALISATION ||--o{ APPARTEMENT : "1,n possède"
+    APPARTEMENT ||--o{ RESERVATION : "1,n reçoit"
+    USER ||--o{ RESERVATION : "1,n effectue"
+    USER ||--o{ TEMOIGNAGE : "1,n rédige"
