@@ -15,62 +15,83 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ReservationController extends AbstractController
 {
-    #[Route('/reserver', name: 'app_reservation')]
-    public function index(Request $request, EntityManagerInterface $em): Response
-    {
-        $reservation = new Reservation();
-        $form = $this->createForm(ReservationType::class, $reservation);
-        $form->handleRequest($request);
+#[Route('/reserver', name: 'app_reservation')]
+public function index(
+	Request $request,
+	EntityManagerInterface $em,
+	AppartementRepository $appartementRepo
+): Response {
+	$reservation = new Reservation();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($reservation);
-            $em->flush();
+	// Pré-remplir si un appartement est passé en paramètre
+	$appartementId = $request->query->get('appartement');
+	$preselectedLocalisation = null;
 
-            $this->addFlash('success', 'Votre demande de réservation a bien été envoyée ! Nous vous recontacterons dans les plus brefs délais.');
+	if ($appartementId) {
+		$appartement = $appartementRepo->find($appartementId);
+		if ($appartement) {
+			$reservation->setAppartement($appartement);
+			$preselectedLocalisation = $appartement->getLocalisation();
+		}
+	}
 
-            return $this->redirectToRoute('app_reservation');
-        }
+	$form = $this->createForm(ReservationType::class, $reservation, [
+		'preselected_localisation' => $preselectedLocalisation,
+	]);
 
-        return $this->render('reservation/index.html.twig', [
-            'form' => $form,
-        ]);
-    }
+	$form->handleRequest($request);
 
-    /**
-     * Route AJAX : retourne les appartements d'une localisation en JSON
-     */
-    #[Route('/api/appartements-par-localisation/{id}', name: 'api_appartements_par_localisation', methods: ['GET'])]
-    public function appartementsParLocalisation(
-        int $id,
-        AppartementRepository $appartementRepository,
-        LocalisationRepository $localisationRepository
-    ): JsonResponse {
-        $localisation = $localisationRepository->find($id);
+	if ($form->isSubmitted() && $form->isValid()) {
+		$em->persist($reservation);
+		$em->flush();
 
-        if (!$localisation) {
-            return new JsonResponse([], Response::HTTP_NOT_FOUND);
-        }
+		$this->addFlash('success', 'Votre demande de réservation a bien été envoyée ! Nous vous recontacterons dans les plus brefs délais.');
 
-        $appartements = $appartementRepository->findBy(
-            ['localisation' => $localisation, 'actif' => true],
-            ['ordre' => 'ASC']
-        );
+		return $this->redirectToRoute('app_reservation');
+	}
 
-        $data = [];
-        foreach ($appartements as $appart) {
-            $data[] = [
-                'id' => $appart->getId(),
-                'label' => sprintf('%s — %s · %dm² · %d-%d pers. · %s€/nuit',
-                    $appart->getNom(),
-                    $appart->getType(),
-                    $appart->getSurface(),
-                    $appart->getCapaciteMin(),
-                    $appart->getCapaciteMax(),
-                    $appart->getPrixParNuit()
-                ),
-            ];
-        }
+	return $this->render('reservation/index.html.twig', [
+		'form' => $form,
+		'preselectedAppartementId' => $appartementId,
+	]);
+}
 
-        return new JsonResponse($data);
-    }
+	/**
+	 * Route AJAX : retourne les appartements d'une localisation en JSON
+	 */
+	#[Route('/api/appartements-par-localisation/{id}', name: 'api_appartements_par_localisation', methods: ['GET'])]
+	public function appartementsParLocalisation(
+		int $id,
+		AppartementRepository $appartementRepository,
+		LocalisationRepository $localisationRepository
+	): JsonResponse {
+		$localisation = $localisationRepository->find($id);
+
+		if (!$localisation) {
+			return new JsonResponse([], Response::HTTP_NOT_FOUND);
+		}
+
+		$appartements = $appartementRepository->findBy(
+			['localisation' => $localisation, 'actif' => true],
+			['ordre' => 'ASC']
+		);
+
+		$data = [];
+		foreach ($appartements as $appart) {
+			$data[] = [
+				'id' => $appart->getId(),
+				'label' => sprintf('%s — %s · %dm² · %d-%d pers. · %s€/nuit',
+					$appart->getNom(),
+					$appart->getType(),
+					$appart->getSurface(),
+					$appart->getCapaciteMin(),
+					$appart->getCapaciteMax(),
+					$appart->getPrixParNuit()
+				),
+			];
+		}
+
+		return new JsonResponse($data);
+	}
+
 }

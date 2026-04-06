@@ -4,117 +4,103 @@
 
 {% block body %}
 <section class="page-header">
-    <div class="page-header-overlay"></div>
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb breadcrumb-light">
-                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">{{ 'nav.home'|trans }}</a></li>
-                <li class="breadcrumb-item"><a href="{{ path('app_appartements') }}">{{ 'apartments.page_title'|trans }}</a></li>
-                <li class="breadcrumb-item active">{{ localisation.ville }}</li>
-            </ol>
-        </nav>
-        <h1>{{ localisation.ville }}</h1>
-        <p class="lead"><i class="bi bi-geo-alt"></i> {{ localisation.adresse }} — {{ localisation.codePostal }}</p>
-    </div>
+  <div class="page-header-overlay"></div>
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-light">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">{{ 'nav.home'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('app_appartements') }}">{{ 'apartments.page_title'|trans }}</a></li>
+        <li class="breadcrumb-item active">{{ localisation.ville }}</li>
+      </ol>
+    </nav>
+    <h1>{{ localisation.ville }}</h1>
+    <p class="lead"><i class="bi bi-geo-alt"></i> {{ localisation.adresse }} — {{ localisation.codePostal }}</p>
+  </div>
 </section>
 
 {% if localisation.description %}
 <section class="py-4 bg-white">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <p class="lead">{{ localisation.description }}</p>
-                {% if localisation.telephone or localisation.email %}
-                <div class="mt-3">
-                    {% if localisation.telephone %}
-                        <span class="me-4">
-                            <i class="bi bi-telephone text-primary"></i>
-                            <a href="tel:{{ localisation.telephone|replace({' ': ''}) }}">{{ localisation.telephone }}</a>
-                        </span>
-                    {% endif %}
-                    {% if localisation.email %}
-                        <span>
-                            <i class="bi bi-envelope text-primary"></i>
-                            <a href="mailto:{{ localisation.email }}">{{ localisation.email }}</a>
-                        </span>
-                    {% endif %}
-                </div>
-                {% endif %}
-            </div>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <p class="lead">{{ localisation.description }}</p>
+        {% if localisation.telephone or localisation.email %}
+        <div class="mt-3">
+          {% if localisation.telephone %}
+            <span class="me-4"><i class="bi bi-telephone text-primary"></i> <a href="tel:{{ localisation.telephone|replace({' ': ''}) }}">{{ localisation.telephone }}</a></span>
+          {% endif %}
+          {% if localisation.email %}
+            <span><i class="bi bi-envelope text-primary"></i> <a href="mailto:{{ localisation.email }}">{{ localisation.email }}</a></span>
+          {% endif %}
         </div>
+        {% endif %}
+      </div>
     </div>
+  </div>
 </section>
 {% endif %}
 
+{# ================================================ #}
+{# CARDS APPARTEMENTS CLIQUABLES                    #}
+{# ================================================ #}
 <section class="py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-badge">{{ localisation.ville }}</span>
-            <h2 class="section-title">{{ 'apartments.available_count'|trans({'%count%': appartements|length}) }}</h2>
-        </div>
-
-        {% for appartement in appartements %}
-        <div class="appart-detail-card mb-5" id="{{ appartement.slug }}">
-            <div class="row g-0 align-items-stretch">
-                <div class="col-lg-6">
-                    <div class="appart-detail-img">
-                        <img src="/images/{{ appartement.imagePrincipale }}"
-                             alt="{{ appartement.nom }}"
-                             onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=500&fit=crop'"
-                             class="img-fluid">
-                        <div class="appart-detail-type">{{ appartement.type }} — {{ appartement.surface }}{{ 'common.surface'|trans }}</div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="appart-detail-body">
-                        <h2>{{ appartement.nom }}</h2>
-                        <div class="appart-detail-meta mb-3">
-                            <span class="badge bg-primary"><i class="bi bi-rulers"></i> {{ appartement.surface }}{{ 'common.surface'|trans }}</span>
-                            <span class="badge bg-secondary"><i class="bi bi-people"></i> {{ appartement.capaciteMin }}-{{ appartement.capaciteMax }} {{ 'common.people'|trans }}</span>
-                            <span class="badge bg-success"><i class="bi bi-tag"></i> {{ 'common.from'|trans }} {{ appartement.prixParNuit }}€{{ 'common.per_night'|trans }}</span>
-                        </div>
-                        <p>{{ appartement.description }}</p>
-
-                        {% if appartement.equipements is not empty %}
-                        <h5 class="mt-4 mb-3"><i class="bi bi-check2-circle"></i> {{ 'apartments.equipment'|trans }}</h5>
-                        <div class="row g-2">
-                            {% for equipement in appartement.equipements %}
-                            <div class="col-6">
-                                <div class="equip-item"><i class="bi bi-check-lg text-success"></i> {{ equipement }}</div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-
-                        <div class="mt-4">
-                            <a href="{{ path('app_reservation') }}" class="btn btn-primary">
-                                <i class="bi bi-calendar-check"></i> {{ 'apartment.book_this'|trans({'%name%': appartement.nom}) }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-
-        <div class="text-center mt-4">
-            <a href="{{ path('app_appartements') }}" class="btn btn-outline-primary btn-lg">
-                <i class="bi bi-arrow-left"></i> {{ 'apartments.back'|trans }}
-            </a>
-        </div>
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="section-badge">{{ localisation.ville }}</span>
+      <h2 class="section-title">{{ 'apartments.available_count'|trans({'%count%': appartements|length}) }}</h2>
     </div>
+
+    <div class="row g-4">
+      {% for appartement in appartements %}
+      <div class="col-md-6 col-lg-4">
+          <a href="{{ path('app_appartement_detail', {slug: appartement.slug}) }}" class="appart-card-link">
+            <div class="appart-card">
+              <div class="appart-card-img">
+                <img src="/images/{{ appartement.imagePrincipale }}"
+                  alt="{{ appartement.nom }}"
+                  onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop'">
+                <div class="appart-card-badge">{{ appartement.type }} — {{ appartement.surface }}{{ 'common.surface'|trans }}</div>
+              </div>
+              <div class="appart-card-body">
+                <h3>{{ appartement.nom }}</h3>
+                <div class="appart-card-meta">
+                    <span><i class="bi bi-people"></i> {{ appartement.capaciteMin }}-{{ appartement.capaciteMax }} {{ 'common.people'|trans }}</span>
+                    <span><i class="bi bi-tag"></i> {{ appartement.prixParNuit }}€{{ 'common.per_night'|trans }}</span>
+                </div>
+                <p class="mt-2 text-muted small">
+                    {{ appartement.description|length > 100 ? appartement.description|slice(0, 100) ~ '...' : appartement.description }}
+                </p>
+                <div class="mt-2">
+                  <span class="btn btn-primary btn-sm w-100">
+                    <i class="bi bi-eye"></i>
+                      {{ app.request.locale == 'fr' ? 'Voir le détail & disponibilités' : 'View details & availability' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-5">
+      <a href="{{ path('app_appartements') }}" class="btn btn-outline-primary btn-lg">
+        <i class="bi bi-arrow-left"></i> {{ 'apartments.back'|trans }}
+      </a>
+    </div>
+  </div>
 </section>
 
 <section class="cta-section py-5">
-    <div class="container text-center">
-        <h2>{{ 'cta.apartment.title'|trans }}</h2>
-        <p class="lead mb-4">{{ 'cta.apartment.subtitle'|trans({'%ville%': localisation.ville}) }}</p>
-        <a href="{{ path('app_contact') }}" class="btn btn-outline-light btn-lg me-3">
-            <i class="bi bi-chat-dots"></i> {{ 'footer.contact_us'|trans }}
-        </a>
-        <a href="{{ path('app_reservation') }}" class="btn btn-hero btn-lg">
-            <i class="bi bi-star-fill"></i> {{ 'nav.book'|trans }}
-        </a>
-    </div>
+  <div class="container text-center">
+    <h2>{{ 'cta.apartment.title'|trans }}</h2>
+    <p class="lead mb-4">{{ 'cta.apartment.subtitle'|trans({'%ville%': localisation.ville}) }}</p>
+    <a href="{{ path('app_contact') }}" class="btn btn-outline-light btn-lg me-3">
+      <i class="bi bi-chat-dots"></i> {{ 'footer.contact_us'|trans }}
+    </a>
+    <a href="{{ path('app_reservation') }}" class="btn btn-hero btn-lg">
+      <i class="bi bi-star-fill"></i> {{ 'nav.book'|trans }}
+    </a>
+  </div>
 </section>
 {% endblock %}

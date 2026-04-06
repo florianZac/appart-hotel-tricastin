@@ -37,7 +37,7 @@
                 <a href="{{ path('app_appartements_localisation', {slug: localisation.slug}) }}" class="appart-card-link">
                     <div class="appart-card text-center">
                         <div class="appart-card-img">
-                            <img src="/images/{{ localisation.slug }}.jpg"
+                            <img src="/images/Ville/{{ localisation.slug }}.webp"
                                  alt="{{ localisation.ville }}"
                                  onerror="this.src='https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop'">
                             <div class="appart-card-badge">{{ localisation.appartements|length }} {{ 'loc.apartments_count'|trans }}</div>

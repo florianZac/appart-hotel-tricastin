@@ -7,181 +7,198 @@
 {# PAGE HEADER                                      #}
 {# ================================================ #}
 <section class="page-header">
-    <div class="page-header-overlay"></div>
-    <div class="container">
-        <h1><i class="bi bi-star-fill"></i> {{ 'reservation.title'|trans }}</h1>
-        <p class="lead">{{ 'reservation.subtitle'|trans }}</p>
-    </div>
+  <div class="page-header-overlay"></div>
+  <div class="container">
+    <h1><i class="bi bi-star-fill"></i> {{ 'reservation.title'|trans }}</h1>
+    <p class="lead">{{ 'reservation.subtitle'|trans }}</p>
+  </div>
 </section>
 
 {# ================================================ #}
 {# FORMULAIRE DE RESERVATION                        #}
 {# ================================================ #}
 <section class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="form-card p-4 p-md-5 rounded-4">
-                    <h2 class="mb-4 text-center">
-                        <i class="bi bi-calendar-check text-primary"></i> {{ 'reservation.form_title'|trans }}
-                    </h2>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="form-card p-4 p-md-5 rounded-4">
+          <h2 class="mb-4 text-center">
+            <i class="bi bi-calendar-check text-primary"></i> {{ 'reservation.form_title'|trans }}
+          </h2>
 
-                    {{ form_start(form, {'attr': {'class': 'reservation-form', 'novalidate': 'novalidate'}}) }}
+          {{ form_start(form, {'attr': {'class': 'reservation-form', 'novalidate': 'novalidate'}}) }}
 
-                    <div class="mb-3">
-                        <h5 class="mb-3"><span class="badge bg-primary rounded-pill">1</span> {{ 'reservation.step1'|trans }}</h5>
-                        {{ form_label(form.localisation) }}
-                        {{ form_widget(form.localisation, {'attr': {'id': 'reservation_localisation'}}) }}
-                        {{ form_errors(form.localisation) }}
-                    </div>
+          <div class="mb-3">
+            <h5 class="mb-3"><span class="badge bg-primary rounded-pill">1</span> {{ 'reservation.step1'|trans }}</h5>
+            {{ form_label(form.localisation) }}
+            {{ form_widget(form.localisation, {'attr': {'id': 'reservation_localisation'}}) }}
+            {{ form_errors(form.localisation) }}
+          </div>
 
-                    <div class="mb-4">
-                        <h5 class="mb-3"><span class="badge bg-primary rounded-pill">2</span> {{ 'reservation.step2'|trans }}</h5>
-                        {{ form_label(form.appartement) }}
-                        {{ form_widget(form.appartement, {'attr': {'id': 'reservation_appartement'}}) }}
-                        {{ form_errors(form.appartement) }}
-                        <div id="appartement-loading" class="text-muted small mt-1" style="display:none;">
-                            <i class="bi bi-hourglass-split"></i> ...
-                        </div>
-                    </div>
-
-                    <hr class="my-4">
-
-                    <h5 class="mb-3"><span class="badge bg-primary rounded-pill">3</span> {{ 'reservation.step3'|trans }}</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            {{ form_label(form.nom) }}
-                            {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.nom) }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(form.prenom) }}
-                            {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.prenom) }}
-                        </div>
-                    </div>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            {{ form_label(form.email) }}
-                            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.email) }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(form.telephone) }}
-                            {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.telephone) }}
-                        </div>
-                    </div>
-
-                    <hr class="my-4">
-
-                    <h5 class="mb-3"><span class="badge bg-primary rounded-pill">4</span> {{ 'reservation.step4'|trans }}</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            {{ form_label(form.dateArrivee) }}
-                            {{ form_widget(form.dateArrivee, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.dateArrivee) }}
-                        </div>
-                        <div class="col-md-4">
-                            {{ form_label(form.dateDepart) }}
-                            {{ form_widget(form.dateDepart, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.dateDepart) }}
-                        </div>
-                        <div class="col-md-4">
-                            {{ form_label(form.nombrePersonnes) }}
-                            {{ form_widget(form.nombrePersonnes, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.nombrePersonnes) }}
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        {{ form_label(form.message) }}
-                        {{ form_widget(form.message, {'attr': {'class': 'form-control'}}) }}
-                        {{ form_errors(form.message) }}
-                    </div>
-
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary btn-lg px-5">
-                            <i class="bi bi-send"></i> {{ 'reservation.submit'|trans }}
-                        </button>
-                    </div>
-
-                    {{ form_end(form) }}
-                </div>
+          <div class="mb-4">
+            <h5 class="mb-3"><span class="badge bg-primary rounded-pill">2</span> {{ 'reservation.step2'|trans }}</h5>
+            {{ form_label(form.appartement) }}
+            {{ form_widget(form.appartement, {'attr': {'id': 'reservation_appartement'}}) }}
+            {{ form_errors(form.appartement) }}
+            <div id="appartement-loading" class="text-muted small mt-1" style="display:none;">
+                <i class="bi bi-hourglass-split"></i> ...
             </div>
-        </div>
+          </div>
 
-        <div class="row justify-content-center mt-5">
-            <div class="col-lg-8">
-                <div class="row g-4 text-center">
-                    <div class="col-md-4">
-                        <div class="info-mini-card">
-                            <i class="bi bi-clock text-primary fs-2"></i>
-                            <h6>{{ 'reservation.fast'|trans }}</h6>
-                            <small class="text-muted">{{ 'reservation.fast_desc'|trans }}</small>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-mini-card">
-                            <i class="bi bi-shield-check text-primary fs-2"></i>
-                            <h6>{{ 'reservation.secure'|trans }}</h6>
-                            <small class="text-muted">{{ 'reservation.secure_desc'|trans }}</small>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-mini-card">
-                            <i class="bi bi-x-circle text-primary fs-2"></i>
-                            <h6>{{ 'reservation.flexible'|trans }}</h6>
-                            <small class="text-muted">{{ 'reservation.flexible_desc'|trans }}</small>
-                        </div>
-                    </div>
-                </div>
+          <hr class="my-4">
+
+          <h5 class="mb-3"><span class="badge bg-primary rounded-pill">3</span> {{ 'reservation.step3'|trans }}</h5>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              {{ form_label(form.nom) }}
+              {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.nom) }}
             </div>
+            <div class="col-md-6">
+              {{ form_label(form.prenom) }}
+              {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.prenom) }}
+            </div>
+          </div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              {{ form_label(form.email) }}
+              {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.email) }}
+            </div>
+            <div class="col-md-6">
+              {{ form_label(form.telephone) }}
+              {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.telephone) }}
+            </div>
+          </div>
+
+          <hr class="my-4">
+
+          <h5 class="mb-3"><span class="badge bg-primary rounded-pill">4</span> {{ 'reservation.step4'|trans }}</h5>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              {{ form_label(form.dateArrivee) }}
+              {{ form_widget(form.dateArrivee, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.dateArrivee) }}
+            </div>
+            <div class="col-md-4">
+              {{ form_label(form.dateDepart) }}
+              {{ form_widget(form.dateDepart, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.dateDepart) }}
+            </div>
+            <div class="col-md-4">
+              {{ form_label(form.nombrePersonnes) }}
+              {{ form_widget(form.nombrePersonnes, {'attr': {'class': 'form-control'}}) }}
+              {{ form_errors(form.nombrePersonnes) }}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            {{ form_label(form.message) }}
+            {{ form_widget(form.message, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.message) }}
+          </div>
+
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-send"></i> {{ 'reservation.submit'|trans }}
+              </button>
+            </div>
+
+            {{ form_end(form) }}
         </div>
+      </div>
     </div>
+
+    <div class="row justify-content-center mt-5">
+      <div class="col-lg-8">
+        <div class="row g-4 text-center">
+          <div class="col-md-4">
+            <div class="info-mini-card">
+              <i class="bi bi-clock text-primary fs-2"></i>
+              <h6>{{ 'reservation.fast'|trans }}</h6>
+              <small class="text-muted">{{ 'reservation.fast_desc'|trans }}</small>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-mini-card">
+              <i class="bi bi-shield-check text-primary fs-2"></i>
+              <h6>{{ 'reservation.secure'|trans }}</h6>
+              <small class="text-muted">{{ 'reservation.secure_desc'|trans }}</small>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info-mini-card">
+              <i class="bi bi-x-circle text-primary fs-2"></i>
+              <h6>{{ 'reservation.flexible'|trans }}</h6>
+              <small class="text-muted">{{ 'reservation.flexible_desc'|trans }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 {% endblock %}
 
 {% block javascripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const locSelect = document.getElementById('reservation_localisation');
-    const aptSelect = document.getElementById('reservation_appartement');
-    const loading = document.getElementById('appartement-loading');
+  var locSelect = document.getElementById('reservation_localisation');
+  var aptSelect = document.getElementById('reservation_appartement');
+  var loading = document.getElementById('appartement-loading');
+  var preselectedAppartementId = '{{ preselectedAppartementId|default("") }}';
 
-    if (!locSelect || !aptSelect) return;
+  if (!locSelect || !aptSelect) return;
 
-    locSelect.addEventListener('change', function () {
-        const id = this.value;
-        aptSelect.innerHTML = '';
+  function loadAppartements(localisationId, preselectId) {
+    if (!localisationId) {
+        aptSelect.innerHTML = '<option value="">--</option>';
+        return;
+    }
 
-        if (!id) {
-            aptSelect.innerHTML = '<option value="">--</option>';
-            return;
-        }
+    loading.style.display = 'block';
+    aptSelect.disabled = true;
 
-        loading.style.display = 'block';
-        aptSelect.disabled = true;
+    fetch('/api/appartements-par-localisation/' + localisationId)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        aptSelect.innerHTML = '<option value="">--</option>';
 
-        fetch('/api/appartements-par-localisation/' + id)
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                aptSelect.innerHTML = '<option value="">--</option>';
-                data.forEach(function(a) {
-                    var opt = document.createElement('option');
-                    opt.value = a.id;
-                    opt.textContent = a.label;
-                    aptSelect.appendChild(opt);
-                });
-                aptSelect.disabled = false;
-                loading.style.display = 'none';
-            })
-            .catch(function() {
-                aptSelect.innerHTML = '<option value="">Erreur</option>';
-                aptSelect.disabled = false;
-                loading.style.display = 'none';
-            });
-    });
+        data.forEach(function (a) {
+          var opt = document.createElement('option');
+          opt.value = a.id;
+          opt.textContent = a.label;
+
+          // Pré-sélectionner l'appartement si l'id correspond
+          if (preselectId && String(a.id) === String(preselectId)) {
+              opt.selected = true;
+          }
+
+          aptSelect.appendChild(opt);
+        });
+
+        aptSelect.disabled = false;
+        loading.style.display = 'none';
+      })
+      .catch(function () {
+        aptSelect.innerHTML = '<option value="">Erreur</option>';
+        aptSelect.disabled = false;
+        loading.style.display = 'none';
+      });
+  }
+
+  // Écouter le changement de localisation
+  locSelect.addEventListener('change', function () {
+    loadAppartements(this.value, null);
+  });
+
+  // Si une localisation est déjà sélectionnée (pré-remplissage)
+  if (locSelect.value) {
+    loadAppartements(locSelect.value, preselectedAppartementId);
+  }
 });
 </script>
+
 {% endblock %}

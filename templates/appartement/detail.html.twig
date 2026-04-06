@@ -4,74 +4,298 @@
 
 {% block body %}
 <section class="page-header">
-    <div class="page-header-overlay"></div>
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb breadcrumb-light">
-                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">{{ 'nav.home'|trans }}</a></li>
-                <li class="breadcrumb-item"><a href="{{ path('app_appartements') }}">{{ 'nav.apartments'|trans }}</a></li>
-                <li class="breadcrumb-item active">{{ appartement.nom }}</li>
-            </ol>
-        </nav>
-        <h1>{{ appartement.nom }}</h1>
-        <p class="lead">{{ 'apartment.header_subtitle'|trans({'%type%': appartement.type, '%surface%': appartement.surface, '%min%': appartement.capaciteMin, '%max%': appartement.capaciteMax}) }}</p>
-    </div>
+  <div class="page-header-overlay"></div>
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-light">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">{{ 'nav.home'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('app_appartements') }}">{{ 'nav.apartments'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('app_appartements_localisation', {slug: appartement.localisation.slug}) }}">{{ appartement.localisation.ville }}</a></li>
+        <li class="breadcrumb-item active">{{ appartement.nom }}</li>
+      </ol>
+    </nav>
+    <h1>{{ appartement.nom }}</h1>
+    <p class="lead">{{ 'apartment.header_subtitle'|trans({'%type%': appartement.type, '%surface%': appartement.surface, '%min%': appartement.capaciteMin, '%max%': appartement.capaciteMax}) }}</p>
+  </div>
 </section>
 
+{# ================================================ #}
+{# CARROUSEL PHOTOS                                 #}
+{# ================================================ #}
 <section class="py-5">
-    <div class="container">
-        <div class="row g-5">
-            <div class="col-lg-7">
-                <div class="detail-main-img rounded-4 overflow-hidden">
-                    <img src="/images/{{ appartement.imagePrincipale }}" alt="{{ appartement.nom }}"
-                         onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop'"
-                         class="img-fluid w-100">
-                </div>
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-7">
+        {# Carrousel principal #}
+        <div id="carouselAppart" class="carousel slide rounded-4 overflow-hidden" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            {# Image principale #}
+            <div class="carousel-item active">
+              <img src="/images/{{ appartement.imagePrincipale }}"
+                class="d-block w-100 detail-carousel-img"
+                alt="{{ appartement.nom }}"
+                onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=500&fit=crop'">
+            </div>
+            {# Images de la galerie #}
+            {% if appartement.galerie|length > 0 %}
+              {% for image in appartement.galerie %}
+              <div class="carousel-item">
+                <img src="/images/{{ image }}"
+                  class="d-block w-100 detail-carousel-img"
+                  alt="{{ appartement.nom }}"
+                  onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop'">
+              </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+            {# Flèches #}
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselAppart" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselAppart" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+
+            {# Indicateurs #}
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselAppart" data-bs-slide-to="0" class="active"></button>
                 {% if appartement.galerie|length > 0 %}
-                <div class="row g-2 mt-3">
-                    {% for image in appartement.galerie %}
-                    <div class="col-4">
-                        <img src="/images/{{ image }}" alt="{{ appartement.nom }}" class="img-fluid rounded-3 gallery-thumb"
-                             onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300&h=200&fit=crop'">
-                    </div>
+                    {% for i in 1..appartement.galerie|length %}
+                        <button type="button" data-bs-target="#carouselAppart" data-bs-slide-to="{{ i }}"></button>
                     {% endfor %}
-                </div>
                 {% endif %}
             </div>
-
-            <div class="col-lg-5">
-                <div class="detail-info-card p-4 rounded-4">
-                    <div class="d-flex justify-content-between align-items-start mb-4">
-                        <div>
-                            <h2 class="mb-1">{{ appartement.nom }}</h2>
-                            <span class="text-muted">{{ appartement.type }} — {{ appartement.surface }}{{ 'common.surface'|trans }}</span>
-                        </div>
-                        <div class="detail-price">
-                            <span class="price-amount">{{ appartement.prixParNuit }}€</span>
-                            <span class="price-unit">{{ 'common.per_night'|trans }}</span>
-                        </div>
-                    </div>
-                    <hr>
-                    <p>{{ appartement.description }}</p>
-                    <hr>
-                    <h5><i class="bi bi-check2-circle text-primary"></i> {{ 'apartments.equipment'|trans }}</h5>
-                    <div class="row g-2 mt-2">
-                        {% for equipement in appartement.equipements %}
-                        <div class="col-6"><small><i class="bi bi-check-lg text-success"></i> {{ equipement }}</small></div>
-                        {% endfor %}
-                    </div>
-                    <hr>
-                    <a href="{{ path('app_reservation') }}" class="btn btn-primary btn-lg w-100">
-                        <i class="bi bi-calendar-check"></i> {{ 'apartment.book_this'|trans({'%name%': appartement.nom}) }}
-                    </a>
-                    <div class="text-center mt-3">
-                        <a href="{{ path('app_contact') }}" class="text-muted">
-                            <i class="bi bi-chat-dots"></i> {{ 'apartment.contact_us'|trans }}
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
+
+        {# Miniatures cliquables #}
+        {% if appartement.galerie|length > 0 %}
+        <div class="row g-2 mt-3">
+            <div class="col-3">
+              <img src="/images/{{ appartement.imagePrincipale }}"
+                    class="img-fluid rounded-3 gallery-thumb active-thumb"
+                    alt="{{ appartement.nom }}"
+                    data-bs-target="#carouselAppart" data-bs-slide-to="0"
+                    role="button"
+                    onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=200&h=130&fit=crop'">
+            </div>
+            {% for image in appartement.galerie %}
+            <div class="col-3">
+              <img src="/images/{{ image }}"
+                    class="img-fluid rounded-3 gallery-thumb"
+                    alt="{{ appartement.nom }}"
+                    data-bs-target="#carouselAppart" data-bs-slide-to="{{ loop.index }}"
+                    role="button"
+                    onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=130&fit=crop'">
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      {# ============================================ #}
+      {# INFOS APPARTEMENT                            #}
+      {# ============================================ #}
+      <div class="col-lg-5">
+        <div class="detail-info-card p-4 rounded-4">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h2 class="mb-1">{{ appartement.nom }}</h2>
+              <span class="text-muted">
+                <i class="bi bi-geo-alt"></i> {{ appartement.localisation.ville }}
+                — {{ appartement.type }} · {{ appartement.surface }}{{ 'common.surface'|trans }}
+              </span>
+            </div>
+            <div class="detail-price">
+              <span class="price-amount">{{ appartement.prixParNuit }}€</span>
+              <span class="price-unit">{{ 'common.per_night'|trans }}</span>
+            </div>
+          </div>
+
+          <hr>
+          <p>{{ appartement.description }}</p>
+          <hr>
+
+          <h5><i class="bi bi-check2-circle text-primary"></i> {{ 'apartments.equipment'|trans }}</h5>
+          <div class="row g-2 mt-2">
+            {% for equipement in appartement.equipements %}
+            <div class="col-6">
+              <small><i class="bi bi-check-lg text-success"></i> {{ equipement }}</small>
+            </div>
+            {% endfor %}
+          </div>
+
+          <hr>
+
+          <a href="{{ path('app_reservation', {appartement: appartement.id}) }}" class="btn btn-primary btn-lg w-100">
+            <i class="bi bi-calendar-check"></i> {{ 'apartment.book_this'|trans({'%name%': appartement.nom}) }}
+          </a>
+
+          <div class="text-center mt-3">
+            <a href="{{ path('app_contact') }}" class="text-muted">
+              <i class="bi bi-chat-dots"></i> {{ 'apartment.contact_us'|trans }}
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
+
+{# ================================================ #}
+{# CALENDRIER DE DISPONIBILITÉ                      #}
+{# ================================================ #}
+<section class="py-5 bg-white">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="text-center mb-4">
+          <span class="section-badge">
+                  {{ app.request.locale == 'fr' ? 'Disponibilités' : 'Availability' }}
+          </span>
+          <h2 class="section-title">
+                {{ app.request.locale == 'fr' ? 'Calendrier de disponibilité' : 'Availability calendar' }}
+          </h2>
+          <div class="d-flex justify-content-center gap-3 mt-2 flex-wrap">
+            <span>
+                <span class="calendar-legend" style="background:#27ae60;"></span>
+                {{ app.request.locale == 'fr' ? 'Disponible' : 'Available' }}
+            </span>
+            <span>
+                <span class="calendar-legend" style="background:#c0392b;"></span>
+                {{ app.request.locale == 'fr' ? 'Réservé' : 'Booked' }}
+            </span>
+            <span>
+                <span class="calendar-legend" style="background:#95a5a6;"></span>
+                {{ app.request.locale == 'fr' ? 'Nettoyage' : 'Cleaning' }}
+            </span>
+            <span>
+                <span class="calendar-legend" style="background:#e67e22;"></span>
+                {{ app.request.locale == 'fr' ? 'Indisponible' : 'Unavailable' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="form-card p-4 rounded-4">
+            <div id="calendarPublic"></div>
+        </div>
+
+        <div class="text-center mt-4">
+          <a href="{{ path('app_reservation') }}" class="btn btn-primary btn-lg">
+              <i class="bi bi-calendar-check"></i>
+              {{ app.request.locale == 'fr' ? 'Les dates vous conviennent ? Réservez !' : 'Dates work for you? Book now!' }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# CTA retour #}
+<section class="py-4">
+  <div class="container text-center">
+    <a href="{{ path('app_appartements_localisation', {slug: appartement.localisation.slug}) }}" class="btn btn-outline-primary">
+      <i class="bi bi-arrow-left"></i>
+      {{ app.request.locale == 'fr' ? 'Retour aux appartements de' : 'Back to apartments in' }} {{ appartement.localisation.ville }}
+    </a>
+  </div>
+</section>
+{% endblock %}
+{% block javascripts %}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/fr.global.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    var calEl = document.getElementById('calendarPublic');
+    if (!calEl) return;
+
+    // Stocker les événements chargés pour la coloration
+    var loadedEvents = [];
+
+    var cal = new FullCalendar.Calendar(calEl, {
+        initialView: 'dayGridMonth',
+        locale: '{{ app.request.locale }}',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth'
+        },
+        height: 'auto',
+        selectable: false,
+        editable: false,
+        dayMaxEvents: 2,
+        validRange: {
+            start: new Date().toISOString().split('T')[0]
+        },
+
+        // Charger les événements (réservations + blocages)
+        events: function (info, successCallback, failureCallback) {
+            fetch('/api/disponibilites/{{ appartement.id }}?start=' + info.startStr + '&end=' + info.endStr)
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    loadedEvents = data;
+                    successCallback(data);
+                })
+                .catch(function (err) { failureCallback(err); });
+        },
+
+        // Colorier chaque cellule du calendrier
+        dayCellDidMount: function (info) {
+            var cellDate = info.date;
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Ne pas colorier les dates passées
+            if (cellDate < today) {
+                info.el.style.backgroundColor = '#f5f5f5';
+                info.el.style.opacity = '0.5';
+                return;
+            }
+
+            // Vérifier si cette date a un événement
+            var dateStr = cellDate.toISOString().split('T')[0];
+            var hasEvent = false;
+
+            for (var i = 0; i < loadedEvents.length; i++) {
+                var ev = loadedEvents[i];
+                if (dateStr >= ev.start && dateStr < ev.end) {
+                    hasEvent = true;
+                    break;
+                }
+            }
+
+            // Si pas d'événement → disponible (vert clair)
+            if (!hasEvent) {
+                info.el.style.backgroundColor = 'rgba(39, 174, 96, 0.1)';
+                info.el.style.borderBottom = '3px solid #27ae60';
+            }
+        },
+
+        // Tooltip au survol des événements
+        eventDidMount: function (info) {
+            var note = info.event.extendedProps.note;
+            if (note) {
+                info.el.title = note;
+            }
+        }
+    });
+
+    cal.render();
+
+    // Miniatures carrousel
+    var carouselEl = document.getElementById('carouselAppart');
+    if (carouselEl) {
+        carouselEl.addEventListener('slid.bs.carousel', function (e) {
+            document.querySelectorAll('.gallery-thumb').forEach(function (thumb) {
+                thumb.classList.remove('active-thumb');
+            });
+            var activeThumb = document.querySelector('.gallery-thumb[data-bs-slide-to="' + e.to + '"]');
+            if (activeThumb) activeThumb.classList.add('active-thumb');
+        });
+    }
+});
+</script>
 {% endblock %}

@@ -1,0 +1,235 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Calendrier des disponibilités{% endblock %}
+
+{% block admin_body %}
+<div class="admin-topbar">
+	<h1><i class="bi bi-calendar3"></i> Calendrier des disponibilités</h1>
+</div>
+
+{# Sélection de l'appartement #}
+<div class="row mb-4">
+	<div class="col-md-4">
+		<label for="selectAppartement" class="form-label fw-bold">Appartement</label>
+		<select id="selectAppartement" class="form-select">
+			<option value="">-- Choisir un appartement --</option>
+			{% for appart in appartements %}
+				<option value="{{ appart.id }}">
+					{{ appart.localisation.ville }} — {{ appart.nom }} ({{ appart.type }})
+				</option>
+			{% endfor %}
+		</select>
+	</div>
+	<div class="col-md-8 d-flex align-items-end gap-2">
+		<span class="badge" style="background:#27ae60;font-size:0.85rem;">Disponible</span>
+		<span class="badge" style="background:#c0392b;font-size:0.85rem;">Réservé</span>
+		<span class="badge" style="background:#95a5a6;font-size:0.85rem;">Bloqué / Maintenance</span>
+	</div>
+</div>
+
+{# Calendrier #}
+<div class="table-card p-3" id="calendarWrapper" style="display:none;">
+	<div id="calendar"></div>
+</div>
+
+<div id="noAppartement" class="text-center py-5 text-muted">
+	<i class="bi bi-calendar3" style="font-size:3rem;"></i>
+	<p class="mt-2">Sélectionnez un appartement pour afficher le calendrier</p>
+</div>
+
+{# Modal pour ajouter/modifier #}
+<div class="modal fade" id="dispoModal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"><i class="bi bi-calendar-plus"></i> Gérer la disponibilité</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+					<label class="form-label fw-bold">Date de début</label>
+					<input type="date" id="modalDateDebut" class="form-control">
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-bold">Date de fin</label>
+					<input type="date" id="modalDateFin" class="form-control">
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-bold">Statut</label>
+					<select id="modalStatut" class="form-select">
+						<option value="disponible">✅ Disponible</option>
+						<option value="reserve">🔴 Réservé</option>
+						<option value="bloque" selected>⚙️ Bloqué / Maintenance</option>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-bold">Note (optionnel)</label>
+					<input type="text" id="modalNote" class="form-control" placeholder="Ex: Travaux salle de bain">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+				<button type="button" class="btn btn-danger d-none" id="btnDelete">
+					<i class="bi bi-trash"></i> Supprimer
+				</button>
+				<button type="button" class="btn btn-primary" id="btnSave">
+					<i class="bi bi-check-lg"></i> Enregistrer
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+{# FullCalendar CSS + JS via CDN #}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/fr.global.min.js"></script>
+
+<style>
+	#calendar { max-width: 100%; }
+	.fc-event { cursor: pointer; border: none; padding: 2px 6px; font-size: 0.8rem; }
+	.fc-daygrid-day:hover { background: rgba(184,134,11,0.05); }
+	.fc .fc-toolbar-title { font-size: 1.3rem; font-weight: 700; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const select = document.getElementById('selectAppartement');
+    const calendarWrapper = document.getElementById('calendarWrapper');
+    const noAppartement = document.getElementById('noAppartement');
+    const calendarEl = document.getElementById('calendar');
+
+    const modal = new bootstrap.Modal(document.getElementById('dispoModal'));
+    const modalDateDebut = document.getElementById('modalDateDebut');
+    const modalDateFin = document.getElementById('modalDateFin');
+    const modalStatut = document.getElementById('modalStatut');
+    const modalNote = document.getElementById('modalNote');
+    const btnSave = document.getElementById('btnSave');
+    const btnDelete = document.getElementById('btnDelete');
+
+    let calendar = null;
+    let currentEventId = null;
+
+    function initCalendar(appartementId) {
+			if (calendar) {
+				calendar.destroy();
+			}
+
+			calendar = new FullCalendar.Calendar(calendarEl, {
+				initialView: 'dayGridMonth',
+				locale: 'fr',
+				headerToolbar: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'dayGridMonth,dayGridWeek'
+				},
+				selectable: true,
+				editable: false,
+				height: 'auto',
+
+				// Charger les événements
+				events: function (info, successCallback, failureCallback) {
+					fetch('/admin/api/disponibilites/' + appartementId +
+							'?start=' + info.startStr + '&end=' + info.endStr)
+						.then(function (r) { return r.json(); })
+						.then(function (data) { successCallback(data); })
+						.catch(function (err) { failureCallback(err); });
+				},
+
+				// Clic sur une date vide → créer
+				select: function (info) {
+					currentEventId = null;
+					modalDateDebut.value = info.startStr;
+
+					// FullCalendar end est exclusif, on recule d'un jour
+					var endDate = new Date(info.end);
+					endDate.setDate(endDate.getDate() - 1);
+					modalDateFin.value = endDate.toISOString().split('T')[0];
+
+					modalStatut.value = 'bloque';
+					modalNote.value = '';
+					btnDelete.classList.add('d-none');
+					modal.show();
+				},
+
+				// Clic sur un événement → modifier/supprimer
+				eventClick: function (info) {
+					currentEventId = info.event.id;
+					modalDateDebut.value = info.event.startStr;
+
+					var endDate = new Date(info.event.end || info.event.start);
+					endDate.setDate(endDate.getDate() - 1);
+					modalDateFin.value = endDate.toISOString().split('T')[0];
+
+					modalStatut.value = info.event.extendedProps.statut || 'bloque';
+					modalNote.value = info.event.extendedProps.note || '';
+					btnDelete.classList.remove('d-none');
+					modal.show();
+				},
+			});
+
+			calendar.render();
+    }
+
+    // Sélection d'un appartement
+    select.addEventListener('change', function () {
+			var id = this.value;
+			if (id) {
+				calendarWrapper.style.display = 'block';
+				noAppartement.style.display = 'none';
+				initCalendar(id);
+			} else {
+				calendarWrapper.style.display = 'none';
+				noAppartement.style.display = 'block';
+			}
+    });
+
+	// Enregistrer
+	btnSave.addEventListener('click', function () {
+		var appartementId = select.value;
+		if (!appartementId) return;
+
+		var payload = {
+			appartement_id: parseInt(appartementId),
+			date_debut: modalDateDebut.value,
+			date_fin: modalDateFin.value,
+			statut: modalStatut.value,
+			note: modalNote.value || null
+		};
+
+		// Si modification, supprimer l'ancien d'abord
+		var promise = currentEventId
+			? fetch('/admin/api/disponibilite/' + currentEventId, { method: 'DELETE' })
+			: Promise.resolve();
+
+		promise.then(function () {
+			return fetch('/admin/api/disponibilite', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload)
+			});
+		})
+		.then(function (r) { return r.json(); })
+		.then(function () {
+			modal.hide();
+			calendar.refetchEvents();
+		})
+		.catch(function (err) {
+			alert('Erreur: ' + err.message);
+		});
+	});
+
+	// Supprimer
+	btnDelete.addEventListener('click', function () {
+		if (!currentEventId) return;
+		if (!confirm('Supprimer cette disponibilité ?')) return;
+
+		fetch('/admin/api/disponibilite/' + currentEventId, { method: 'DELETE' })
+			.then(function () {
+				modal.hide();
+				calendar.refetchEvents();
+			});
+	});
+});
+</script>
+{% endblock %}

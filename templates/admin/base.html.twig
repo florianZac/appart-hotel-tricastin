@@ -124,6 +124,12 @@
         {{ 'admin.sidebar.reservations'|trans }}
       </a>
 
+      <a class="nav-link {% if app.request.attributes.get('_route') == 'admin_calendrier' %}active{% endif %}"
+         href="{{ path('admin_calendrier') }}">
+        <i class="bi bi-calendar3"></i>
+        Calendrier
+      </a>
+      
       <div class="nav-divider"></div>
 
       <a class="nav-link" href="{{ path('app_home') }}" target="_blank">
