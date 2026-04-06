@@ -41,8 +41,14 @@ Projet monolithique **Symfony 7** avec **Bootstrap 5** (front + back dans le mê
 
 ### Prérequis
 - **PHP 8.2+** avec extensions : `pdo_sqlite`, `intl`, `mbstring`, `xml`
-- **Composer** (gestionnaire de dépendances PHP)
-- **Symfony CLI** (optionnel mais recommandé)
+- **Composer** (gestionnaire de dépendances PHP) pour windows -> https://getcomposer.org/Composer-Setup.exe
+- **Symfony CLI** scoop update symfony-cli
+- **Verification** composer -v et symfony -v
+Pour mon cas :
+Composer version 2.9.5 2026-01-29 11:40:53
+PHP version 8.4.15 (D:\wamp64\bin\php\php8.4.15\php.exe)
+Symfony CLI version 5.16.1 (c) 2021-2026 Fabien Potencier (2025-11-25T07:30:20Z - stable)
+
 
 ### Étapes
 
