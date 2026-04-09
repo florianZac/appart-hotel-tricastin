@@ -1,0 +1,24 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block content %}
+<h2>Nouvelle réservation reçue</h2>
+
+<div class="info-box">
+  <strong>Client :</strong> {{ reservation.prenom }} {{ reservation.nom }}<br>
+  <strong>Email :</strong> {{ reservation.email }}<br>
+  <strong>Téléphone :</strong> {{ reservation.telephone }}<br>
+  <strong>Appartement :</strong> {{ reservation.appartement.nom }} ({{ reservation.appartement.localisation.ville }})<br>
+  <strong>Arrivée :</strong> {{ reservation.dateArrivee|date('d/m/Y') }}<br>
+  <strong>Départ :</strong> {{ reservation.dateDepart|date('d/m/Y') }}<br>
+  <strong>Nuits :</strong> {{ reservation.nombreNuits }}<br>
+  <strong>Personnes :</strong> {{ reservation.nombrePersonnes }}<br>
+  {% if reservation.montantTotal %}
+  <strong>Montant :</strong> {{ reservation.montantTotal }}€<br>
+  {% endif %}
+  {% if reservation.message %}
+  <strong>Message :</strong> {{ reservation.message }}
+  {% endif %}
+</div>
+
+<a href="{{ app_url }}/admin/reservations" class="btn-gold">Gérer les réservations</a>
+{% endblock %}

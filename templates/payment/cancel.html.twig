@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement annulé — Appart Hôtel Tricastin{% endblock %}
+
+{% block body %}
+<section style="margin-top: 120px;" class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 text-center">
+        <div class="mb-4">
+          <i class="bi bi-x-circle text-warning" style="font-size: 5rem;"></i>
+        </div>
+        <h1 style="font-family: 'Cormorant Garamond', serif; color: #1a2744;">Paiement annulé</h1>
+        <p class="lead text-muted">Le paiement n'a pas été finalisé. Aucun montant n'a été débité.</p>
+
+        {% if payment %}
+        <p>Vous pouvez réessayer à tout moment depuis votre espace client.</p>
+        {% endif %}
+
+        <div class="d-flex justify-content-center gap-3 mt-4">
+          <a href="{{ path('client_dashboard') }}" class="btn btn-reserve">
+            <i class="bi bi-house"></i> Mon espace
+          </a>
+          <a href="{{ path('client_paiements') }}" class="btn btn-outline-dark">
+            <i class="bi bi-credit-card"></i> Mes paiements
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

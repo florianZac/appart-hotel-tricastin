@@ -1,0 +1,28 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block content %}
+<h2>Échéance de paiement</h2>
+
+<p>Bonjour {{ payment.user.prenom }},</p>
+
+<p>Un paiement est en attente sur votre compte :</p>
+
+<div class="info-box">
+  <strong>Type :</strong> {{ payment.typeLabel }}<br>
+  <strong>Montant :</strong> {{ payment.montant }}€<br>
+  {% if payment.dateEcheance %}
+  <strong>Échéance :</strong> {{ payment.dateEcheance|date('d/m/Y') }}<br>
+  {% endif %}
+  {% if payment.description %}
+  <strong>Description :</strong> {{ payment.description }}<br>
+  {% endif %}
+  <strong>Statut :</strong> <span class="badge-statut badge-warning">En attente</span>
+</div>
+
+<p>Vous pouvez régler ce paiement en ligne depuis votre espace client :</p>
+
+<a href="{{ app_url }}/espace-client/paiements" class="btn-gold">Régler mon paiement</a>
+
+<p>En cas de question, n'hésitez pas à nous contacter.</p>
+<p><em>L'équipe Appart Hôtel Tricastin</em></p>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon espace — Appart Hôtel Tricastin{% endblock %}
+
+{% block stylesheets %}
+<style>
+  .client-hero { background: linear-gradient(135deg, #1a2744 0%, #2c3e5a 100%); padding: 60px 0 40px; margin-top: 80px; }
+  .client-hero h1 { font-family: 'Cormorant Garamond', serif; color: #c8a962; }
+  .client-hero p { color: #a0aec0; }
+  .stat-card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.06); border-left: 4px solid #c8a962; transition: transform .2s; }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-card h3 { font-size: 2rem; color: #1a2744; font-weight: 700; margin: 0; }
+  .stat-card p { color: #666; margin: 0; font-size: .85rem; }
+  .section-title { font-family: 'Cormorant Garamond', serif; color: #1a2744; border-bottom: 2px solid #c8a962; padding-bottom: 8px; }
+  .badge-statut { font-size: .75rem; }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="client-hero">
+  <div class="container">
+    <h1>Bonjour {{ app.user.prenom }} 👋</h1>
+    <p>Bienvenue dans votre espace personnel</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    {# Statistiques #}
+    <div class="row g-3 mb-5">
+      <div class="col-md-4">
+        <div class="stat-card">
+          <h3>{{ totalReservations }}</h3>
+          <p>Réservation{{ totalReservations > 1 ? 's' : '' }} au total</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card">
+          <h3>{{ reservationsActives }}</h3>
+          <p>Réservation{{ reservationsActives > 1 ? 's' : '' }} active{{ reservationsActives > 1 ? 's' : '' }}</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card" {% if paiementsEnAttente > 0 %}style="border-left-color: #e74c3c;"{% endif %}>
+          <h3>{{ paiementsEnAttente }}</h3>
+          <p>Paiement{{ paiementsEnAttente > 1 ? 's' : '' }} en attente</p>
+        </div>
+      </div>
+    </div>
+
+    {# Dernières réservations #}
+    <div class="row">
+      <div class="col-lg-7 mb-4">
+        <h2 class="section-title">Mes dernières réservations</h2>
+        {% if reservations|length > 0 %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Appartement</th>
+                  <th>Dates</th>
+                  <th>Statut</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in reservations %}
+                <tr>
+                  <td>
+                    <strong>{{ r.appartement.nom }}</strong><br>
+                    <small class="text-muted">{{ r.appartement.localisation.ville }}</small>
+                  </td>
+                  <td>
+                    {{ r.dateArrivee|date('d/m/Y') }}<br>
+                    <small class="text-muted">→ {{ r.dateDepart|date('d/m/Y') }} ({{ r.nombreNuits }}n)</small>
+                  </td>
+                  <td>
+                    <span class="badge bg-{{ r.statutBadgeClass }} badge-statut">{{ r.statutLabel }}</span>
+                  </td>
+                  <td>
+                    <a href="{{ path('client_reservation_detail', {id: r.id}) }}" class="btn btn-sm btn-outline-secondary">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <a href="{{ path('client_reservations') }}" class="btn btn-outline-dark btn-sm">Voir tout l'historique →</a>
+        {% else %}
+          <p class="text-muted">Aucune réservation pour le moment.</p>
+          <a href="{{ path('app_reservation') }}" class="btn btn-outline-dark">Réserver un appartement</a>
+        {% endif %}
+      </div>
+
+      {# Derniers paiements #}
+      <div class="col-lg-5 mb-4">
+        <h2 class="section-title">Mes derniers paiements</h2>
+        {% if payments|length > 0 %}
+          {% for p in payments %}
+          <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+            <div>
+              <strong>{{ p.typeLabel }}</strong><br>
+              <small class="text-muted">{{ p.createdAt|date('d/m/Y') }}</small>
+            </div>
+            <div class="text-end">
+              <strong>{{ p.montant }}€</strong><br>
+              <span class="badge bg-{{ p.statutBadgeClass }} badge-statut">{{ p.statutLabel }}</span>
+            </div>
+          </div>
+          {% endfor %}
+          <a href="{{ path('client_paiements') }}" class="btn btn-outline-dark btn-sm mt-3">Tous mes paiements →</a>
+        {% else %}
+          <p class="text-muted">Aucun paiement enregistré.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Liens rapides #}
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{{ path('app_reservation') }}" class="btn btn-reserve">
+            <i class="bi bi-calendar-plus"></i> Nouvelle réservation
+          </a>
+          <a href="{{ path('client_paiements') }}" class="btn btn-outline-dark">
+            <i class="bi bi-credit-card"></i> Mes paiements
+          </a>
+          <a href="{{ path('app_contact') }}" class="btn btn-outline-dark">
+            <i class="bi bi-envelope"></i> Nous contacter
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

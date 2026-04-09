@@ -1,0 +1,34 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block content %}
+<h2>Rappel : votre séjour approche !</h2>
+
+<p>Bonjour {{ reservation.prenom }},</p>
+
+<p>Votre arrivée est prévue dans <strong>3 jours</strong>, le <strong>{{ reservation.dateArrivee|date('d/m/Y') }}</strong>. Nous avons hâte de vous accueillir !</p>
+
+<div class="info-box">
+  <strong>Rappel de votre réservation :</strong><br>
+  <strong>Appartement :</strong> {{ reservation.appartement.nom }}<br>
+  <strong>Adresse :</strong> {{ reservation.appartement.localisation.adresse }}, {{ reservation.appartement.localisation.codePostal }} {{ reservation.appartement.localisation.ville }}<br>
+  <strong>Arrivée :</strong> {{ reservation.dateArrivee|date('d/m/Y') }}<br>
+  <strong>Départ :</strong> {{ reservation.dateDepart|date('d/m/Y') }}<br>
+  <strong>Personnes :</strong> {{ reservation.nombrePersonnes }}
+</div>
+
+<p><strong>Informations pratiques :</strong></p>
+<ul>
+  <li>Check-in à partir de 15h00</li>
+  <li>Check-out avant 11h00</li>
+  <li>Un état des lieux sera effectué à votre arrivée</li>
+</ul>
+
+{% if reservation.appartement.localisation.telephone %}
+<p>En cas de besoin, contactez-nous au <strong>{{ reservation.appartement.localisation.telephone }}</strong>.</p>
+{% endif %}
+
+<a href="{{ app_url }}/espace-client/reservation/{{ reservation.id }}" class="btn-gold">Voir ma réservation</a>
+
+<p>Bon voyage et à bientôt !</p>
+<p><em>L'équipe Appart Hôtel Tricastin</em></p>
+{% endblock %}

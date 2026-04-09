@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes réservations — Appart Hôtel Tricastin{% endblock %}
+
+{% block stylesheets %}
+<style>
+  .page-header { background: linear-gradient(135deg, #1a2744 0%, #2c3e5a 100%); padding: 60px 0 40px; margin-top: 80px; }
+  .page-header h1 { font-family: 'Cormorant Garamond', serif; color: #c8a962; }
+  .page-header .breadcrumb a { color: #c8a962; text-decoration: none; }
+  .page-header .breadcrumb { color: #a0aec0; }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="page-header">
+  <div class="container">
+    <nav class="breadcrumb mb-2"><a href="{{ path('client_dashboard') }}">Mon espace</a> / Réservations</nav>
+    <h1>Historique de mes réservations</h1>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    {% if reservations|length > 0 %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Appartement</th>
+            <th>Localisation</th>
+            <th>Arrivée</th>
+            <th>Départ</th>
+            <th>Nuits</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Paiement</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in reservations %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td><strong>{{ r.appartement.nom }}</strong></td>
+            <td>{{ r.appartement.localisation.ville }}</td>
+            <td>{{ r.dateArrivee|date('d/m/Y') }}</td>
+            <td>{{ r.dateDepart|date('d/m/Y') }}</td>
+            <td>{{ r.nombreNuits }}</td>
+            <td>{% if r.montantTotal %}{{ r.montantTotal }}€{% else %}<span class="text-muted">—</span>{% endif %}</td>
+            <td><span class="badge bg-{{ r.statutBadgeClass }}">{{ r.statutLabel }}</span></td>
+            <td>
+              {% if r.paiementStatut == 'paye' %}
+                <span class="badge bg-success">Payé</span>
+              {% elseif r.paiementStatut == 'acompte_paye' %}
+                <span class="badge bg-info">Acompte</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">Non payé</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{{ path('client_reservation_detail', {id: r.id}) }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-eye"></i> Détails
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-calendar-x" style="font-size: 3rem; color: #ccc;"></i>
+      <p class="mt-3 text-muted">Vous n'avez pas encore de réservation.</p>
+      <a href="{{ path('app_reservation') }}" class="btn btn-reserve">Réserver un appartement</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

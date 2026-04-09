@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription — Appart Hôtel Tricastin{% endblock %}
+
+{% block stylesheets %}
+<style>
+  .register-section { margin-top: 100px; padding: 60px 0; }
+  .register-card { max-width: 500px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 40px; }
+  .register-card h1 { font-family: 'Cormorant Garamond', serif; color: #1a2744; text-align: center; margin-bottom: 30px; }
+  .register-card .form-label { font-weight: 500; color: #1a2744; font-size: .9rem; }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="register-section">
+  <div class="container">
+    <div class="register-card">
+      <h1>Créer un compte</h1>
+
+      {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="row g-3">
+          <div class="col-6">
+            {{ form_row(form.prenom) }}
+          </div>
+          <div class="col-6">
+            {{ form_row(form.nom) }}
+          </div>
+        </div>
+
+        {{ form_row(form.email) }}
+        {{ form_row(form.telephone) }}
+
+        <div class="row g-3">
+          <div class="col-6">
+            {{ form_row(form.plainPassword.first) }}
+          </div>
+          <div class="col-6">
+            {{ form_row(form.plainPassword.second) }}
+          </div>
+        </div>
+
+        <div class="my-3">
+          {{ form_row(form.agreeTerms) }}
+        </div>
+
+        <button type="submit" class="btn btn-reserve w-100">
+          <i class="bi bi-person-plus"></i> S'inscrire
+        </button>
+      {{ form_end(form) }}
+
+      <p class="text-center mt-3 text-muted">
+        Déjà un compte ?
+        <a href="{{ path('app_login') }}" style="color: #c8a962; font-weight: 500;">Se connecter</a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réservation #{{ reservation.id }} — Appart Hôtel Tricastin{% endblock %}
+
+{% block stylesheets %}
+<style>
+  .page-header { background: linear-gradient(135deg, #1a2744 0%, #2c3e5a 100%); padding: 60px 0 40px; margin-top: 80px; }
+  .page-header h1 { font-family: 'Cormorant Garamond', serif; color: #c8a962; }
+  .page-header .breadcrumb a { color: #c8a962; text-decoration: none; }
+  .page-header .breadcrumb { color: #a0aec0; }
+  .detail-card { background: #fff; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .detail-label { color: #666; font-size: .85rem; margin-bottom: 2px; }
+  .detail-value { font-weight: 600; color: #1a2744; }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="page-header">
+  <div class="container">
+    <nav class="breadcrumb mb-2">
+      <a href="{{ path('client_dashboard') }}">Mon espace</a> /
+      <a href="{{ path('client_reservations') }}">Réservations</a> /
+      #{{ reservation.id }}
+    </nav>
+    <h1>{{ reservation.appartement.nom }}</h1>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      {# Détails réservation #}
+      <div class="col-lg-8">
+        <div class="detail-card mb-4">
+          <h5 class="mb-3"><i class="bi bi-house"></i> Détails de la réservation</h5>
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <p class="detail-label">Appartement</p>
+              <p class="detail-value">{{ reservation.appartement.nom }}</p>
+            </div>
+            <div class="col-sm-6">
+              <p class="detail-label">Localisation</p>
+              <p class="detail-value">{{ reservation.appartement.localisation.ville }}</p>
+            </div>
+            <div class="col-sm-4">
+              <p class="detail-label">Arrivée</p>
+              <p class="detail-value">{{ reservation.dateArrivee|date('d/m/Y') }}</p>
+            </div>
+            <div class="col-sm-4">
+              <p class="detail-label">Départ</p>
+              <p class="detail-value">{{ reservation.dateDepart|date('d/m/Y') }}</p>
+            </div>
+            <div class="col-sm-4">
+              <p class="detail-label">Durée</p>
+              <p class="detail-value">{{ reservation.nombreNuits }} nuit{{ reservation.nombreNuits > 1 ? 's' : '' }}</p>
+            </div>
+            <div class="col-sm-4">
+              <p class="detail-label">Personnes</p>
+              <p class="detail-value">{{ reservation.nombrePersonnes }}</p>
+            </div>
+            <div class="col-sm-4">
+              <p class="detail-label">Statut</p>
+              <p><span class="badge bg-{{ reservation.statutBadgeClass }}">{{ reservation.statutLabel }}</span></p>
+            </div>
+            <div class="col-sm-4">
+              <p class="detail-label">Créée le</p>
+              <p class="detail-value">{{ reservation.createdAt|date('d/m/Y') }}</p>
+            </div>
+          </div>
+          {% if reservation.message %}
+          <hr>
+          <p class="detail-label">Message</p>
+          <p>{{ reservation.message }}</p>
+          {% endif %}
+        </div>
+
+        {# Historique des paiements pour cette réservation #}
+        <div class="detail-card">
+          <h5 class="mb-3"><i class="bi bi-credit-card"></i> Paiements associés</h5>
+          {% if reservation.payments|length > 0 %}
+            <table class="table table-sm">
+              <thead><tr><th>Date</th><th>Type</th><th>Montant</th><th>Statut</th></tr></thead>
+              <tbody>
+                {% for p in reservation.payments %}
+                <tr>
+                  <td>{{ p.createdAt|date('d/m/Y') }}</td>
+                  <td>{{ p.typeLabel }}</td>
+                  <td>{{ p.montant }}€</td>
+                  <td><span class="badge bg-{{ p.statutBadgeClass }}">{{ p.statutLabel }}</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="text-muted">Aucun paiement enregistré pour cette réservation.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Sidebar : Montant et actions #}
+      <div class="col-lg-4">
+        <div class="detail-card">
+          <h5 class="mb-3">Récapitulatif financier</h5>
+          {% if reservation.montantTotal %}
+            <div class="d-flex justify-content-between mb-2">
+              <span>{{ reservation.nombreNuits }} nuit{{ reservation.nombreNuits > 1 ? 's' : '' }} × {{ reservation.appartement.prixParNuit }}€</span>
+              <strong>{{ reservation.montantTotal }}€</strong>
+            </div>
+            {% if reservation.totalPaye > 0 %}
+            <div class="d-flex justify-content-between mb-2 text-success">
+              <span>Déjà payé</span>
+              <strong>-{{ reservation.totalPaye|number_format(2, '.', '') }}€</strong>
+            </div>
+            {% endif %}
+            <hr>
+            <div class="d-flex justify-content-between mb-3">
+              <strong>Solde restant</strong>
+              <strong class="{% if reservation.soldeRestant > 0 %}text-danger{% else %}text-success{% endif %}">
+                {{ reservation.soldeRestant|number_format(2, '.', '') }}€
+              </strong>
+            </div>
+          {% endif %}
+
+          {# Bouton paiement si solde restant #}
+          {% if reservation.soldeRestant > 0 and reservation.statut in ['en_attente', 'confirmee'] %}
+            <form action="{{ path('payment_reservation_checkout', {id: reservation.id}) }}" method="POST">
+              <input type="hidden" name="_token" value="{{ csrf_token('payment_' ~ reservation.id) }}">
+              <button type="submit" class="btn btn-reserve w-100">
+                <i class="bi bi-credit-card"></i> Payer {{ reservation.soldeRestant|number_format(2, '.', '') }}€
+              </button>
+            </form>
+          {% elseif reservation.paiementStatut == 'paye' %}
+            <div class="alert alert-success text-center mb-0">
+              <i class="bi bi-check-circle"></i> Entièrement payé
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block content %}
+<h2>Confirmation de paiement</h2>
+
+<p>Bonjour {{ payment.user.prenom }},</p>
+
+<p>Votre paiement a été traité avec succès !</p>
+
+<div class="info-box">
+  <strong>Détails du paiement :</strong><br>
+  <strong>Type :</strong> {{ payment.typeLabel }}<br>
+  <strong>Montant :</strong> {{ payment.montant }}€<br>
+  <strong>Date :</strong> {{ payment.paidAt|date('d/m/Y à H:i') }}<br>
+  <strong>Statut :</strong> <span class="badge-statut badge-success">Payé</span><br>
+  {% if payment.reservation %}
+  <strong>Réservation :</strong> {{ payment.reservation.appartement.nom }} — du {{ payment.reservation.dateArrivee|date('d/m/Y') }} au {{ payment.reservation.dateDepart|date('d/m/Y') }}<br>
+  {% endif %}
+  {% if payment.description %}
+  <strong>Description :</strong> {{ payment.description }}
+  {% endif %}
+</div>
+
+<a href="{{ app_url }}/espace-client/paiements" class="btn-gold">Voir mes paiements</a>
+
+<p>Merci pour votre confiance.</p>
+<p><em>L'équipe Appart Hôtel Tricastin</em></p>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block content %}
+<h2>Confirmation de votre réservation</h2>
+
+<p>Bonjour {{ reservation.prenom }},</p>
+
+<p>Nous avons bien reçu votre demande de réservation et nous vous en remercions !</p>
+
+<div class="info-box">
+  <strong>Récapitulatif :</strong><br>
+  <strong>Appartement :</strong> {{ reservation.appartement.nom }}<br>
+  <strong>Localisation :</strong> {{ reservation.appartement.localisation.ville }}<br>
+  <strong>Arrivée :</strong> {{ reservation.dateArrivee|date('d/m/Y') }}<br>
+  <strong>Départ :</strong> {{ reservation.dateDepart|date('d/m/Y') }}<br>
+  <strong>Durée :</strong> {{ reservation.nombreNuits }} nuit{{ reservation.nombreNuits > 1 ? 's' : '' }}<br>
+  <strong>Personnes :</strong> {{ reservation.nombrePersonnes }}<br>
+  {% if reservation.montantTotal %}
+  <strong>Montant total :</strong> {{ reservation.montantTotal }}€<br>
+  {% endif %}
+  <strong>Statut :</strong> <span class="badge-statut badge-success">{{ reservation.statutLabel }}</span>
+</div>
+
+{% if reservation.montantTotal and reservation.paiementStatut != 'paye' %}
+<p>Pour finaliser votre réservation, vous pouvez procéder au paiement en ligne depuis votre espace client :</p>
+<a href="{{ app_url }}/espace-client/reservation/{{ reservation.id }}" class="btn-gold">Accéder à ma réservation</a>
+{% endif %}
+
+<p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+
+<p>À très bientôt en Drôme Provençale !</p>
+<p><em>L'équipe Appart Hôtel Tricastin</em></p>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block content %}
+<h2>Annulation de votre réservation</h2>
+
+<p>Bonjour {{ reservation.prenom }},</p>
+
+<p>Nous vous confirmons l'annulation de votre réservation :</p>
+
+<div class="info-box">
+  <strong>Appartement :</strong> {{ reservation.appartement.nom }}<br>
+  <strong>Du :</strong> {{ reservation.dateArrivee|date('d/m/Y') }} au {{ reservation.dateDepart|date('d/m/Y') }}<br>
+  <strong>Statut :</strong> <span class="badge-statut badge-danger">Annulée</span>
+</div>
+
+{% if reservation.totalPaye > 0 %}
+<p>Un remboursement sera effectué selon nos conditions générales. Vous serez informé(e) dès que celui-ci sera traité.</p>
+{% endif %}
+
+<p>Nous espérons vous accueillir une prochaine fois en Drôme Provençale.</p>
+
+<p><em>L'équipe Appart Hôtel Tricastin</em></p>
+{% endblock %}

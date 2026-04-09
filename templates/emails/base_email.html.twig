@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { margin: 0; padding: 0; background-color: #f5f0eb; font-family: 'Montserrat', Arial, sans-serif; }
+  .email-container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
+  .email-header { background-color: #1a2744; padding: 30px; text-align: center; }
+  .email-header h1 { color: #c8a962; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; margin: 0; }
+  .email-header p { color: #a0aec0; font-size: 12px; margin: 5px 0 0; }
+  .email-body { padding: 30px; color: #333; line-height: 1.6; font-size: 14px; }
+  .email-body h2 { color: #1a2744; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; border-bottom: 2px solid #c8a962; padding-bottom: 8px; }
+  .info-box { background-color: #f8f6f2; border-left: 4px solid #c8a962; padding: 15px; margin: 15px 0; border-radius: 0 4px 4px 0; }
+  .info-box strong { color: #1a2744; }
+  .btn-gold { display: inline-block; background-color: #c8a962; color: #1a2744 !important; text-decoration: none; padding: 12px 30px; border-radius: 4px; font-weight: 600; margin: 15px 0; }
+  .email-footer { background-color: #1a2744; padding: 20px; text-align: center; color: #a0aec0; font-size: 11px; }
+  .email-footer a { color: #c8a962; text-decoration: none; }
+  .badge-statut { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+  .badge-success { background-color: #d4edda; color: #155724; }
+  .badge-warning { background-color: #fff3cd; color: #856404; }
+  .badge-danger { background-color: #f8d7da; color: #721c24; }
+</style>
+</head>
+<body>
+<div class="email-container">
+  <div class="email-header">
+    <h1>Appart Hôtel Tricastin</h1>
+    <p>Drôme Provençale — Pierrelatte · Saint-Paul-Trois-Châteaux · Montélimar</p>
+  </div>
+  <div class="email-body">
+    {% block content %}{% endblock %}
+  </div>
+  <div class="email-footer">
+    <p>Appart Hôtel Tricastin — 12 appartements meublés en Drôme Provençale</p>
+    <p><a href="{{ app_url | default('#') }}">Visiter notre site</a></p>
+    <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre directement.</p>
+  </div>
+</div>
+</body>
+</html>

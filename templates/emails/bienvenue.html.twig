@@ -1,0 +1,23 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block content %}
+<h2>Bienvenue chez Appart Hôtel Tricastin !</h2>
+
+<p>Bonjour {{ user.prenom }},</p>
+
+<p>Nous sommes ravis de vous compter parmi nos membres !</p>
+
+<p>Votre espace client est maintenant disponible. Vous y trouverez :</p>
+<ul>
+  <li>L'historique de vos réservations</li>
+  <li>Le suivi de vos paiements</li>
+  <li>La gestion de vos informations personnelles</li>
+</ul>
+
+<a href="{{ app_url }}/espace-client" class="btn-gold">Accéder à mon espace</a>
+
+<p>Découvrez nos 12 appartements meublés dans trois destinations de charme en Drôme Provençale : Pierrelatte, Saint-Paul-Trois-Châteaux et Montélimar.</p>
+
+<p>À bientôt !</p>
+<p><em>L'équipe Appart Hôtel Tricastin</em></p>
+{% endblock %}
