@@ -6,6 +6,7 @@ use App\Entity\Reservation;
 use App\Form\ReservationType;
 use App\Repository\AppartementRepository;
 use App\Repository\LocalisationRepository;
+use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,46 +16,82 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ReservationController extends AbstractController
 {
-#[Route('/reserver', name: 'app_reservation')]
-public function index(
-	Request $request,
-	EntityManagerInterface $em,
-	AppartementRepository $appartementRepo
-): Response {
-	$reservation = new Reservation();
+	#[Route('/reserver', name: 'app_reservation')]
+	public function index(
+		Request $request,
+		EntityManagerInterface $em,
+		AppartementRepository $appartementRepo,
+		MailerService $mailerService
+	): Response {
+		$reservation = new Reservation();
 
-	// Pré-remplir si un appartement est passé en paramètre
-	$appartementId = $request->query->get('appartement');
-	$preselectedLocalisation = null;
+		// Pré-remplir si un appartement est passé en paramètre
+		$appartementId = $request->query->get('appartement');
+		$preselectedLocalisation = null;
 
-	if ($appartementId) {
-		$appartement = $appartementRepo->find($appartementId);
-		if ($appartement) {
-			$reservation->setAppartement($appartement);
-			$preselectedLocalisation = $appartement->getLocalisation();
+		if ($appartementId) {
+			$appartement = $appartementRepo->find($appartementId);
+			if ($appartement) {
+				$reservation->setAppartement($appartement);
+				$preselectedLocalisation = $appartement->getLocalisation();
+			}
 		}
+
+		// Pré-remplir avec les données de l'utilisateur connecté
+		$user = $this->getUser();
+		if ($user) {
+			$reservation->setUser($user);
+			if (method_exists($user, 'getNom')) {
+				$reservation->setNom($user->getNom());
+				$reservation->setPrenom($user->getPrenom());
+			}
+			$reservation->setEmail($user->getEmail());
+			if (method_exists($user, 'getTelephone') && $user->getTelephone()) {
+				$reservation->setTelephone($user->getTelephone());
+			}
+		}
+
+		$form = $this->createForm(ReservationType::class, $reservation, [
+			'preselected_localisation' => $preselectedLocalisation,
+		]);
+
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+			// Associer l'utilisateur connecté
+			if ($user) {
+				$reservation->setUser($user);
+			}
+
+			// Calculer le montant total
+			$reservation->calculerMontantTotal();
+
+			$em->persist($reservation);
+			$em->flush();
+
+			// Envoyer les notifications email
+			try {
+				// Notification admin
+				$mailerService->sendNouvelleReservationAdmin($reservation);
+
+				// Confirmation client (si la réservation est directement confirmée)
+				if ($reservation->getStatut() === Reservation::STATUT_CONFIRMEE) {
+					$mailerService->sendConfirmationReservation($reservation);
+				}
+			} catch (\Exception $e) {
+				// On ne bloque pas la réservation si l'email échoue
+			}
+
+			$this->addFlash('success', 'Votre demande de réservation a bien été envoyée ! Nous vous recontacterons dans les plus brefs délais.');
+
+			return $this->redirectToRoute('app_reservation');
+		}
+
+		return $this->render('reservation/index.html.twig', [
+			'form' => $form,
+			'preselectedAppartementId' => $appartementId,
+		]);
 	}
-
-	$form = $this->createForm(ReservationType::class, $reservation, [
-		'preselected_localisation' => $preselectedLocalisation,
-	]);
-
-	$form->handleRequest($request);
-
-	if ($form->isSubmitted() && $form->isValid()) {
-		$em->persist($reservation);
-		$em->flush();
-
-		$this->addFlash('success', 'Votre demande de réservation a bien été envoyée ! Nous vous recontacterons dans les plus brefs délais.');
-
-		return $this->redirectToRoute('app_reservation');
-	}
-
-	return $this->render('reservation/index.html.twig', [
-		'form' => $form,
-		'preselectedAppartementId' => $appartementId,
-	]);
-}
 
 	/**
 	 * Route AJAX : retourne les appartements d'une localisation en JSON
@@ -93,5 +130,4 @@ public function index(
 
 		return new JsonResponse($data);
 	}
-
 }

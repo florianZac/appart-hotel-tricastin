@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{{ 'site.title'|trans }}{% endblock %}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🏠</text></svg>">
   <meta name="description" content="{% block meta_description %}{{ 'site.title'|trans }} : 12 appartements meublés dans trois destinations. Réservez votre séjour idéal.{% endblock %}">
 
   {# Bootstrap 5 CSS #}
@@ -65,11 +66,21 @@
             </a>
           </li>
           
-          {# Bouton Admin / Login #}
+          {# Bouton Espace client / Admin / Login #}
           <li class="nav-item ms-lg-3 d-none d-lg-block">
             {% if is_granted('ROLE_ADMIN') %}
-              <a class="btn btn-reserve"" href="{{ path('admin_dashboard') }}">
+              <a class="btn btn-outline-light btn-sm me-1" href="{{ path('client_dashboard') }}">
+                <i class="bi bi-person"></i> Mon espace
+              </a>
+              <a class="btn btn-reserve" href="{{ path('admin_dashboard') }}">
                 <i class="bi bi-speedometer2"></i> Admin
+              </a>
+            {% elseif is_granted('ROLE_USER') %}
+              <a class="btn btn-reserve" href="{{ path('client_dashboard') }}">
+                <i class="bi bi-person"></i> Mon espace
+              </a>
+              <a class="btn btn-outline-light btn-sm ms-1" href="{{ path('app_logout') }}">
+                <i class="bi bi-box-arrow-right"></i>
               </a>
             {% else %}
               <a class="btn btn-reserve" href="{{ path('app_login') }}">

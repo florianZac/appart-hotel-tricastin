@@ -1,6 +1,8 @@
 # config/services.yaml
 parameters:
     contact_email: '%env(CONTACT_EMAIL)%'
+    stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
 
 services:
     _defaults:
@@ -13,3 +15,19 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+   # ---- Cloudinary ----
+    App\Service\CloudinaryService:
+        arguments:
+            $cloudinaryUrl: '%env(CLOUDINARY_URL)%'
+
+    # ---- Mailer ----
+    App\Service\MailerService:
+        arguments:
+            $appUrl: '%env(APP_URL)%'
+
+    # ---- Stripe ----
+    App\Service\StripeService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+            $stripeWebhookSecret: '%env(STRIPE_WEBHOOK_SECRET)%'
+            $appUrl: '%env(APP_URL)%'

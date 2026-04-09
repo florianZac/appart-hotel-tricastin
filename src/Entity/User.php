@@ -3,112 +3,128 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+	#[ORM\Id]
+	#[ORM\GeneratedValue]
+	#[ORM\Column]
+	private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
-    private ?string $email = null;
+	#[ORM\Column(length: 100)]
+	#[Assert\NotBlank]
+	private ?string $nom = null;
 
-    /**
-     * @var list<string> The user roles
-     */
-    #[ORM\Column]
-    private array $roles = [];
+	#[ORM\Column(length: 100)]
+	#[Assert\NotBlank]
+	private ?string $prenom = null;
 
-    /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
-    private ?string $password = null;
+	#[ORM\Column(length: 180)]
+	#[Assert\NotBlank]
+	#[Assert\Email]
+	private ?string $email = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+	#[ORM\Column(length: 20, nullable: true)]
+	private ?string $telephone = null;
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
+	/** @var list<string> The user roles */
+	#[ORM\Column]
+	private array $roles = [];
 
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
+	/** @var string The hashed password */
+	#[ORM\Column]
+	private ?string $password = null;
 
-        return $this;
-    }
+	#[ORM\Column(type: 'datetime_immutable')]
+	private ?\DateTimeImmutable $createdAt = null;
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
-    public function getUserIdentifier(): string
-    {
-        return (string) $this->email;
-    }
+	#[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user')]
+	#[ORM\OrderBy(['createdAt' => 'DESC'])]
+	private Collection $reservations;
 
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+	#[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'user')]
+	#[ORM\OrderBy(['createdAt' => 'DESC'])]
+	private Collection $payments;
 
-        return array_unique($roles);
-    }
+	public function __construct()
+	{
+		$this->createdAt = new \DateTimeImmutable();
+		$this->reservations = new ArrayCollection();
+		$this->payments = new ArrayCollection();
+	}
 
-    /**
-     * @param list<string> $roles
-     */
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
+	public function getId(): ?int { return $this->id; }
 
-        return $this;
-    }
+	public function getNom(): ?string { return $this->nom; }
+	public function setNom(string $nom): static { $this->nom = $nom; return $this; }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
+	public function getPrenom(): ?string { return $this->prenom; }
+	public function setPrenom(string $prenom): static { $this->prenom = $prenom; return $this; }
 
-    public function setPassword(string $password): static
-    {
-        $this->password = $password;
+	public function getEmail(): ?string { return $this->email; }
+	public function setEmail(string $email): static { $this->email = $email; return $this; }
 
-        return $this;
-    }
+	public function getTelephone(): ?string { return $this->telephone; }
+	public function setTelephone(?string $telephone): static { $this->telephone = $telephone; return $this; }
 
-    /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
-     */
-    public function __serialize(): array
-    {
-        $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+	public function getUserIdentifier(): string
+	{
+		return (string) $this->email;
+	}
 
-        return $data;
-    }
+	public function getRoles(): array
+	{
+		$roles = $this->roles;
+		$roles[] = 'ROLE_USER';
+		return array_unique($roles);
+	}
 
-    #[\Deprecated]
-    public function eraseCredentials(): void
-    {
-        // @deprecated, to be removed when upgrading to Symfony 8
-    }
+	/** @param list<string> $roles */
+	public function setRoles(array $roles): static
+	{
+		$this->roles = $roles;
+		return $this;
+	}
+
+	public function getPassword(): ?string { return $this->password; }
+	public function setPassword(string $password): static { $this->password = $password; return $this; }
+
+	public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
+	public function setCreatedAt(\DateTimeImmutable $createdAt): static { $this->createdAt = $createdAt; return $this; }
+
+	/** @return Collection<int, Reservation> */
+	public function getReservations(): Collection { return $this->reservations; }
+
+	/** @return Collection<int, Payment> */
+	public function getPayments(): Collection { return $this->payments; }
+
+	public function getFullName(): string
+	{
+		return $this->prenom . ' ' . $this->nom;
+	}
+
+	public function __toString(): string
+	{
+		return $this->getFullName();
+	}
+
+	public function __serialize(): array
+	{
+		$data = (array) $this;
+		$data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+		return $data;
+	}
+
+	#[\Deprecated]
+	public function eraseCredentials(): void
+	{
+	}
 }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ReservationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,6 +15,11 @@ class Reservation
 	public const STATUT_EN_ATTENTE = 'en_attente';
 	public const STATUT_CONFIRMEE = 'confirmee';
 	public const STATUT_ANNULEE = 'annulee';
+	public const STATUT_TERMINEE = 'terminee';
+
+	public const PAIEMENT_NON_PAYE = 'non_paye';
+	public const PAIEMENT_ACOMPTE = 'acompte_paye';
+	public const PAIEMENT_COMPLET = 'paye';
 
 	#[ORM\Id]
 	#[ORM\GeneratedValue]
@@ -58,16 +65,33 @@ class Reservation
 	#[ORM\Column(length: 20)]
 	private ?string $statut = self::STATUT_EN_ATTENTE;
 
+	#[ORM\Column(length: 20)]
+	private ?string $paiementStatut = self::PAIEMENT_NON_PAYE;
+
+	#[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+	private ?string $montantTotal = null;
+
+	#[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+	private ?string $montantCaution = null;
+
 	#[ORM\Column(type: Types::DATETIME_MUTABLE)]
 	private ?\DateTimeInterface $createdAt = null;
 
-	#[ORM\ManyToOne(targetEntity: User::class)]
+	#[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'reservations')]
 	#[ORM\JoinColumn(nullable: true)]
 	private ?User $user = null;
+
+	#[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'reservation')]
+	#[ORM\OrderBy(['createdAt' => 'DESC'])]
+	private Collection $payments;
+
+	#[ORM\Column(length: 255, nullable: true)]
+	private ?string $stripeSessionId = null;
 
 	public function __construct()
 	{
 		$this->createdAt = new \DateTime();
+		$this->payments = new ArrayCollection();
 	}
 
 	public function getId(): ?int { return $this->id; }
@@ -102,8 +126,26 @@ class Reservation
 	public function getStatut(): ?string { return $this->statut; }
 	public function setStatut(string $statut): static { $this->statut = $statut; return $this; }
 
+	public function getPaiementStatut(): ?string { return $this->paiementStatut; }
+	public function setPaiementStatut(string $paiementStatut): static { $this->paiementStatut = $paiementStatut; return $this; }
+
+	public function getMontantTotal(): ?string { return $this->montantTotal; }
+	public function setMontantTotal(?string $montantTotal): static { $this->montantTotal = $montantTotal; return $this; }
+
+	public function getMontantCaution(): ?string { return $this->montantCaution; }
+	public function setMontantCaution(?string $montantCaution): static { $this->montantCaution = $montantCaution; return $this; }
+
 	public function getCreatedAt(): ?\DateTimeInterface { return $this->createdAt; }
 	public function setCreatedAt(\DateTimeInterface $createdAt): static { $this->createdAt = $createdAt; return $this; }
+
+	public function getUser(): ?User { return $this->user; }
+	public function setUser(?User $user): static { $this->user = $user; return $this; }
+
+	/** @return Collection<int, Payment> */
+	public function getPayments(): Collection { return $this->payments; }
+
+	public function getStripeSessionId(): ?string { return $this->stripeSessionId; }
+	public function setStripeSessionId(?string $stripeSessionId): static { $this->stripeSessionId = $stripeSessionId; return $this; }
 
 	/**
 	 * Calcule le nombre de nuits
@@ -115,15 +157,66 @@ class Reservation
 		}
 		return 0;
 	}
-	public function getUser(): ?User
+
+	/**
+	 * Calcule le montant total basé sur le prix par nuit
+	 */
+	public function calculerMontantTotal(): string
 	{
-		return $this->user;
+		if ($this->appartement && $this->appartement->getPrixParNuit()) {
+			$total = $this->getNombreNuits() * (float) $this->appartement->getPrixParNuit();
+			$this->montantTotal = number_format($total, 2, '.', '');
+		}
+		return $this->montantTotal ?? '0.00';
 	}
 
-	public function setUser(?User $user): static
+	/**
+	 * Retourne le total payé sur cette réservation
+	 */
+	public function getTotalPaye(): float
 	{
-		$this->user = $user;
-		return $this;
+		$total = 0;
+		foreach ($this->payments as $payment) {
+			if ($payment->getStatut() === Payment::STATUT_REUSSI) {
+				$total += (float) $payment->getMontant();
+			}
+		}
+		return $total;
 	}
 
+	/**
+	 * Retourne le solde restant à payer
+	 */
+	public function getSoldeRestant(): float
+	{
+		return (float) ($this->montantTotal ?? 0) - $this->getTotalPaye();
+	}
+
+	/**
+	 * Label lisible du statut
+	 */
+	public function getStatutLabel(): string
+	{
+		return match ($this->statut) {
+			self::STATUT_EN_ATTENTE => 'En attente',
+			self::STATUT_CONFIRMEE  => 'Confirmée',
+			self::STATUT_ANNULEE    => 'Annulée',
+			self::STATUT_TERMINEE   => 'Terminée',
+			default                 => $this->statut,
+		};
+	}
+
+	/**
+	 * Couleur Bootstrap pour le badge du statut
+	 */
+	public function getStatutBadgeClass(): string
+	{
+		return match ($this->statut) {
+			self::STATUT_EN_ATTENTE => 'warning',
+			self::STATUT_CONFIRMEE  => 'success',
+			self::STATUT_ANNULEE    => 'danger',
+			self::STATUT_TERMINEE   => 'secondary',
+			default                 => 'light',
+		};
+	}
 }
