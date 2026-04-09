@@ -1,4 +1,13 @@
 {
+    "doctrine/annotations": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.10",
+            "ref": "64d8583af5ea57b7afa4aba4b159907f3a148b05"
+        }
+    },
     "doctrine/deprecations": {
         "version": "1.1",
         "recipe": {
@@ -135,6 +144,18 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/monolog-bundle": {
+        "version": "4.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.7",
+            "ref": "1b9efb10c54cb51c713a9391c9300ff8bceda459"
+        },
+        "files": [
+            "./config/packages/monolog.yaml"
+        ]
     },
     "symfony/property-info": {
         "version": "7.4",
