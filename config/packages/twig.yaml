@@ -3,10 +3,10 @@ twig:
     default_path: '%kernel.project_dir%/templates'
     form_themes: ['bootstrap_5_layout.html.twig']
     globals:
-        site_name: 'Appart Hôtel Poitiers'
+        site_name: 'Appart Hôtel Tricastin'
         site_phone: '+33 6 98 48 57 28'
-        site_email: 'hello@appart-hotel-poitiers.com'
-        site_address: '11 Boulevard Pont Achard, 86000 Poitiers'
+        site_email: 'admin@appart-hotel-tricastin.com'
+        site_address: '11 Boulevard Pont Achard, 26130 Saint paul les trois châteaux'
 
 when@test:
     twig:
