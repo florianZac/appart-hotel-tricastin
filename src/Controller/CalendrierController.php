@@ -31,8 +31,10 @@ class CalendrierController extends AbstractController
       return new JsonResponse([], Response::HTTP_NOT_FOUND);
     }
 
-    $start = new \DateTime($request->query->get('start', 'first day of this month'));
-    $end = new \DateTime($request->query->get('end', 'last day of +3 months'));
+    $startParam = $request->query->get('start');
+    $endParam = $request->query->get('end');
+    $start = $startParam ? new \DateTime(substr($startParam, 0, 10)) : new \DateTime('first day of this month');
+    $end = $endParam ? new \DateTime(substr($endParam, 0, 10)) : new \DateTime('last day of +3 months');
 
     $events = [];
 

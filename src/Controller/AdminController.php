@@ -310,8 +310,10 @@ class AdminController extends AbstractController
 		Request $request,
 		DisponibiliteRepository $disponibiliteRepo
 	): JsonResponse {
-		$start = new \DateTime($request->query->get('start', 'first day of this month'));
-		$end = new \DateTime($request->query->get('end', 'last day of +2 months'));
+		$startParam = $request->query->get('start');
+		$endParam = $request->query->get('end');
+		$start = $startParam ? new \DateTime(substr($startParam, 0, 10)) : new \DateTime('first day of this month');
+		$end = $endParam ? new \DateTime(substr($endParam, 0, 10)) : new \DateTime('last day of +2 months');
 
 		$disponibilites = $disponibiliteRepo->findByAppartementAndPeriode($appartementId, $start, $end);
 

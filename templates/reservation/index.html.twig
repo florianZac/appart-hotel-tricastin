@@ -2,10 +2,42 @@
 
 {% block title %}{{ 'reservation.title'|trans }} — {{ 'site.title'|trans }}{% endblock %}
 
-{% block body %}
+{# ================================================ #}
+{# STYLES SPÉCIFIQUES À LA PAGE RÉSERVATION         #}
+{# ================================================ #}
+{% block stylesheets %}
+<style>
+  /* Badge numéroté gold pour les étapes (remplace bg-primary bleu Bootstrap) */
+  .step-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: #fff; font-weight: 600; font-size: .9rem; margin-right: 10px;
+  }
+  /* Container flex pour aligner badge + titre d'étape */
+  .step-title { display: flex; align-items: center; margin-bottom: 1rem; }
+  .step-title h5 { margin: 0; font-family: 'Cormorant Garamond', serif; color: var(--color-dark); font-size: 1.2rem; }
+  /* Couleur gold pour les icônes (remplace text-primary bleu Bootstrap) */
+  .icon-gold { color: var(--color-primary); }
+  /* Calendrier FullCalendar intégré au formulaire */
+  #calendarPicker { max-width: 100%; margin-bottom: 1rem; }
+  .fc .fc-daygrid-day.fc-day-today { background-color: rgba(184, 134, 11, 0.08) !important; }
+  /* Encart récapitulatif des dates sélectionnées */
+  .selected-dates-info {
+    background: #f8f6f2; border-left: 4px solid var(--color-primary);
+    padding: 12px 16px; border-radius: 0 6px 6px 0; margin-bottom: 1rem;
+  }
+  .selected-dates-info strong { color: var(--color-dark); }
+  /* Légende du calendrier */
+  .calendar-legend { font-size: .85rem; color: #555; }
+  .calendar-legend i { margin-right: 3px; }
+</style>
+{% endblock %}
+
 {# ================================================ #}
 {# PAGE HEADER                                      #}
 {# ================================================ #}
+{% block body %}
 <section class="page-header">
   <div class="page-header-overlay"></div>
   <div class="container">
@@ -23,31 +55,52 @@
       <div class="col-lg-8">
         <div class="form-card p-4 p-md-5 rounded-4">
           <h2 class="mb-4 text-center">
-            <i class="bi bi-calendar-check text-primary"></i> {{ 'reservation.form_title'|trans }}
+            <i class="bi bi-calendar-check icon-gold"></i> {{ 'reservation.form_title'|trans }}
           </h2>
 
           {{ form_start(form, {'attr': {'class': 'reservation-form', 'novalidate': 'novalidate'}}) }}
 
+          {# ---------------------------------------- #}
+          {# ÉTAPE 1 — Choix de la localisation       #}
+          {# ---------------------------------------- #}
           <div class="mb-3">
-            <h5 class="mb-3"><span class="badge bg-primary rounded-pill">1</span> {{ 'reservation.step1'|trans }}</h5>
+            <div class="step-title">
+              <span class="step-badge">1</span>
+              <h5>{{ 'reservation.step1'|trans }}</h5>
+            </div>
             {{ form_label(form.localisation) }}
             {{ form_widget(form.localisation, {'attr': {'id': 'reservation_localisation'}}) }}
             {{ form_errors(form.localisation) }}
           </div>
 
+          {# ---------------------------------------- #}
+          {# ÉTAPE 2 — Choix de l'appartement         #}
+          {# Chargé dynamiquement en AJAX selon la    #}
+          {# localisation sélectionnée                #}
+          {# ---------------------------------------- #}
           <div class="mb-4">
-            <h5 class="mb-3"><span class="badge bg-primary rounded-pill">2</span> {{ 'reservation.step2'|trans }}</h5>
+            <div class="step-title">
+              <span class="step-badge">2</span>
+              <h5>{{ 'reservation.step2'|trans }}</h5>
+            </div>
             {{ form_label(form.appartement) }}
             {{ form_widget(form.appartement, {'attr': {'id': 'reservation_appartement'}}) }}
             {{ form_errors(form.appartement) }}
             <div id="appartement-loading" class="text-muted small mt-1" style="display:none;">
-                <i class="bi bi-hourglass-split"></i> ...
+              <i class="bi bi-hourglass-split"></i> ...
             </div>
           </div>
 
           <hr class="my-4">
 
-          <h5 class="mb-3"><span class="badge bg-primary rounded-pill">3</span> {{ 'reservation.step3'|trans }}</h5>
+          {# ---------------------------------------- #}
+          {# ÉTAPE 3 — Informations personnelles      #}
+          {# Pré-rempli si l'utilisateur est connecté #}
+          {# ---------------------------------------- #}
+          <div class="step-title">
+            <span class="step-badge">3</span>
+            <h5>{{ 'reservation.step3'|trans }}</h5>
+          </div>
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               {{ form_label(form.nom) }}
@@ -75,16 +128,49 @@
 
           <hr class="my-4">
 
-          <h5 class="mb-3"><span class="badge bg-primary rounded-pill">4</span> {{ 'reservation.step4'|trans }}</h5>
+          {# ---------------------------------------- #}
+          {# ÉTAPE 4 — Dates du séjour                #}
+          {# Le calendrier FullCalendar affiche les   #}
+          {# disponibilités de l'appartement choisi.  #}
+          {# Jours verts = disponibles                #}
+          {# Jours rouges = réservés                  #}
+          {# Jours gris = nettoyage                   #}
+          {# Jours orange = bloqués par l'admin       #}
+          {# L'utilisateur clique-glisse pour         #}
+          {# sélectionner ses dates d'arrivée/départ  #}
+          {# ---------------------------------------- #}
+          <div class="step-title">
+            <span class="step-badge">4</span>
+            <h5>{{ 'reservation.step4'|trans }}</h5>
+          </div>
+
+          {# Calendrier FullCalendar — disponibilités + sélection de dates #}
+          <div id="calendarPicker"></div>
+
+          <div id="calendarLegend" class="d-flex flex-wrap justify-content-center gap-3 mb-3 small text-muted" style="display:none;">
+            <span><i class="bi bi-circle-fill" style="color:#27ae60;font-size:.5rem;"></i> Disponible</span>
+            <span><i class="bi bi-circle-fill" style="color:#c0392b;font-size:.5rem;"></i> Réservé</span>
+            <span><i class="bi bi-circle-fill" style="color:#95a5a6;font-size:.5rem;"></i> Nettoyage</span>
+            <span><i class="bi bi-circle-fill" style="color:#e67e22;font-size:.5rem;"></i> Indisponible</span>
+          </div>
+
+          {# Encart récapitulatif affiché après sélection dans le calendrier #}
+          <div id="selectedDatesInfo" class="selected-dates-info" style="display:none;">
+            <strong>Votre sélection :</strong>
+            du <span id="infoArrivee">—</span> au <span id="infoDepart">—</span>
+            (<span id="infoNuits">0</span> nuit(s))
+          </div>
+
+          {# Champs date — remplis automatiquement par le calendrier ou manuellement #}
           <div class="row g-3 mb-4">
             <div class="col-md-4">
               {{ form_label(form.dateArrivee) }}
-              {{ form_widget(form.dateArrivee, {'attr': {'class': 'form-control'}}) }}
+              {{ form_widget(form.dateArrivee, {'attr': {'class': 'form-control', 'id': 'reservation_dateArrivee'}}) }}
               {{ form_errors(form.dateArrivee) }}
             </div>
             <div class="col-md-4">
               {{ form_label(form.dateDepart) }}
-              {{ form_widget(form.dateDepart, {'attr': {'class': 'form-control'}}) }}
+              {{ form_widget(form.dateDepart, {'attr': {'class': 'form-control', 'id': 'reservation_dateDepart'}}) }}
               {{ form_errors(form.dateDepart) }}
             </div>
             <div class="col-md-4">
@@ -94,43 +180,48 @@
             </div>
           </div>
 
+          {# Message optionnel #}
           <div class="mb-4">
             {{ form_label(form.message) }}
             {{ form_widget(form.message, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.message) }}
           </div>
 
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary btn-lg px-5">
-                <i class="bi bi-send"></i> {{ 'reservation.submit'|trans }}
-              </button>
-            </div>
+          {# Bouton de soumission — btn-reserve = gold du design system #}
+          <div class="text-center">
+            <button type="submit" class="btn btn-reserve btn-lg px-5">
+              <i class="bi bi-send"></i> {{ 'reservation.submit'|trans }}
+            </button>
+          </div>
 
-            {{ form_end(form) }}
+          {{ form_end(form) }}
         </div>
       </div>
     </div>
 
+    {# ================================================ #}
+    {# CARTES INFO — Réponse rapide, Paiement, Annulation #}
+    {# ================================================ #}
     <div class="row justify-content-center mt-5">
       <div class="col-lg-8">
         <div class="row g-4 text-center">
           <div class="col-md-4">
             <div class="info-mini-card">
-              <i class="bi bi-clock text-primary fs-2"></i>
+              <i class="bi bi-clock icon-gold fs-2"></i>
               <h6>{{ 'reservation.fast'|trans }}</h6>
               <small class="text-muted">{{ 'reservation.fast_desc'|trans }}</small>
             </div>
           </div>
           <div class="col-md-4">
             <div class="info-mini-card">
-              <i class="bi bi-shield-check text-primary fs-2"></i>
+              <i class="bi bi-shield-check icon-gold fs-2"></i>
               <h6>{{ 'reservation.secure'|trans }}</h6>
               <small class="text-muted">{{ 'reservation.secure_desc'|trans }}</small>
             </div>
           </div>
           <div class="col-md-4">
             <div class="info-mini-card">
-              <i class="bi bi-x-circle text-primary fs-2"></i>
+              <i class="bi bi-x-circle icon-gold fs-2"></i>
               <h6>{{ 'reservation.flexible'|trans }}</h6>
               <small class="text-muted">{{ 'reservation.flexible_desc'|trans }}</small>
             </div>
@@ -142,20 +233,212 @@
 </section>
 {% endblock %}
 
+{# ================================================ #}
+{# JAVASCRIPT — Chargement AJAX appartements +      #}
+{#               FullCalendar disponibilités         #}
+{# ================================================ #}
 {% block javascripts %}
+{# FullCalendar 6 — pas besoin de CSS séparé, tout est dans le JS #}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/fr.global.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+
+  // ============================================
+  // RÉFÉRENCES DOM
+  // ============================================
   var locSelect = document.getElementById('reservation_localisation');
   var aptSelect = document.getElementById('reservation_appartement');
   var loading = document.getElementById('appartement-loading');
   var preselectedAppartementId = '{{ preselectedAppartementId|default("") }}';
 
+  // Champs date remplis automatiquement par le calendrier
+  var inputArrivee = document.getElementById('reservation_dateArrivee');
+  var inputDepart = document.getElementById('reservation_dateDepart');
+
+  // Encart récapitulatif des dates sélectionnées
+  var infoBox = document.getElementById('selectedDatesInfo');
+  var infoArrivee = document.getElementById('infoArrivee');
+  var infoDepart = document.getElementById('infoDepart');
+  var infoNuits = document.getElementById('infoNuits');
+
+  // Légende du calendrier
+  var legendEl = document.getElementById('calendarLegend');
+
+  // Instance FullCalendar (null tant qu'aucun appartement n'est sélectionné)
+  var calendar = null;
+
+  // Stocke les événements chargés pour la coloration des cellules (dayCellDidMount)
+  var loadedEvents = [];
+
+  // ============================================
+  // FULLCALENDAR — Disponibilités + sélection
+  // Initialisé/rechargé à chaque changement
+  // d'appartement. Affiche les réservations
+  // existantes (rouge), nettoyages (gris) et
+  // blocages admin (orange). Les jours sans
+  // événement sont colorés en vert (disponible).
+  // L'utilisateur clique-glisse pour sélectionner
+  // sa plage de dates.
+  // ============================================
+  function initCalendar(appartementId) {
+    var calEl = document.getElementById('calendarPicker');
+    if (!calEl) return;
+
+    // Détruire l'ancien calendrier si on change d'appartement
+    if (calendar) {
+      calendar.destroy();
+    }
+
+    // Réinitialiser les événements stockés
+    loadedEvents = [];
+
+    // Pas d'appartement → message d'attente + cacher la légende
+    if (!appartementId) {
+      calEl.innerHTML = '<p class="text-muted text-center py-3"><i class="bi bi-info-circle"></i> Sélectionnez un appartement pour voir les disponibilités</p>';
+      if (legendEl) legendEl.style.display = 'none';
+      return;
+    }
+
+    calendar = new FullCalendar.Calendar(calEl, {
+      initialView: 'dayGridMonth',
+      locale: 'fr',
+      height: 'auto',
+      selectable: true,       // Permet de cliquer-glisser pour sélectionner
+      selectMirror: true,     // Affiche un reflet pendant la sélection
+      dayMaxEvents: 2,
+      // Empêcher de sélectionner dans le passé
+      validRange: { start: new Date().toISOString().split('T')[0] },
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth'
+      },
+
+      // ============================================
+      // CHARGEMENT DES ÉVÉNEMENTS DEPUIS L'API
+      // GET /api/disponibilites/{appartementId}
+      // Retourne : réservations (rouge), nettoyages (gris), blocages (orange)
+      // ============================================
+      events: function(info, successCallback, failureCallback) {
+        fetch('/api/disponibilites/' + appartementId
+          + '?start=' + info.startStr.substring(0, 10)
+          + '&end=' + info.endStr.substring(0, 10))
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            // Stocker les événements pour la coloration des cellules
+            loadedEvents = data;
+            successCallback(data);
+          })
+          .catch(function(err) { failureCallback(err); });
+      },
+
+      // ============================================
+      // COLORATION DES CELLULES DU CALENDRIER
+      // — Passé → gris + opacity réduite
+      // — Sans événement → vert (disponible) + barre verte en bas
+      // — Avec événement → coloré par l'événement lui-même
+      // ============================================
+      dayCellDidMount: function(info) {
+        var cellDate = info.date;
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Dates passées → gris + opacity réduite
+        if (cellDate < today) {
+          info.el.style.backgroundColor = '#f5f5f5';
+          info.el.style.opacity = '0.5';
+          return;
+        }
+
+        // Vérifier si cette date a un événement (réservé/nettoyage/bloqué)
+        var dateStr = cellDate.toISOString().split('T')[0];
+        var hasEvent = false;
+
+        for (var i = 0; i < loadedEvents.length; i++) {
+          var ev = loadedEvents[i];
+          if (dateStr >= ev.start && dateStr < ev.end) {
+            hasEvent = true;
+            break;
+          }
+        }
+
+        // Si pas d'événement → disponible (fond vert clair + barre verte en bas)
+        if (!hasEvent) {
+          info.el.style.backgroundColor = 'rgba(39, 174, 96, 0.1)';
+          info.el.style.borderBottom = '3px solid #27ae60';
+        }
+      },
+
+      // Tooltip au survol des événements (affiche la note si présente)
+      eventDidMount: function(info) {
+        var note = info.event.extendedProps.note;
+        if (note) {
+          info.el.title = note;
+        }
+      },
+
+      // ============================================
+      // SÉLECTION DE DATES PAR L'UTILISATEUR
+      // Cliquer-glisser sur des jours disponibles
+      // → remplit automatiquement les champs
+      //   dateArrivee et dateDepart du formulaire
+      // ============================================
+      select: function(info) {
+        // Remplir les champs du formulaire
+        inputArrivee.value = info.startStr;
+        inputDepart.value = info.endStr;
+
+        // Calculer le nombre de nuits et afficher le récap
+        var d1 = new Date(info.startStr);
+        var d2 = new Date(info.endStr);
+        var nuits = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+
+        infoArrivee.textContent = d1.toLocaleDateString('fr-FR');
+        infoDepart.textContent = d2.toLocaleDateString('fr-FR');
+        infoNuits.textContent = nuits;
+        infoBox.style.display = 'block';
+      },
+
+      // ============================================
+      // PROTECTION ANTI-CHEVAUCHEMENT
+      // Empêche de sélectionner des jours qui
+      // chevauchent un événement existant
+      // ============================================
+      selectAllow: function(selectInfo) {
+        var events = calendar.getEvents();
+        for (var i = 0; i < events.length; i++) {
+          var evStart = events[i].start;
+          var evEnd = events[i].end || events[i].start;
+          // Si la sélection chevauche un événement existant → refusé
+          if (selectInfo.start < evEnd && selectInfo.end > evStart) {
+            return false;
+          }
+        }
+        return true;
+      },
+    });
+
+    calendar.render();
+
+    // Afficher la légende quand le calendrier est chargé
+    if (legendEl) legendEl.style.display = 'flex';
+  }
+
+  // ============================================
+  // CHARGEMENT AJAX DES APPARTEMENTS
+  // Quand la localisation change, on charge
+  // la liste des appartements via l'API
+  // /api/appartements-par-localisation/{id}
+  // ============================================
   if (!locSelect || !aptSelect) return;
 
   function loadAppartements(localisationId, preselectId) {
     if (!localisationId) {
-        aptSelect.innerHTML = '<option value="">--</option>';
-        return;
+      aptSelect.innerHTML = '<option value="">--</option>';
+      initCalendar(null);
+      return;
     }
 
     loading.style.display = 'block';
@@ -171,9 +454,9 @@ document.addEventListener('DOMContentLoaded', function () {
           opt.value = a.id;
           opt.textContent = a.label;
 
-          // Pré-sélectionner l'appartement si l'id correspond
+          // Pré-sélectionner l'appartement si on vient de ?appartement=X
           if (preselectId && String(a.id) === String(preselectId)) {
-              opt.selected = true;
+            opt.selected = true;
           }
 
           aptSelect.appendChild(opt);
@@ -181,6 +464,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         aptSelect.disabled = false;
         loading.style.display = 'none';
+
+        // Si un appartement est déjà sélectionné → charger son calendrier
+        if (aptSelect.value) {
+          initCalendar(aptSelect.value);
+        }
       })
       .catch(function () {
         aptSelect.innerHTML = '<option value="">Erreur</option>';
@@ -189,16 +477,20 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
-  // Écouter le changement de localisation
+  // Écouter le changement de localisation → recharger les appartements
   locSelect.addEventListener('change', function () {
     loadAppartements(this.value, null);
   });
 
-  // Si une localisation est déjà sélectionnée (pré-remplissage)
+  // Écouter le changement d'appartement → recharger le calendrier
+  aptSelect.addEventListener('change', function () {
+    initCalendar(this.value || null);
+  });
+
+  // Si une localisation est déjà sélectionnée au chargement (pré-remplissage via ?appartement=X)
   if (locSelect.value) {
     loadAppartements(locSelect.value, preselectedAppartementId);
   }
 });
 </script>
-
 {% endblock %}
