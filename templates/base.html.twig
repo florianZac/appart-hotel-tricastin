@@ -79,21 +79,22 @@
               <a class="btn btn-reserve" href="{{ path('client_dashboard') }}">
                 <i class="bi bi-person"></i> Mon espace
               </a>
-              <a class="btn btn-outline-light btn-sm ms-1" href="{{ path('app_logout') }}">
-                <i class="bi bi-box-arrow-right"></i>
+              {# Bouton déconnection desktop #}
+              <a href="{{ path('app_logout') }}" class="btn btn-reserve">
+                <i class="bi bi-box-arrow-right"></i> Déconnexion
               </a>
             {% else %}
               <a class="btn btn-reserve" href="{{ path('app_login') }}">
                 <i class="bi bi-box-arrow-in-right"></i> {{ app.request.locale == 'fr' ? 'Connexion' : 'Login' }}
               </a>
             {% endif %}
-          </li>
-          {# Bouton réserver desktop #}
-          <li class="nav-item ms-lg-3 d-none d-lg-block">
+
+            {# Bouton réserver desktop #}
             <a class="btn btn-reserve" href="{{ path('app_reservation') }}" >
               {{ 'nav.book'|trans }}
             </a>
           </li>
+
         </ul>
       </div>
     </div>

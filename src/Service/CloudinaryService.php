@@ -108,4 +108,46 @@ class CloudinaryService
 
 		return $publicId;
 	}
+
+	/**
+	 * Upload un fichier vers Cloudinary en forçant un public_id explicite.
+	 * Utilisé par la commande de synchronisation pour que les chemins sur
+	 * Cloudinary correspondent exactement à l'arborescence locale.
+	 *
+	 * @param string $filePath Chemin local du fichier à uploader
+	 * @param string $publicId Public ID complet à utiliser (ex: "images/Tulette/Tul_A_Urban-Nest/Urban-Nest")
+	 * @return string L'URL publique (secure_url) de l'image uploadée
+	 */
+	public function uploadWithPublicId(string $filePath, string $publicId): string
+	{
+		$result = $this->cloudinary->uploadApi()->upload($filePath, [
+			'public_id'        => $publicId,
+			'resource_type'    => 'image',
+			'overwrite'        => true,
+			'use_filename'     => false,
+			'unique_filename'  => false,
+			'invalidate'       => true,
+		]);
+
+		return $result['secure_url'];
+	}
+
+	/**
+	 * Supprime toutes les ressources Cloudinary sous un préfixe donné.
+	 * Ex: deleteByPrefix('images/') supprime tous les assets dont le
+	 * public_id commence par "images/".
+	 *
+	 * @param string $prefix Préfixe de public_id (inclut le slash final si dossier)
+	 * @return int Nombre de ressources effectivement supprimées
+	 */
+	public function deleteByPrefix(string $prefix): int
+	{
+		try {
+			$result = $this->cloudinary->adminApi()->deleteAssetsByPrefix($prefix);
+			// La réponse contient un tableau "deleted" avec public_id => "deleted"
+			return is_array($result['deleted'] ?? null) ? count($result['deleted']) : 0;
+		} catch (\Exception $e) {
+			return 0;
+		}
+	}
 }

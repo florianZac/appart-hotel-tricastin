@@ -31,18 +31,20 @@
           <div class="carousel-inner">
             {# Image principale #}
             <div class="carousel-item active">
-              <img src="/images/{{ appartement.imagePrincipale }}"
+              <img src="{{ appartement.imagePrincipale|image_url('carousel') }}"
                 class="d-block w-100 detail-carousel-img"
                 alt="{{ appartement.nom }}"
+                loading="lazy"
                 onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=500&fit=crop'">
             </div>
             {# Images de la galerie #}
             {% if appartement.galerie|length > 0 %}
               {% for image in appartement.galerie %}
               <div class="carousel-item">
-                <img src="/images/{{ image }}"
+                <img src="{{ image|image_url('carousel') }}"
                   class="d-block w-100 detail-carousel-img"
                   alt="{{ appartement.nom }}"
+                  loading="lazy"
                   onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop'">
               </div>
               {% endfor %}
@@ -72,18 +74,20 @@
         {% if appartement.galerie|length > 0 %}
         <div class="row g-2 mt-3">
             <div class="col-3">
-              <img src="/images/{{ appartement.imagePrincipale }}"
+              <img src="{{ appartement.imagePrincipale|image_url('thumb') }}"
                     class="img-fluid rounded-3 gallery-thumb active-thumb"
                     alt="{{ appartement.nom }}"
+                    loading="lazy"
                     data-bs-target="#carouselAppart" data-bs-slide-to="0"
                     role="button"
                     onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=200&h=130&fit=crop'">
             </div>
             {% for image in appartement.galerie %}
             <div class="col-3">
-              <img src="/images/{{ image }}"
+              <img src="{{ image|image_url('thumb') }}"
                     class="img-fluid rounded-3 gallery-thumb"
                     alt="{{ appartement.nom }}"
+                    loading="lazy"
                     data-bs-target="#carouselAppart" data-bs-slide-to="{{ loop.index }}"
                     role="button"
                     onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=130&fit=crop'">

@@ -194,6 +194,18 @@ MAILER_DSN=smtp://localhost:1025
 
 ---
 
+##  Configuration Cloudynary
+
+1. Tester en dry-run pour voir les fichiers leurs chemin d'après le dossier /public/images
+
+
+php bin/console app:cloudinary:sync-images --dry-run
+
+2. lancement de l'importation Cloudinary
+
+php bin/console app:cloudinary:sync-images
+
+
 ##  Sécurité (à ajouter)
 
 Le back-office `/admin` n'est pas protégé par défaut.  

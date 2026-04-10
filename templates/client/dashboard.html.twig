@@ -17,9 +17,9 @@
 {% endblock %}
 
 {% block body %}
-<section class="client-hero">
-  <div class="container">
-    <h1>Bonjour {{ app.user.prenom }} 👋</h1>
+<section class="client-hero ">
+  <div class="container text-center">
+    <h1>Bonjour {{ app.user.prenom }}</h1>
     <p>Bienvenue dans votre espace personnel</p>
   </div>
 </section>
@@ -87,10 +87,10 @@
               </tbody>
             </table>
           </div>
-          <a href="{{ path('client_reservations') }}" class="btn btn-outline-dark btn-sm">Voir tout l'historique →</a>
+          <a href="{{ path('client_reservations') }}" class="btn btn-reserve btn-sm">Voir tout l'historique →</a>
         {% else %}
           <p class="text-muted">Aucune réservation pour le moment.</p>
-          <a href="{{ path('app_reservation') }}" class="btn btn-outline-dark">Réserver un appartement</a>
+          <a href="{{ path('app_reservation') }}" class="btn btn-reserve">Réserver un appartement</a>
         {% endif %}
       </div>
 
@@ -110,7 +110,7 @@
             </div>
           </div>
           {% endfor %}
-          <a href="{{ path('client_paiements') }}" class="btn btn-outline-dark btn-sm mt-3">Tous mes paiements →</a>
+          <a href="{{ path('client_paiements') }}" class="btn btn-reserve btn-sm mt-3">Tous mes paiements →</a>
         {% else %}
           <p class="text-muted">Aucun paiement enregistré.</p>
         {% endif %}
@@ -118,16 +118,16 @@
     </div>
 
     {# Liens rapides #}
-    <div class="row mt-4">
+    <div class="row mt-4 ">
       <div class="col-12">
-        <div class="d-flex gap-3 flex-wrap">
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
           <a href="{{ path('app_reservation') }}" class="btn btn-reserve">
             <i class="bi bi-calendar-plus"></i> Nouvelle réservation
           </a>
-          <a href="{{ path('client_paiements') }}" class="btn btn-outline-dark">
+          <a href="{{ path('client_paiements') }}" class="btn btn-reserve">
             <i class="bi bi-credit-card"></i> Mes paiements
           </a>
-          <a href="{{ path('app_contact') }}" class="btn btn-outline-dark">
+          <a href="{{ path('app_contact') }}" class="btn btn-reserve">
             <i class="bi bi-envelope"></i> Nous contacter
           </a>
         </div>

@@ -56,8 +56,9 @@
           <a href="{{ path('app_appartement_detail', {slug: appartement.slug}) }}" class="appart-card-link">
             <div class="appart-card">
               <div class="appart-card-img">
-                <img src="/images/{{ appartement.imagePrincipale }}"
+                <img src="{{ appartement.imagePrincipale|image_url('card') }}"
                   alt="{{ appartement.nom }}"
+                  loading="lazy"
                   onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop'">
                 <div class="appart-card-badge">{{ appartement.type }} — {{ appartement.surface }}{{ 'common.surface'|trans }}</div>
               </div>

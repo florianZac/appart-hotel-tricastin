@@ -20,6 +20,14 @@ services:
         arguments:
             $cloudinaryUrl: '%env(CLOUDINARY_URL)%'
 
+    App\Twig\CloudinaryExtension:
+        arguments:
+            $cloudinaryUrl: '%env(CLOUDINARY_URL)%'
+
+    App\Command\CloudinaryMigrateCommand:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
     # ---- Mailer ----
     App\Service\MailerService:
         arguments:
