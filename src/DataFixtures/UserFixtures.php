@@ -24,6 +24,7 @@ class UserFixtures extends Fixture
 		$admin->setPrenom('Florian');
 		$admin->setEmail('admin@appart-hotel-tricastin.fr');
 		$admin->setTelephone('06 00 00 00 01');
+		$admin->setIsActive(true);
 		$admin->setRoles(['ROLE_ADMIN']);
 		$admin->setPassword($this->passwordHasher->hashPassword($admin, 'Admin@2026!'));
 		$manager->persist($admin);
@@ -35,6 +36,7 @@ class UserFixtures extends Fixture
 		$client->setPrenom('Marie');
 		$client->setEmail('marie.dupont@email.fr');
 		$client->setTelephone('06 12 34 56 78');
+		$client->setIsActive(true);
 		$client->setRoles([]);
 		$client->setPassword($this->passwordHasher->hashPassword($client, 'Client@2026!'));
 		$manager->persist($client);
@@ -46,6 +48,7 @@ class UserFixtures extends Fixture
 		$client2->setPrenom('Jean');
 		$client2->setEmail('jean.martin@email.fr');
 		$client2->setTelephone('06 98 76 54 32');
+		$client2->setIsActive(true);
 		$client2->setRoles([]);
 		$client2->setPassword($this->passwordHasher->hashPassword($client2, 'Client@2026!'));
 		$manager->persist($client2);

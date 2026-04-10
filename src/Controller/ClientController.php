@@ -96,4 +96,6 @@ class ClientController extends AbstractController
 			'payments' => $payments,
 		]);
 	}
+
+
 }

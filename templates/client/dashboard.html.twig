@@ -19,8 +19,9 @@
 {% block body %}
 <section class="client-hero ">
   <div class="container text-center">
-    <h1>Bonjour {{ app.user.prenom }}</h1>
-    <p>Bienvenue dans votre espace personnel</p>
+    <h1>{{ app.request.locale == 'fr' ? 'Bonjour ' : 'Hello ' }} {{ app.user.prenom }}</h1>
+    <p> {{ app.request.locale == 'fr' ? 'Bienvenue dans votre espace personnel' : 'Welcome to your personal space' }}
+    </p>
   </div>
 </section>
 
@@ -31,19 +32,19 @@
       <div class="col-md-4">
         <div class="stat-card">
           <h3>{{ totalReservations }}</h3>
-          <p>Réservation{{ totalReservations > 1 ? 's' : '' }} au total</p>
+          <p>{{ app.request.locale == 'fr' ? 'Réservation ' : 'booking ' }} {{ totalReservations > 1 ? 's' : '' }} {{ app.request.locale == 'fr' ? ' au total' : ' in all' }}</p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="stat-card">
           <h3>{{ reservationsActives }}</h3>
-          <p>Réservation{{ reservationsActives > 1 ? 's' : '' }} active{{ reservationsActives > 1 ? 's' : '' }}</p>
+          <p> {{ app.request.locale == 'fr' ? 'Réservation ' : 'booking ' }}{{ reservationsActives > 1 ? 's' : '' }} active{{ reservationsActives > 1 ? 's' : '' }}</p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="stat-card" {% if paiementsEnAttente > 0 %}style="border-left-color: #e74c3c;"{% endif %}>
           <h3>{{ paiementsEnAttente }}</h3>
-          <p>Paiement{{ paiementsEnAttente > 1 ? 's' : '' }} en attente</p>
+          <p>{{ app.request.locale == 'fr' ? 'Paiement ' : 'Payment ' }} {{ paiementsEnAttente > 1 ? 's' : '' }}   {{ app.request.locale == 'fr' ? ' en attente ' : ' awaiting' }}   </p>
         </div>
       </div>
     </div>
@@ -51,15 +52,15 @@
     {# Dernières réservations #}
     <div class="row">
       <div class="col-lg-7 mb-4">
-        <h2 class="section-title">Mes dernières réservations</h2>
+        <h2 class="section-title"> {{ app.request.locale == 'fr' ? 'Mes dernières réservations' : 'My last reservations' }}</h2>
         {% if reservations|length > 0 %}
           <div class="table-responsive">
             <table class="table table-hover align-middle">
               <thead class="table-light">
                 <tr>
-                  <th>Appartement</th>
-                  <th>Dates</th>
-                  <th>Statut</th>
+                  <th>{{ app.request.locale == 'fr' ? 'Appartement' : 'apartment' }} </th>
+                  <th>{{ app.request.locale == 'fr' ? 'Dates' : 'Dates' }}</th>
+                  <th>{{ app.request.locale == 'fr' ? 'Statut' : 'Status' }}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -87,16 +88,20 @@
               </tbody>
             </table>
           </div>
-          <a href="{{ path('client_reservations') }}" class="btn btn-reserve btn-sm">Voir tout l'historique →</a>
+          <a href="{{ path('client_reservations') }}" class="btn btn-reserve btn-sm"> 
+            {{ app.request.locale == 'fr' ? "Voir tout l'historique" : 'See the entire history' }}
+          </a>
         {% else %}
-          <p class="text-muted">Aucune réservation pour le moment.</p>
-          <a href="{{ path('app_reservation') }}" class="btn btn-reserve">Réserver un appartement</a>
+          <p class="text-muted">{{ app.request.locale == 'fr' ? "Aucune réservation pour le moment." : 'No reservations for the moment.' }}</p>
+          <a href="{{ path('app_reservation') }}" class="btn btn-reserve">
+            {{ app.request.locale == 'fr' ? "Réserver un appartement" : 'book an apartment' }}
+          </a>
         {% endif %}
       </div>
 
       {# Derniers paiements #}
       <div class="col-lg-5 mb-4">
-        <h2 class="section-title">Mes derniers paiements</h2>
+        <h2 class="section-title">  {{ app.request.locale == 'fr' ? "Mes derniers paiements" : 'My last payments' }} </h2>
         {% if payments|length > 0 %}
           {% for p in payments %}
           <div class="d-flex justify-content-between align-items-center border-bottom py-2">
@@ -110,25 +115,44 @@
             </div>
           </div>
           {% endfor %}
-          <a href="{{ path('client_paiements') }}" class="btn btn-reserve btn-sm mt-3">Tous mes paiements →</a>
+          <a href="{{ path('client_paiements') }}" class="btn btn-reserve btn-sm mt-3">
+            {{ app.request.locale == 'fr' ? "Tous mes paiements" : 'all my payments' }} 
+          </a>
         {% else %}
-          <p class="text-muted">Aucun paiement enregistré.</p>
+          <p class="text-muted"> {{ app.request.locale == 'fr' ? "Aucun paiement enregistré." : 'No payments on file.' }} </p>
         {% endif %}
       </div>
     </div>
 
     {# Liens rapides #}
-    <div class="row mt-4 ">
+    <div class="row mt-4">
       <div class="col-12">
         <div class="d-flex justify-content-center gap-3 flex-wrap">
           <a href="{{ path('app_reservation') }}" class="btn btn-reserve">
-            <i class="bi bi-calendar-plus"></i> Nouvelle réservation
+            <i class="bi bi-calendar-plus"></i> {{ app.request.locale == 'fr' ? "Nouvelle réservation" : 'new booking' }} 
           </a>
+
           <a href="{{ path('client_paiements') }}" class="btn btn-reserve">
-            <i class="bi bi-credit-card"></i> Mes paiements
+            <i class="bi bi-credit-card"></i> {{ app.request.locale == 'fr' ? "Mes paiements" : 'my payments' }} 
           </a>
+
+          <a href="{{ path('client_profile_edit') }}" class="btn btn btn-reserve">
+            <i class="bi bi-person-gear"></i> {{ app.request.locale == 'fr' ? "Modifier mon profil" : 'change my profile' }} 
+          </a>
+
+          <form method="post"
+              action="{{ path('client_profile_disable') }}"
+              onsubmit="return confirm(
+                {{ app.request.locale == 'fr' ? "Voulez-vous vraiment désactiver votre compte ?" : 'Are you sure you want to deactivate your account?' }}
+              );">
+            <input type="hidden" name="_token" value="{{ csrf_token('disable_account') }}">
+            <button class="btn btn btn-reserve">
+              <i class="bi bi-person-x"></i>{{ app.request.locale == 'fr' ? "Désactiver mon compte" : 'deactivate my account' }}
+            </button>
+          </form>
+
           <a href="{{ path('app_contact') }}" class="btn btn-reserve">
-            <i class="bi bi-envelope"></i> Nous contacter
+            <i class="bi bi-envelope"></i> {{ app.request.locale == 'fr' ? "Nous contacter" : 'contact us' }}
           </a>
         </div>
       </div>
