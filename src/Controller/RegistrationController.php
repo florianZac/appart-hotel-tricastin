@@ -38,6 +38,15 @@ class RegistrationController extends AbstractController
 			if ($user->getTelephone()) {
 				$user->setTelephone(strip_tags(trim($user->getTelephone())));
 			}
+			if ($user->getAdresse()) {
+				$user->setAdresse(strip_tags(trim($user->getAdresse())));
+			}
+			if ($user->getVille()) {
+				$user->setVille(strip_tags(trim($user->getVille())));
+			}
+			if ($user->getCodePostal()) {
+				$user->setCodePostal(strip_tags(trim($user->getCodePostal())));
+			}
 
 			// Hasher le mot de passe
 			$hashedPassword = $passwordHasher->hashPassword(

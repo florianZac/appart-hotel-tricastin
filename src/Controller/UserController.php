@@ -18,7 +18,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * - Désactivation du compte (client)
  * - Administration des utilisateurs (admin : liste, activer/désactiver)
  */
-
 final class UserController extends AbstractController
 {
 	// =========================================================================
@@ -51,6 +50,15 @@ final class UserController extends AbstractController
 			$user->setEmail(strip_tags(trim($user->getEmail())));
 			if ($user->getTelephone()) {
 				$user->setTelephone(strip_tags(trim($user->getTelephone())));
+			}
+			if ($user->getAdresse()) {
+				$user->setAdresse(strip_tags(trim($user->getAdresse())));
+			}
+			if ($user->getVille()) {
+				$user->setVille(strip_tags(trim($user->getVille())));
+			}
+			if ($user->getCodePostal()) {
+				$user->setCodePostal(strip_tags(trim($user->getCodePostal())));
 			}
 
 			$em->flush();
@@ -96,13 +104,9 @@ final class UserController extends AbstractController
 		$user->setIsActive(false);
 		$em->flush();
 
-		// Invalider la session pour forcer la déconnexion
-		$request->getSession()->invalidate();
-		$this->container->get('security.token_storage')->setToken(null);
-
-		$this->addFlash('warning', 'Votre compte a été désactivé. Contactez-nous pour le réactiver.');
-
-		return $this->redirectToRoute('app_login');
+		// Rediriger vers la déconnexion — Symfony gère la session proprement.
+		// Le UserChecker empêchera toute reconnexion.
+		return $this->redirectToRoute('app_logout');
 	}
 
 	// =========================================================================
@@ -189,6 +193,15 @@ final class UserController extends AbstractController
 			$user->setEmail(strip_tags(trim($user->getEmail())));
 			if ($user->getTelephone()) {
 				$user->setTelephone(strip_tags(trim($user->getTelephone())));
+			}
+			if ($user->getAdresse()) {
+				$user->setAdresse(strip_tags(trim($user->getAdresse())));
+			}
+			if ($user->getVille()) {
+				$user->setVille(strip_tags(trim($user->getVille())));
+			}
+			if ($user->getCodePostal()) {
+				$user->setCodePostal(strip_tags(trim($user->getCodePostal())));
 			}
 
 			$em->flush();

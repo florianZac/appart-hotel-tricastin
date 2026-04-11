@@ -77,6 +77,49 @@ class ProfileType extends AbstractType
 					'class'       => 'form-control',
 					'maxlength'   => 20,
 				],
+			])
+			->add('adresse', TextType::class, [
+				'label'    => 'Adresse',
+				'required' => false,
+				'attr'     => [
+					'placeholder' => '12 rue de la Paix',
+					'class'       => 'form-control',
+					'maxlength'   => 255,
+				],
+				'constraints' => [
+					new Length(['max' => 255]),
+				],
+			])
+			->add('ville', TextType::class, [
+				'label'    => 'Ville',
+				'required' => false,
+				'attr'     => [
+					'placeholder' => 'Pierrelatte',
+					'class'       => 'form-control',
+					'maxlength'   => 100,
+				],
+				'constraints' => [
+					new Length(['max' => 100]),
+					new Regex([
+						'pattern' => '/^[\p{L}\s\-\']+$/u',
+						'message' => 'La ville ne doit contenir que des lettres.',
+					]),
+				],
+			])
+			->add('codePostal', TextType::class, [
+				'label'    => 'Code postal',
+				'required' => false,
+				'attr'     => [
+					'placeholder' => '26700',
+					'class'       => 'form-control',
+					'maxlength'   => 5,
+				],
+				'constraints' => [
+					new Regex([
+						'pattern' => '/^\d{5}$/',
+						'message' => 'Le code postal doit contenir 5 chiffres.',
+					]),
+				],
 			]);
 
 		// Seul un admin peut modifier les rôles

@@ -41,6 +41,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 	#[Assert\Regex(pattern: '/^(\+33|0)[1-9](\s?\d{2}){4}$/', message: 'Le numéro de téléphone n\'est pas valide (format français attendu).')]
 	private ?string $telephone = null;
 
+	#[ORM\Column(length: 255, nullable: true)]
+	#[Assert\Length(max: 255, maxMessage: 'L\'adresse ne doit pas dépasser {{ limit }} caractères.')]
+	private ?string $adresse = null;
+
+	#[ORM\Column(length: 100, nullable: true)]
+	#[Assert\Length(max: 100, maxMessage: 'La ville ne doit pas dépasser {{ limit }} caractères.')]
+	#[Assert\Regex(pattern: '/^[\p{L}\s\-\']+$/u', message: 'La ville ne doit contenir que des lettres.')]
+	private ?string $ville = null;
+
+	#[ORM\Column(length: 10, nullable: true)]
+	#[Assert\Regex(pattern: '/^\d{5}$/', message: 'Le code postal doit contenir 5 chiffres.')]
+	private ?string $codePostal = null;
+
 	/** @var list<string> The user roles */
 	#[ORM\Column]
 	private array $roles = [];
@@ -89,6 +102,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 	public function getTelephone(): ?string { return $this->telephone; }
 	public function setTelephone(?string $telephone): static { $this->telephone = $telephone; return $this; }
+
+	public function getAdresse(): ?string { return $this->adresse; }
+	public function setAdresse(?string $adresse): static { $this->adresse = $adresse; return $this; }
+
+	public function getVille(): ?string { return $this->ville; }
+	public function setVille(?string $ville): static { $this->ville = $ville; return $this; }
+
+	public function getCodePostal(): ?string { return $this->codePostal; }
+	public function setCodePostal(?string $codePostal): static { $this->codePostal = $codePostal; return $this; }
+
+	public function getFullAddress(): string
+	{
+		$parts = array_filter([$this->adresse, $this->codePostal, $this->ville]);
+		return implode(', ', $parts);
+	}
 
 	public function getUserIdentifier(): string
 	{
