@@ -17,19 +17,33 @@ class ContactType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'label' => 'contact.nom-form',           // clé de traduction pour le label
-                'constraints' => [new Assert\NotBlank()],           
+                'label' => 'contact.nom-form',
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['min' => 2, 'max' => 100]),
+                    new Assert\Regex([
+                        'pattern' => '/^[\p{L}\s\-\']+$/u',
+                        'message' => 'Le nom ne doit contenir que des lettres.',
+                    ]),
+                ],
                 'attr' => [
-                    'placeholder' => 'contact.nom_placeholder', // clé de traduction pour le placeholder
-                    'class' => 'form-control'
+                    'placeholder' => 'contact.nom_placeholder',
+                    'class' => 'form-control',
+                    'maxlength' => 100,
                 ],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'contact.email-form',
-                'constraints' => [new Assert\NotBlank(), new Assert\Email()],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Email(),
+                    new Assert\Length(['max' => 180]),
+                ],
                 'attr' => [ 
                     'placeholder' => 'contact.email_placeholder',
-                    'class' => 'form-control'],
+                    'class' => 'form-control',
+                    'maxlength' => 180,
+                ],
             ])
             ->add('telephone', TelType::class, [
                 'label' => 'contact.telephone-form',

@@ -31,6 +31,23 @@ class RegistrationController extends AbstractController
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
+			// Sanitize les champs texte (Point 5)
+			$user->setNom(strip_tags(trim($user->getNom())));
+			$user->setPrenom(strip_tags(trim($user->getPrenom())));
+			$user->setEmail(strip_tags(trim($user->getEmail())));
+			if ($user->getTelephone()) {
+				$user->setTelephone(strip_tags(trim($user->getTelephone())));
+			}
+			if ($user->getAdresse()) {
+				$user->setAdresse(strip_tags(trim($user->getAdresse())));
+			}
+			if ($user->getVille()) {
+				$user->setVille(strip_tags(trim($user->getVille())));
+			}
+			if ($user->getCodePostal()) {
+				$user->setCodePostal(strip_tags(trim($user->getCodePostal())));
+			}
+
 			// Hasher le mot de passe
 			$hashedPassword = $passwordHasher->hashPassword(
 				$user,

@@ -1,13 +1,37 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ app.request.locale == 'fr' ? 'Connexion' : 'Login' }} — {{ 'site.title'|trans }}{% endblock %}
+{% block title %}
+{{ app.request.locale == 'fr' ? 'Connexion' : 'Login' }} — {{ 'site.title'|trans }}
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+  .spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-top: 2px solid #000;
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin {
+    0%   { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  .login-feedback {
+    font-size: .85rem;
+    margin-top: 6px;
+  }
+</style>
+{% endblock %}
 
 {% block body %}
 <section class="page-header">
     <div class="page-header-overlay"></div>
     <div class="container">
         <h1><i class="bi bi-lock"></i> {{ app.request.locale == 'fr' ? 'Connexion' : 'Login' }}</h1>
-        <p class="lead">{{ app.request.locale == 'fr' ? 'Accédez à votre espace ' : 'Access your panel' }}</p>
+        <p class="lead">{{ app.request.locale == 'fr' ? 'Accédez à votre espace' : 'Access your panel' }}</p>
     </div>
 </section>
 
@@ -22,9 +46,10 @@
                 <i class="bi bi-person-lock"></i>
             </div>
             <h2 class="mb-1">{{ app.request.locale == 'fr' ? 'Connexion' : 'Sign in' }}</h2>
-            <p class="text-muted small">{{ app.request.locale == 'fr' ? 'Espace réservé aux administrateurs ou client ' : 'Reserved for administrators or client' }}</p>
+            <p class="text-muted small">{{ app.request.locale == 'fr' ? 'Espace réservé aux administrateurs ou clients' : 'Reserved for administrators or clients' }}</p>
           </div>
 
+          {# ================= ERROR ================= #}
           {% if error %}
             <div class="alert alert-danger d-flex align-items-center" role="alert">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -32,55 +57,65 @@
             </div>
           {% endif %}
 
-          <form method="post">
+          {# ====== FORM : method="post" — soumission classique Symfony ====== #}
+          <form method="post" id="loginForm">
+
+            {# ================= EMAIL ================= #}
             <div class="mb-3">
-                <label for="inputEmail" class="form-label">
-                  <i class="bi bi-envelope"></i> Email
-                </label>
-                <input type="email"
-                    value="{{ last_username }}"
-                    name="email"
-                    id="inputEmail"
-                    class="form-control form-control-lg"
-                    autocomplete="email"
-                    required
-                    autofocus
-                    placeholder="admin@email.com">
+              <label for="inputEmail" class="form-label">Email</label>
+
+              <input type="email"
+                     id="inputEmail"
+                     name="email"
+                     value="{{ last_username }}"
+                     class="form-control form-control-lg"
+                     autocomplete="email"
+                     required
+                     autofocus
+                     placeholder="votre@email.fr">
+
+              <div class="d-flex align-items-center gap-2 mt-2">
+                <div id="spinner" class="spinner"></div>
+                <small id="emailStatus" class="login-feedback"></small>
+              </div>
             </div>
 
+            {# ================= PASSWORD ================= #}
             <div class="mb-3">
               <label for="inputPassword" class="form-label">
-                <i class="bi bi-key"></i> {{ app.request.locale == 'fr' ? 'Mot de passe' : 'Password' }}
+                {{ app.request.locale == 'fr' ? 'Mot de passe' : 'Password' }}
               </label>
+
               <div class="input-group input-group-lg">
                 <input type="password"
-                    name="password"
-                    id="inputPassword"
-                    class="form-control"
-                    autocomplete="current-password"
-                    required
-                    placeholder="••••••••">
-                <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Afficher/masquer le mot de passe">
+                       id="inputPassword"
+                       name="password"
+                       class="form-control"
+                       autocomplete="current-password"
+                       required
+                       placeholder="••••••••">
+
+                <button type="button" class="btn btn-outline-secondary" id="togglePassword" aria-label="Afficher / masquer">
                   <i class="bi bi-eye" id="togglePasswordIcon"></i>
                 </button>
               </div>
             </div>
 
+            {# ================= REMEMBER ME ================= #}
             <div class="mb-4">
               <div class="form-check">
-                <input type="checkbox"
-                  class="form-check-input"
-                  name="_remember_me"
-                  id="rememberMe">
+                <input type="checkbox" class="form-check-input" name="_remember_me" id="rememberMe">
                 <label class="form-check-label" for="rememberMe">
                   {{ app.request.locale == 'fr' ? 'Se souvenir de moi' : 'Remember me' }}
                 </label>
               </div>
             </div>
-   
+
+            {# ================= CSRF ================= #}
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-            <button type="submit" class="btn btn-primary btn-lg w-100">
+            {# ================= SUBMIT — PAS disabled par défaut (fallback si JS off) ================= #}
+            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg w-100">
               <i class="bi bi-box-arrow-in-right"></i>
               {{ app.request.locale == 'fr' ? 'Se connecter' : 'Sign in' }}
             </button>
@@ -89,6 +124,13 @@
               {{ app.request.locale == 'fr' ? 'Pas encore inscrit ?' : 'Not registered yet?' }}
               <a href="{{ path('app_register') }}">
                 {{ app.request.locale == 'fr' ? 'Créer votre compte' : 'Create your account' }}
+              </a>
+            </p>
+
+            <p class="mt-1">
+              <a href="{{ path('app_forgot_password') }}" style="color: #c8a962; font-size: .9rem;">
+                <i class="bi bi-key"></i>
+                {{ app.request.locale == 'fr' ? 'Mot de passe oublié ?' : 'Forgot your password?' }}
               </a>
             </p>
           </form>
@@ -108,29 +150,77 @@
 
 {% block javascripts %}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  
-  const toggle = document.getElementById('togglePassword');
-  const input = document.getElementById('inputPassword');
-  const icon = document.getElementById('togglePasswordIcon');
+document.addEventListener('DOMContentLoaded', () => {
 
-  if (toggle && input && icon) {
-    toggle.addEventListener('click', function () {
-    if (input.type === 'password') {
+  const email   = document.getElementById('inputEmail');
+  const pw      = document.getElementById('inputPassword');
+  const spinner = document.getElementById('spinner');
+  const status  = document.getElementById('emailStatus');
+  const toggle  = document.getElementById('togglePassword');
+  const icon    = document.getElementById('togglePasswordIcon');
 
-        input.type = 'text';
-        icon.classList.remove('bi-eye');
-        icon.classList.add('bi-eye-slash');
+  let debounceTimer = null;
 
-      } else {
+  // =========================
+  // AJAX CHECK EMAIL (UX only — ne bloque pas la soumission)
+  // =========================
+  function checkEmail() {
+    clearTimeout(debounceTimer);
 
-        input.type = 'password';
-        icon.classList.remove('bi-eye-slash');
-        icon.classList.add('bi-eye');
+    debounceTimer = setTimeout(async () => {
+      const val = email.value.trim();
+      if (!val || !val.includes('@')) {
+        status.textContent = '';
+        return;
       }
-    });
-  }
-});
 
+      spinner.style.display = 'inline-block';
+      status.textContent = '';
+
+      try {
+        const res = await fetch('/api/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: val })
+        });
+        const data = await res.json();
+
+        if (data.exists && data.active) {
+          status.textContent = 'Compte trouvé ✔';
+          status.style.color = '#198754';
+        } else if (data.exists && !data.active) {
+          status.textContent = 'Compte désactivé ⚠';
+          status.style.color = '#e67e22';
+        } else {
+          status.textContent = 'Aucun compte associé ⚠';
+          status.style.color = '#dc3545';
+        }
+      } catch (e) {
+        status.textContent = 'Erreur serveur';
+        status.style.color = '#dc3545';
+      }
+
+      spinner.style.display = 'none';
+    }, 800);
+  }
+
+  // =========================
+  // TOGGLE PASSWORD
+  // =========================
+  toggle.addEventListener('click', () => {
+    if (pw.type === 'password') {
+      pw.type = 'text';
+      icon.classList.replace('bi-eye', 'bi-eye-slash');
+    } else {
+      pw.type = 'password';
+      icon.classList.replace('bi-eye-slash', 'bi-eye');
+    }
+  });
+
+  // =========================
+  // EVENTS
+  // =========================
+  email.addEventListener('input', checkEmail);
+});
 </script>
 {% endblock %}

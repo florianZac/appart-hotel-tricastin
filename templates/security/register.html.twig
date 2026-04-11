@@ -1,13 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription — Appart Hôtel Tricastin{% endblock %}
+{% block title %}Inscription — {{ 'site.title'|trans }}{% endblock %}
 
 {% block stylesheets %}
 <style>
   .register-section { margin-top: 100px; padding: 60px 0; }
-  .register-card { max-width: 500px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 40px; }
+  .register-card { max-width: 520px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 40px; }
   .register-card h1 { font-family: 'Cormorant Garamond', serif; color: #1a2744; text-align: center; margin-bottom: 30px; }
   .register-card .form-label { font-weight: 500; color: #1a2744; font-size: .9rem; }
+
+  /* PASSWORD RULES */
+  .password-rules { list-style: none; padding: 0; margin: 8px 0 0; }
+  .password-rules li { padding: 3px 0; font-size: .8rem; color: #999; transition: color .2s; }
+  .password-rules li.valid { color: #198754; }
+  .password-rules li.valid::before { content: "✓ "; font-weight: 700; }
+  .password-rules li.invalid { color: #dc3545; }
+  .password-rules li.invalid::before { content: "✗ "; font-weight: 700; }
+
+  /* STRENGTH BAR */
+  .strength-bar { height: 6px; background: #e9ecef; border-radius: 50px; overflow: hidden; margin-top: 8px; }
+  .strength-bar-inner { height: 100%; width: 0%; transition: width .3s, background .3s; }
+
+  /* MATCH + EMAIL FEEDBACK */
+  .password-match, .email-feedback { font-size: .8rem; margin-top: 4px; }
+
+  /* SPINNER */
+  .spinner {
+    display: none;
+    width: 16px; height: 16px;
+    border: 2px solid #ccc;
+    border-top: 2px solid #000;
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
 </style>
 {% endblock %}
 
@@ -15,9 +41,10 @@
 <section class="register-section">
   <div class="container">
     <div class="register-card">
-      <h1>Créer un compte</h1>
+      <h1>{{ app.request.locale == 'fr' ? 'Créer un compte' : 'Create an account' }}</h1>
 
-      {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+      {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'registerForm'}}) }}
+
         <div class="row g-3">
           <div class="col-6">
             {{ form_row(form.prenom) }}
@@ -27,7 +54,15 @@
           </div>
         </div>
 
-        {{ form_row(form.email) }}
+        {# ===== EMAIL + AJAX CHECK ===== #}
+        <div class="mb-3">
+          {{ form_row(form.email) }}
+          <div class="d-flex align-items-center gap-2 mt-1">
+            <div id="emailSpinner" class="spinner"></div>
+            <small id="emailMsg" class="email-feedback"></small>
+          </div>
+        </div>
+
         {{ form_row(form.telephone) }}
 
         <div class="row g-3">
@@ -39,20 +74,186 @@
           </div>
         </div>
 
+        {# Barre de force #}
+        <div class="strength-bar">
+          <div id="passwordStrength" class="strength-bar-inner"></div>
+        </div>
+
+        {# Règles temps réel #}
+        <ul class="password-rules">
+          <li id="rule-length">8 caractères minimum</li>
+          <li id="rule-upper">1 lettre majuscule</li>
+          <li id="rule-lower">1 lettre minuscule</li>
+          <li id="rule-number">2 chiffres minimum</li>
+          <li id="rule-special">1 caractère spécial (!@#$%...)</li>
+        </ul>
+        <div id="matchText" class="password-match"></div>
+
         <div class="my-3">
           {{ form_row(form.agreeTerms) }}
         </div>
 
-        <button type="submit" class="btn btn-reserve w-100">
-          <i class="bi bi-person-plus"></i> S'inscrire
+        <button type="submit" id="submitBtn" class="btn btn-reserve w-100" disabled>
+          <i class="bi bi-person-plus"></i>
+          {{ app.request.locale == 'fr' ? "S'inscrire" : 'Sign up' }}
         </button>
+
       {{ form_end(form) }}
 
       <p class="text-center mt-3 text-muted">
-        Déjà un compte ?
-        <a href="{{ path('app_login') }}" style="color: #c8a962; font-weight: 500;">Se connecter</a>
+        {{ app.request.locale == 'fr' ? 'Déjà un compte ?' : 'Already have an account?' }}
+        <a href="{{ path('app_login') }}" style="color: #c8a962; font-weight: 500;">
+          {{ app.request.locale == 'fr' ? 'Se connecter' : 'Sign in' }}
+        </a>
       </p>
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // =========================
+  // ÉLÉMENTS DOM
+  // =========================
+  const email     = document.getElementById("registration_email");
+  const pw1       = document.getElementById("registration_plainPassword_first");
+  const pw2       = document.getElementById("registration_plainPassword_second");
+  const submit    = document.getElementById("submitBtn");
+  const bar       = document.getElementById("passwordStrength");
+  const msg       = document.getElementById("emailMsg");
+  const spinner   = document.getElementById("emailSpinner");
+  const matchText = document.getElementById("matchText");
+
+  let debounceTimer = null;
+
+  // =========================
+  // RÈGLES PASSWORD
+  // =========================
+  const rules = {
+    length:  v => v.length >= 8,
+    upper:   v => /[A-Z]/.test(v),
+    lower:   v => /[a-z]/.test(v),
+    number:  v => (v.match(/\d/g) || []).length >= 2,
+    special: v => /[\W_]/.test(v),
+  };
+
+  // =========================
+  // FORCE MOT DE PASSE
+  // =========================
+  function calcStrength(v) {
+    let score = 0;
+    Object.values(rules).forEach(fn => { if (fn(v)) score++; });
+    return score;
+  }
+
+  // =========================
+  // MISE À JOUR PASSWORD UI
+  // =========================
+  function updatePassword() {
+    const val = pw1.value;
+
+    // Règles visuelles
+    for (const [id, fn] of Object.entries(rules)) {
+      const el = document.getElementById("rule-" + id);
+      if (!el) continue;
+      el.className = fn(val) ? "valid" : (val.length > 0 ? "invalid" : "");
+    }
+
+    // Barre de force
+    const score = calcStrength(val);
+    const pct   = (score / 5) * 100;
+    bar.style.width = pct + "%";
+
+    if (score < 2)      bar.style.background = "#dc3545";
+    else if (score < 4) bar.style.background = "#ffc107";
+    else                bar.style.background = "#198754";
+
+    // Correspondance
+    if (pw2.value.length > 0) {
+      const match = pw1.value === pw2.value;
+      matchText.textContent = match ? "✓ OK" : "✗ Pas identique";
+      matchText.style.color = match ? "#198754" : "#dc3545";
+    } else {
+      matchText.textContent = "";
+    }
+  }
+
+  // =========================
+  // AJAX CHECK EMAIL (UX : email déjà pris ?)
+  // =========================
+  function checkEmail() {
+    clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(async () => {
+      const val = email.value.trim();
+      if (!val || !val.includes("@")) {
+        msg.textContent = "";
+        return;
+      }
+
+      spinner.style.display = "inline-block";
+      msg.textContent = "";
+
+      try {
+        const res = await fetch("/api/check-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: val })
+        });
+        const data = await res.json();
+
+        if (data.exists) {
+          msg.textContent = "Email déjà utilisé ⚠";
+          msg.style.color = "#dc3545";
+        } else {
+          msg.textContent = "Email disponible ✔";
+          msg.style.color = "#198754";
+        }
+      } catch (e) {
+        msg.textContent = "Erreur serveur";
+        msg.style.color = "#dc3545";
+      }
+
+      spinner.style.display = "none";
+    }, 800);
+  }
+
+  // =========================
+  // VALIDATION GLOBALE DU FORMULAIRE
+  // =========================
+  function validateForm() {
+    const pwValid =
+      Object.values(rules).every(fn => fn(pw1.value)) &&
+      pw1.value === pw2.value;
+
+    const emailOk = email.value.length > 3 && email.value.includes("@");
+
+    submit.disabled = !(pwValid && emailOk);
+  }
+
+  // =========================
+  // EVENTS
+  // =========================
+  email.addEventListener("input", () => {
+    checkEmail();
+    validateForm();
+  });
+
+  pw1.addEventListener("input", () => {
+    updatePassword();
+    validateForm();
+  });
+
+  pw2.addEventListener("input", () => {
+    updatePassword();
+    validateForm();
+  });
+
+  // Init
+  submit.disabled = true;
+});
+</script>
 {% endblock %}
