@@ -30,8 +30,8 @@ Projet monolithique **Symfony 7** avec **Bootstrap 5** (front + back dans le mê
 | **CSS**        | Bootstrap 5.3 + CSS custom |
 | **Icons**      | Bootstrap Icons            |
 | **Fonts**      | Cormorant Garamond + Montserrat |
-| **ORM**        | Doctrine ORM               |
-| **BDD**        | SQLite (dev) / MySQL / PostgreSQL |
+| **ORM**        | Doctrine ORM                    |
+| **BDD**        | MySQL                           |
 | **JS**         | Vanilla JS (scroll reveal, navbar) |
 | **Mailer**     | Symfony Mailer             |
 
