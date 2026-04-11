@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Reservation;
+use App\Entity\User;
 use App\Form\ReservationType;
+use App\Repository\UserRepository;
 use App\Repository\AppartementRepository;
 use App\Repository\LocalisationRepository;
 use App\Service\MailerService;
@@ -21,7 +23,8 @@ class ReservationController extends AbstractController
 		Request $request,
 		EntityManagerInterface $em,
 		AppartementRepository $appartementRepo,
-		MailerService $mailerService
+		MailerService $mailerService,
+		User $user
 	): Response {
 		$reservation = new Reservation();
 
@@ -43,9 +46,13 @@ class ReservationController extends AbstractController
 			$reservation->setUser($user);
 			if (method_exists($user, 'getNom')) {
 				$reservation->setNom($user->getNom());
+			}
+			if (method_exists($user, 'getPrenom')) {
 				$reservation->setPrenom($user->getPrenom());
 			}
-			$reservation->setEmail($user->getEmail());
+			if (method_exists($user, 'getEmail')) {
+				$reservation->setEmail($user->getEmail());
+			}
 			if (method_exists($user, 'getTelephone') && $user->getTelephone()) {
 				$reservation->setTelephone($user->getTelephone());
 			}
@@ -58,6 +65,14 @@ class ReservationController extends AbstractController
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
+			// Sanitize les données texte (Point 5)
+			$reservation->setNom(strip_tags(trim($reservation->getNom())));
+			$reservation->setPrenom(strip_tags(trim($reservation->getPrenom())));
+			$reservation->setEmail(strip_tags(trim($reservation->getEmail())));
+			if ($reservation->getTelephone()) {
+				$reservation->setTelephone(strip_tags(trim($reservation->getTelephone())));
+			}
+
 			// Associer l'utilisateur connecté
 			if ($user) {
 				$reservation->setUser($user);

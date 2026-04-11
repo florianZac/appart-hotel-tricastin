@@ -91,6 +91,13 @@
                 {{ app.request.locale == 'fr' ? 'Créer votre compte' : 'Create your account' }}
               </a>
             </p>
+
+            <p class="mt-1">
+              <a href="{{ path('app_forgot_password') }}" style="color: #c8a962; font-size: .9rem;">
+                <i class="bi bi-key"></i>
+                {{ app.request.locale == 'fr' ? 'Mot de passe oublié ?' : 'Forgot your password?' }}
+              </a>
+            </p>
           </form>
 
           <div class="text-center mt-4">

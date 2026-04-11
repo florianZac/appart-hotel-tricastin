@@ -129,8 +129,20 @@
         <i class="bi bi-calendar3"></i>
         Calendrier
       </a>
-      
+
+      <a class="nav-link {% if app.request.attributes.get('_route') in ['admin_users', 'admin_user_edit'] %}active{% endif %}"
+         href="{{ path('admin_users') }}">
+        <i class="bi bi-people"></i>
+        Utilisateurs
+      </a>
+
       <div class="nav-divider"></div>
+
+      <a class="nav-link {% if app.request.attributes.get('_route') == 'client_profile_edit' %}active{% endif %}"
+         href="{{ path('client_profile_edit') }}">
+        <i class="bi bi-person-gear"></i>
+        Mon profil
+      </a>
 
       <a class="nav-link" href="{{ path('app_home') }}" target="_blank">
         <i class="bi bi-box-arrow-up-right"></i>

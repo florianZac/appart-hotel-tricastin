@@ -20,19 +20,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 	private ?int $id = null;
 
 	#[ORM\Column(length: 100)]
-	#[Assert\NotBlank]
+	#[Assert\NotBlank(message: 'Le nom est obligatoire.')]
+	#[Assert\Length(min: 2, max: 100, minMessage: 'Le nom doit contenir au moins {{ limit }} caractères.')]
+	#[Assert\Regex(pattern: '/^[\p{L}\s\-\']+$/u', message: 'Le nom ne doit contenir que des lettres, espaces, tirets ou apostrophes.')]
 	private ?string $nom = null;
 
 	#[ORM\Column(length: 100)]
-	#[Assert\NotBlank]
+	#[Assert\NotBlank(message: 'Le prénom est obligatoire.')]
+	#[Assert\Length(min: 2, max: 100, minMessage: 'Le prénom doit contenir au moins {{ limit }} caractères.')]
+	#[Assert\Regex(pattern: '/^[\p{L}\s\-\']+$/u', message: 'Le prénom ne doit contenir que des lettres, espaces, tirets ou apostrophes.')]
 	private ?string $prenom = null;
 
 	#[ORM\Column(length: 180)]
-	#[Assert\NotBlank]
-	#[Assert\Email]
+	#[Assert\NotBlank(message: 'L\'email est obligatoire.')]
+	#[Assert\Email(message: 'L\'adresse email "{{ value }}" n\'est pas valide.')]
+	#[Assert\Length(max: 180)]
 	private ?string $email = null;
 
 	#[ORM\Column(length: 20, nullable: true)]
+	#[Assert\Regex(pattern: '/^(\+33|0)[1-9](\s?\d{2}){4}$/', message: 'Le numéro de téléphone n\'est pas valide (format français attendu).')]
 	private ?string $telephone = null;
 
 	/** @var list<string> The user roles */
@@ -45,6 +51,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 	#[ORM\Column(type: 'boolean')]
 	private bool $isActive = true;
+
+	#[ORM\Column(length: 100, nullable: true)]
+	private ?string $resetToken = null;
+
+	#[ORM\Column(type: 'datetime_immutable', nullable: true)]
+	private ?\DateTimeImmutable $resetTokenExpiresAt = null;
 
 	#[ORM\Column(type: 'datetime_immutable')]
 	private ?\DateTimeImmutable $createdAt = null;
@@ -140,6 +152,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 		$this->isActive = $isActive;
 
 		return $this;
+	}
+
+	public function getResetToken(): ?string
+	{
+		return $this->resetToken;
+	}
+
+	public function setResetToken(?string $resetToken): self
+	{
+		$this->resetToken = $resetToken;
+		return $this;
+	}
+
+	public function getResetTokenExpiresAt(): ?\DateTimeImmutable
+	{
+		return $this->resetTokenExpiresAt;
+	}
+
+	public function setResetTokenExpiresAt(?\DateTimeImmutable $resetTokenExpiresAt): self
+	{
+		$this->resetTokenExpiresAt = $resetTokenExpiresAt;
+		return $this;
+	}
+
+	public function isResetTokenValid(): bool
+	{
+		return $this->resetToken !== null
+			&& $this->resetTokenExpiresAt !== null
+			&& $this->resetTokenExpiresAt > new \DateTimeImmutable();
 	}
 
 }

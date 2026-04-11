@@ -142,13 +142,10 @@
 
           <form method="post"
               action="{{ path('client_profile_disable') }}"
-              onsubmit="return confirm(
-                {{ app.request.locale == 'fr' ? "Voulez-vous vraiment désactiver votre compte ?" : 'Are you sure you want to deactivate your account?' }}
-              );">
+              onsubmit="return confirm('{{ app.request.locale == 'fr' ? 'Voulez-vous vraiment désactiver votre compte ? Vous ne pourrez plus vous connecter.' : 'Are you sure you want to deactivate your account? You will no longer be able to log in.' }}');">
             <input type="hidden" name="_token" value="{{ csrf_token('disable_account') }}">
-            <button class="btn btn btn-reserve">
-              <i class="bi bi-person-x"></i>{{ app.request.locale == 'fr' ? "Désactiver mon compte" : 'deactivate my account' }}
-            </button>
+            <button class="btn btn btn-reserve" type="submit">
+              <i class="bi bi-person-x"></i>{{ app.request.locale == 'fr' ? " Désactiver mon compte" : ' Deactivate my account' }}</button>
           </form>
 
           <a href="{{ path('app_contact') }}" class="btn btn-reserve">

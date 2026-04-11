@@ -1,0 +1,123 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des utilisateurs{% endblock %}
+
+{% block admin_body %}
+
+<div class="admin-topbar">
+  <h1>
+    <i class="bi bi-people"></i>
+    Gestion des utilisateurs
+  </h1>
+  <span class="text-muted">{{ users|length }} utilisateur{{ users|length > 1 ? 's' : '' }}</span>
+</div>
+
+<style>
+  .user-table th { font-size: .8rem; text-transform: uppercase; color: #666; letter-spacing: .5px; }
+  .badge-role { font-size: .75rem; }
+  .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .status-dot.active { background: #198754; }
+  .status-dot.inactive { background: #dc3545; }
+  .user-actions .btn { padding: 4px 10px; font-size: .8rem; }
+</style>
+
+{% for label, messages in app.flashes %}
+  {% for message in messages %}
+    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endfor %}
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0 user-table">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Nom complet</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Rôles</th>
+            <th>Statut</th>
+            <th>Inscrit le</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr class="{{ not user.isActive ? 'table-secondary' : '' }}">
+            <td><strong>{{ user.id }}</strong></td>
+            <td>
+              <strong>{{ user.fullName|e }}</strong>
+            </td>
+            <td>
+              <a href="mailto:{{ user.email|e }}" class="text-decoration-none">
+                {{ user.email|e }}
+              </a>
+            </td>
+            <td>{{ user.telephone|default('—') }}</td>
+            <td>
+              {% for role in user.roles %}
+                {% if role == 'ROLE_ADMIN' %}
+                  <span class="badge bg-danger badge-role">Admin</span>
+                {% elseif role == 'ROLE_USER' %}
+                  <span class="badge bg-primary badge-role">Utilisateur</span>
+                {% else %}
+                  <span class="badge bg-secondary badge-role">{{ role }}</span>
+                {% endif %}
+              {% endfor %}
+            </td>
+            <td>
+              <span class="status-dot {{ user.isActive ? 'active' : 'inactive' }}"></span>
+              {{ user.isActive ? 'Actif' : 'Désactivé' }}
+            </td>
+            <td>{{ user.createdAt|date('d/m/Y') }}</td>
+            <td class="text-center user-actions">
+              <div class="d-flex justify-content-center gap-1">
+                {# Bouton modifier #}
+                <a href="{{ path('admin_user_edit', {id: user.id}) }}"
+                   class="btn btn-sm btn-outline-primary"
+                   title="Modifier">
+                  <i class="bi bi-pencil"></i>
+                </a>
+
+                {# Bouton activer/désactiver — pas sur soi-même #}
+                {% if user != app.user %}
+                  <form method="post"
+                        action="{{ path('admin_user_toggle', {id: user.id}) }}"
+                        onsubmit="return confirm('{{ user.isActive ? 'Désactiver' : 'Réactiver' }} le compte de {{ user.fullName|e('js') }} ?');"
+                        class="d-inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_user_' ~ user.id) }}">
+                    {% if user.isActive %}
+                      <button type="submit" class="btn btn-sm btn-outline-warning" title="Désactiver">
+                        <i class="bi bi-person-x"></i>
+                      </button>
+                    {% else %}
+                      <button type="submit" class="btn btn-sm btn-outline-success" title="Réactiver">
+                        <i class="bi bi-person-check"></i>
+                      </button>
+                    {% endif %}
+                  </form>
+                {% else %}
+                  <span class="btn btn-sm btn-outline-secondary disabled" title="Vous ne pouvez pas vous désactiver">
+                    <i class="bi bi-person-lock"></i>
+                  </span>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="8" class="text-center text-muted py-4">Aucun utilisateur trouvé.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

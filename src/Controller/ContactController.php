@@ -21,6 +21,13 @@ class ContactController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
+            // Sanitize les champs (Point 5)
+            $data['nom']       = strip_tags(trim($data['nom']));
+            $data['email']     = strip_tags(trim($data['email']));
+            $data['sujet']     = strip_tags(trim($data['sujet']));
+            $data['message']   = strip_tags(trim($data['message']));
+            $data['telephone'] = isset($data['telephone']) ? strip_tags(trim($data['telephone'])) : null;
+
             try {
                 $email = (new Email())
                     ->from($data['email'])

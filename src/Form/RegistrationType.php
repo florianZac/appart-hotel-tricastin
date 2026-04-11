@@ -15,6 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class RegistrationType extends AbstractType
 {
@@ -23,20 +24,36 @@ class RegistrationType extends AbstractType
 		$builder
 			->add('nom', TextType::class, [
 				'label' => 'Nom',
-				'attr'  => ['placeholder' => 'Nom de famille', 'class' => 'form-control'],
+				'attr'  => ['placeholder' => 'Nom de famille', 'class' => 'form-control', 'maxlength' => 100],
+				'constraints' => [
+					new NotBlank(['message' => 'Le nom est obligatoire.']),
+					new Length(['min' => 2, 'max' => 100]),
+					new Regex([
+						'pattern' => '/^[\p{L}\s\-\']+$/u',
+						'message' => 'Le nom ne doit contenir que des lettres.',
+					]),
+				],
 			])
 			->add('prenom', TextType::class, [
 				'label' => 'Prénom',
-				'attr'  => ['placeholder' => 'Prénom', 'class' => 'form-control'],
+				'attr'  => ['placeholder' => 'Prénom', 'class' => 'form-control', 'maxlength' => 100],
+				'constraints' => [
+					new NotBlank(['message' => 'Le prénom est obligatoire.']),
+					new Length(['min' => 2, 'max' => 100]),
+					new Regex([
+						'pattern' => '/^[\p{L}\s\-\']+$/u',
+						'message' => 'Le prénom ne doit contenir que des lettres.',
+					]),
+				],
 			])
 			->add('email', EmailType::class, [
 				'label' => 'Email',
-				'attr'  => ['placeholder' => 'email@exemple.fr', 'class' => 'form-control'],
+				'attr'  => ['placeholder' => 'email@exemple.fr', 'class' => 'form-control', 'id' => 'registration_email'],
 			])
 			->add('telephone', TelType::class, [
 				'label'    => 'Téléphone',
 				'required' => false,
-				'attr'     => ['placeholder' => '06 12 34 56 78', 'class' => 'form-control'],
+				'attr'     => ['placeholder' => '06 12 34 56 78', 'class' => 'form-control', 'maxlength' => 20],
 			])
 			->add('plainPassword', RepeatedType::class, [
 				'type'            => PasswordType::class,
@@ -55,6 +72,10 @@ class RegistrationType extends AbstractType
 						'min'        => 8,
 						'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères',
 						'max'        => 255,
+					]),
+					new Regex([
+						'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d{2,})(?=.*[\W_]).{8,}$/',
+						'message' => 'Le mot de passe doit contenir : 1 majuscule, 1 minuscule, 2 chiffres et 1 caractère spécial.',
 					]),
 				],
 			])

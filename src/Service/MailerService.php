@@ -220,4 +220,25 @@ class MailerService
 
 		$this->mailer->send($email);
 	}
+
+	/**
+	 * Email de réinitialisation du mot de passe (Point 7)
+	 */
+	public function sendPasswordResetEmail(User $user, string $token): void
+	{
+		$html = $this->twig->render('emails/reset_password.html.twig', [
+			'user'      => $user,
+			'token'     => $token,
+			'app_url'   => $this->appUrl,
+			'reset_url' => $this->appUrl . '/reinitialiser-mot-de-passe/' . $token,
+		]);
+
+		$email = (new Email())
+			->from(self::NOREPLY_EMAIL)
+			->to($user->getEmail())
+			->subject('Réinitialisation de votre mot de passe — ' . self::SITE_NAME)
+			->html($html);
+
+		$this->mailer->send($email);
+	}
 }

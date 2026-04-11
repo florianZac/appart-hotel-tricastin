@@ -266,7 +266,7 @@ class AdminController extends AbstractController
 		}
 
 		$data = json_decode($request->getContent(), true);
-		$urlToDelete = $data['url'] ?? null;
+		$urlToDelete = isset($data['url']) ? filter_var($data['url'], FILTER_SANITIZE_URL) : null;
 
 		if (!$urlToDelete) {
 			return new JsonResponse(['error' => 'URL manquante'], 400);
@@ -343,7 +343,11 @@ class AdminController extends AbstractController
 	): JsonResponse {
 		$data = json_decode($request->getContent(), true);
 
-		$appartement = $appartementRepo->find($data['appartement_id'] ?? 0);
+		if (!is_array($data)) {
+			return new JsonResponse(['error' => 'Données invalides'], 400);
+		}
+
+		$appartement = $appartementRepo->find((int) ($data['appartement_id'] ?? 0));
 		if (!$appartement) {
 			return new JsonResponse(['error' => 'Appartement non trouvé'], 404);
 		}
@@ -353,7 +357,7 @@ class AdminController extends AbstractController
 		$dispo->setDateDebut(new \DateTime($data['date_debut']));
 		$dispo->setDateFin(new \DateTime($data['date_fin']));
 		$dispo->setStatut($data['statut'] ?? Disponibilite::STATUT_BLOQUE);
-		$dispo->setNote($data['note'] ?? null);
+		$dispo->setNote(isset($data['note']) ? strip_tags(trim($data['note'])) : null);
 
 		$em->persist($dispo);
 		$em->flush();

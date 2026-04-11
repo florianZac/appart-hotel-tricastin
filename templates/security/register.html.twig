@@ -8,6 +8,13 @@
   .register-card { max-width: 500px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 40px; }
   .register-card h1 { font-family: 'Cormorant Garamond', serif; color: #1a2744; text-align: center; margin-bottom: 30px; }
   .register-card .form-label { font-weight: 500; color: #1a2744; font-size: .9rem; }
+  .password-rules { list-style: none; padding: 0; margin: 8px 0 0; }
+  .password-rules li { padding: 3px 0; font-size: .8rem; color: #999; transition: color .3s; }
+  .password-rules li.valid { color: #198754; }
+  .password-rules li.valid::before { content: '✓ '; font-weight: 700; }
+  .password-rules li.invalid { color: #dc3545; }
+  .password-rules li.invalid::before { content: '✗ '; font-weight: 700; }
+  .email-feedback { font-size: .8rem; margin-top: 4px; }
 </style>
 {% endblock %}
 
@@ -17,7 +24,7 @@
     <div class="register-card">
       <h1>Créer un compte</h1>
 
-      {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+      {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'registerForm'}}) }}
         <div class="row g-3">
           <div class="col-6">
             {{ form_row(form.prenom) }}
@@ -28,6 +35,8 @@
         </div>
 
         {{ form_row(form.email) }}
+        <div class="email-feedback" id="emailFeedback"></div>
+
         {{ form_row(form.telephone) }}
 
         <div class="row g-3">
@@ -38,6 +47,16 @@
             {{ form_row(form.plainPassword.second) }}
           </div>
         </div>
+
+        {# Indicateurs regex temps réel (Point 6) #}
+        <ul class="password-rules" id="passwordRules">
+          <li id="rule-length">8 caractères minimum</li>
+          <li id="rule-uppercase">1 lettre majuscule</li>
+          <li id="rule-lowercase">1 lettre minuscule</li>
+          <li id="rule-numbers">2 chiffres minimum</li>
+          <li id="rule-special">1 caractère spécial (!@#$%...)</li>
+        </ul>
+        <div class="email-feedback" id="passwordMatch" style="margin-top: 8px;"></div>
 
         <div class="my-3">
           {{ form_row(form.agreeTerms) }}
@@ -55,4 +74,73 @@
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // ============================
+  // Validation mot de passe (Point 6)
+  // ============================
+  const pwFirst  = document.getElementById('registration_plainPassword_first');
+  const pwSecond = document.getElementById('registration_plainPassword_second');
+  const matchDiv = document.getElementById('passwordMatch');
+
+  const rules = {
+    'rule-length':    (v) => v.length >= 8,
+    'rule-uppercase': (v) => /[A-Z]/.test(v),
+    'rule-lowercase': (v) => /[a-z]/.test(v),
+    'rule-numbers':   (v) => (v.match(/\d/g) || []).length >= 2,
+    'rule-special':   (v) => /[\W_]/.test(v),
+  };
+
+  function validatePassword() {
+    if (!pwFirst) return;
+    const val = pwFirst.value;
+
+    for (const [id, test] of Object.entries(rules)) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const ok = test(val);
+      el.className = ok ? 'valid' : (val.length > 0 ? 'invalid' : '');
+    }
+
+    // Correspondance des 2 champs
+    if (pwSecond && pwSecond.value.length > 0) {
+      const match = val === pwSecond.value;
+      matchDiv.textContent = match ? '✓ Les mots de passe correspondent' : '✗ Les mots de passe ne correspondent pas';
+      matchDiv.style.color = match ? '#198754' : '#dc3545';
+    } else {
+      matchDiv.textContent = '';
+    }
+  }
+
+  if (pwFirst)  pwFirst.addEventListener('input', validatePassword);
+  if (pwSecond) pwSecond.addEventListener('input', validatePassword);
+
+  // ============================
+  // Validation email (Point 6)
+  // ============================
+  const emailInput    = document.getElementById('registration_email');
+  const emailFeedback = document.getElementById('emailFeedback');
+  const emailRegex    = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+
+  if (emailInput) {
+    emailInput.addEventListener('input', function () {
+      const val = emailInput.value;
+      if (val.length === 0) {
+        emailFeedback.textContent = '';
+        return;
+      }
+      if (emailRegex.test(val)) {
+        emailFeedback.textContent = '✓ Email valide';
+        emailFeedback.style.color = '#198754';
+      } else {
+        emailFeedback.textContent = '✗ Format email invalide';
+        emailFeedback.style.color = '#dc3545';
+      }
+    });
+  }
+});
+</script>
 {% endblock %}

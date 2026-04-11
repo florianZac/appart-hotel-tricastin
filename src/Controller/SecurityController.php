@@ -2,31 +2,159 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
+use App\Service\MailerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
-    {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+	#[Route(path: '/login', name: 'app_login')]
+	public function login(AuthenticationUtils $authenticationUtils): Response
+	{
+		if ($this->getUser()) {
+			return $this->redirectToRoute('client_dashboard');
+		}
 
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
+		$error = $authenticationUtils->getLastAuthenticationError();
+		$lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
-    }
+		return $this->render('security/login.html.twig', [
+			'last_username' => $lastUsername,
+			'error'         => $error,
+		]);
+	}
 
-    #[Route(path: '/logout', name: 'app_logout')]
-    public function logout(): void
-    {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
-    }
+	#[Route(path: '/logout', name: 'app_logout')]
+	public function logout(): void
+	{
+		throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+	}
+
+	// =========================================================================
+	// MOT DE PASSE OUBLIÉ (Point 7)
+	// =========================================================================
+
+	/**
+	 * Formulaire de demande de réinitialisation du mot de passe.
+	 * Génère un token unique, l'enregistre en base et envoie un email.
+	 */
+	#[Route('/mot-de-passe-oublie', name: 'app_forgot_password')]
+	public function forgotPassword(
+		Request $request,
+		UserRepository $userRepository,
+		EntityManagerInterface $em,
+		MailerService $mailerService
+	): Response {
+		if ($this->getUser()) {
+			return $this->redirectToRoute('client_dashboard');
+		}
+
+		if ($request->isMethod('POST')) {
+			$email = strip_tags(trim($request->request->get('email', '')));
+
+			if (!$this->isCsrfTokenValid('forgot_password', $request->request->get('_token'))) {
+				$this->addFlash('danger', 'Token CSRF invalide.');
+				return $this->redirectToRoute('app_forgot_password');
+			}
+
+			// Toujours afficher le même message (sécurité : pas d'énumération d'emails)
+			$successMessage = 'Si cette adresse est associée à un compte, un email de réinitialisation a été envoyé.';
+
+			if (!empty($email)) {
+				$user = $userRepository->findOneBy(['email' => $email]);
+
+				if ($user && $user->isActive()) {
+					// Générer un token sécurisé
+					$token = bin2hex(random_bytes(32));
+					$user->setResetToken($token);
+					$user->setResetTokenExpiresAt(
+						new \DateTimeImmutable('+1 hour')
+					);
+					$em->flush();
+
+					try {
+						$mailerService->sendPasswordResetEmail($user, $token);
+					} catch (\Exception $e) {
+						// Log mais ne bloque pas
+					}
+				}
+			}
+
+			$this->addFlash('success', $successMessage);
+			return $this->redirectToRoute('app_login');
+		}
+
+		return $this->render('security/forgot_password.html.twig');
+	}
+
+	/**
+	 * Réinitialisation du mot de passe via le token reçu par email.
+	 */
+	#[Route('/reinitialiser-mot-de-passe/{token}', name: 'app_reset_password')]
+	public function resetPassword(
+		string $token,
+		Request $request,
+		UserRepository $userRepository,
+		UserPasswordHasherInterface $passwordHasher,
+		EntityManagerInterface $em
+	): Response {
+		if ($this->getUser()) {
+			return $this->redirectToRoute('client_dashboard');
+		}
+
+		// Rechercher l'utilisateur par token
+		$user = $userRepository->findOneBy(['resetToken' => $token]);
+
+		if (!$user || !$user->isResetTokenValid()) {
+			$this->addFlash('danger', 'Ce lien de réinitialisation est invalide ou a expiré.');
+			return $this->redirectToRoute('app_forgot_password');
+		}
+
+		if ($request->isMethod('POST')) {
+			if (!$this->isCsrfTokenValid('reset_password', $request->request->get('_token'))) {
+				$this->addFlash('danger', 'Token CSRF invalide.');
+				return $this->redirectToRoute('app_reset_password', ['token' => $token]);
+			}
+
+			$password = $request->request->get('password', '');
+			$confirmPassword = $request->request->get('confirm_password', '');
+
+			// Validation du mot de passe
+			if (strlen($password) < 8) {
+				$this->addFlash('danger', 'Le mot de passe doit contenir au moins 8 caractères.');
+				return $this->redirectToRoute('app_reset_password', ['token' => $token]);
+			}
+
+			if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d{2,})(?=.*[\W_]).{8,}$/', $password)) {
+				$this->addFlash('danger', 'Le mot de passe doit contenir : 1 majuscule, 1 minuscule, 2 chiffres et 1 caractère spécial.');
+				return $this->redirectToRoute('app_reset_password', ['token' => $token]);
+			}
+
+			if ($password !== $confirmPassword) {
+				$this->addFlash('danger', 'Les mots de passe ne correspondent pas.');
+				return $this->redirectToRoute('app_reset_password', ['token' => $token]);
+			}
+
+			// Hasher et sauvegarder
+			$hashedPassword = $passwordHasher->hashPassword($user, $password);
+			$user->setPassword($hashedPassword);
+			$user->setResetToken(null);
+			$user->setResetTokenExpiresAt(null);
+			$em->flush();
+
+			$this->addFlash('success', 'Votre mot de passe a été réinitialisé. Vous pouvez vous connecter.');
+			return $this->redirectToRoute('app_login');
+		}
+
+		return $this->render('security/reset_password.html.twig', [
+			'token' => $token,
+		]);
+	}
 }
