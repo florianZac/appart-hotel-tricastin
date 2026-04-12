@@ -356,6 +356,10 @@ class AdminController extends AbstractController
 				'end'   => $dispo->getDateFin()->modify('+1 day')->format('Y-m-d'),
 				'color' => $dispo->getCouleur(),
 				'allDay' => true,
+				'extendedProps' => [
+					'statut' => $dispo->getStatut(),
+					'note'   => $dispo->getNote(),
+				],
 			];
 		}
 
@@ -369,6 +373,7 @@ class AdminController extends AbstractController
 	public function createDisponibilite(
 		Request $request,
 		AppartementRepository $appartementRepo,
+		DisponibiliteRepository $disponibiliteRepo,
 		EntityManagerInterface $em
 	): JsonResponse {
 		if (!$this->isAjaxRequest($request)) {
@@ -385,10 +390,21 @@ class AdminController extends AbstractController
 			return new JsonResponse(['error' => 'Appartement non trouvé'], 404);
 		}
 
+		$dateDebut = new \DateTime($data['date_debut']);
+		$dateFin   = new \DateTime($data['date_fin']);
+
+		// ── Supprimer les disponibilités qui chevauchent la période ──
+		$chevauchements = $disponibiliteRepo->findByAppartementAndPeriode(
+			$appartement->getId(), $dateDebut, $dateFin
+		);
+		foreach ($chevauchements as $ancien) {
+			$em->remove($ancien);
+		}
+
 		$dispo = new Disponibilite();
 		$dispo->setAppartement($appartement);
-		$dispo->setDateDebut(new \DateTime($data['date_debut']));
-		$dispo->setDateFin(new \DateTime($data['date_fin']));
+		$dispo->setDateDebut($dateDebut);
+		$dispo->setDateFin($dateFin);
 		$dispo->setStatut($data['statut'] ?? Disponibilite::STATUT_BLOQUE);
 		$dispo->setNote(isset($data['note']) ? strip_tags(trim($data['note'])) : null);
 

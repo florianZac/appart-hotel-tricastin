@@ -15,8 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class CalendrierController extends AbstractController
 {
   /**
-   * API publique : retourne les événements du calendrier pour un appartement
-   * Combine les réservations confirmées + les blocages manuels
+   * API publique : retourne les événements du calendrier pour un appartement.
+   * Combine les réservations confirmées + les disponibilités manuelles (admin).
    */
   #[Route('/api/disponibilites/{appartementId}', name: 'api_disponibilites', methods: ['GET'])]
   public function getDisponibilites(
@@ -38,7 +38,7 @@ class CalendrierController extends AbstractController
 
     $events = [];
 
-    // 1. Réservations confirmées → rouge + gris maintenance
+    // ── 1. Réservations confirmées en rouge
     $reservations = $reservationRepo->findConfirmeesParAppartement($appartementId, $start, $end);
 
     foreach ($reservations as $reservation) {
@@ -53,7 +53,7 @@ class CalendrierController extends AbstractController
         'extendedProps' => ['type' => 'reserve'],
       ];
 
-      // Jour de maintenance après le départ (gris)
+      // Jour de nettoyage après le départ (gris)
       $jourMaintenance = clone $reservation->getDateDepart();
       $events[] = [
         'id' => 'maint-' . $reservation->getId(),
@@ -62,21 +62,36 @@ class CalendrierController extends AbstractController
         'end' => $jourMaintenance->modify('+1 day')->format('Y-m-d'),
         'color' => '#95a5a6',
         'allDay' => true,
-        'extendedProps' => ['type' => 'maintenance'],
+        'extendedProps' => ['type' => 'nettoyage'],
       ];
     }
 
-    // 2. Blocages manuels (admin) → orange
-    $blocages = $disponibiliteRepo->findByAppartementAndPeriode($appartementId, $start, $end);
-    foreach ($blocages as $blocage) {
+    // ── 2. Disponibilités manuelles (admin) ─────────────────
+    // Affiche chaque statut avec sa couleur et son label réel
+    $disponibilites = $disponibiliteRepo->findByAppartementAndPeriode($appartementId, $start, $end);
+
+    foreach ($disponibilites as $dispo) {
+      // Mapping statut → couleur + titre pour le calendrier public
+      $color = $dispo->getCouleur();
+      $title = match ($dispo->getStatut()) {
+        Disponibilite::STATUT_DISPONIBLE => 'Disponible',
+        Disponibilite::STATUT_RESERVE    => 'Réservé',
+        Disponibilite::STATUT_NETTOYAGE  => 'Nettoyage',
+        Disponibilite::STATUT_BLOQUE     => 'Indisponible',
+        default                          => 'Indisponible',
+      };
+
       $events[] = [
-        'id' => 'bloc-' . $blocage->getId(),
-        'title' => $blocage->getNote() ?: 'Indisponible',
-        'start' => $blocage->getDateDebut()->format('Y-m-d'),
-        'end' => $blocage->getDateFin()->modify('+1 day')->format('Y-m-d'),
-        'color' => '#e67e22',
+        'id' => 'bloc-' . $dispo->getId(),
+        'title' => $title,
+        'start' => $dispo->getDateDebut()->format('Y-m-d'),
+        'end' => $dispo->getDateFin()->modify('+1 day')->format('Y-m-d'),
+        'color' => $color,
         'allDay' => true,
-        'extendedProps' => ['type' => 'bloque', 'note' => $blocage->getNote()],
+        'extendedProps' => [
+          'type' => $dispo->getStatut(),
+          'note' => $dispo->getNote(),
+        ],
       ];
     }
 

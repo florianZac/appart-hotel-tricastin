@@ -23,8 +23,7 @@ class ReservationController extends AbstractController
 		Request $request,
 		EntityManagerInterface $em,
 		AppartementRepository $appartementRepo,
-		MailerService $mailerService,
-	
+		MailerService $mailerService
 	): Response {
 		$reservation = new Reservation();
 

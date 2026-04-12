@@ -56,6 +56,7 @@ class Reservation
 	private ?\DateTimeInterface $dateDepart = null;
 
 	#[ORM\Column]
+	#[Assert\NotBlank(message: 'Veuillez indiquer le nombre de personnes.')]
 	#[Assert\Range(min: 1, max: 8)]
 	private ?int $nombrePersonnes = null;
 
