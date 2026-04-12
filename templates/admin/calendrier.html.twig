@@ -59,6 +59,7 @@
 					<select id="modalStatut" class="form-select">
 						<option value="disponible">✅ Disponible</option>
 						<option value="reserve">🔴 Réservé</option>
+						<option value="nettoyage">🧹 Nettoyage</option>
 						<option value="bloque" selected>⚙️ Bloqué / Maintenance</option>
 					</select>
 				</div>
@@ -93,151 +94,152 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const select = document.getElementById('selectAppartement');
-    const calendarWrapper = document.getElementById('calendarWrapper');
-    const noAppartement = document.getElementById('noAppartement');
-    const calendarEl = document.getElementById('calendar');
+    var select = document.getElementById('selectAppartement');
+    var calendarWrapper = document.getElementById('calendarWrapper');
+    var noAppartement = document.getElementById('noAppartement');
+    var calendarEl = document.getElementById('calendar');
 
-    const modal = new bootstrap.Modal(document.getElementById('dispoModal'));
-    const modalDateDebut = document.getElementById('modalDateDebut');
-    const modalDateFin = document.getElementById('modalDateFin');
-    const modalStatut = document.getElementById('modalStatut');
-    const modalNote = document.getElementById('modalNote');
-    const btnSave = document.getElementById('btnSave');
-    const btnDelete = document.getElementById('btnDelete');
+    var modal = new bootstrap.Modal(document.getElementById('dispoModal'));
+    var modalDateDebut = document.getElementById('modalDateDebut');
+    var modalDateFin = document.getElementById('modalDateFin');
+    var modalStatut = document.getElementById('modalStatut');
+    var modalNote = document.getElementById('modalNote');
+    var btnSave = document.getElementById('btnSave');
+    var btnDelete = document.getElementById('btnDelete');
 
-    let calendar = null;
-    let currentEventId = null;
+    var calendar = null;
+    var currentEventId = null;
 
     function initCalendar(appartementId) {
-			if (calendar) {
-				calendar.destroy();
-			}
+        if (calendar) {
+            calendar.destroy();
+        }
 
-			calendar = new FullCalendar.Calendar(calendarEl, {
-				initialView: 'dayGridMonth',
-				locale: 'fr',
-				headerToolbar: {
-					left: 'prev,next today',
-					center: 'title',
-					right: 'dayGridMonth,dayGridWeek'
-				},
-				selectable: true,
-				editable: false,
-				height: 'auto',
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'fr',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,dayGridWeek'
+            },
+            selectable: true,
+            editable: false,
+            height: 'auto',
 
-				// Charger les événements
-				events: function (info, successCallback, failureCallback) {
-					fetch('/admin/api/disponibilites/' + appartementId +
-							'?start=' + info.startStr + '&end=' + info.endStr)
-						.then(function (r) { return r.json(); })
-						.then(function (data) { successCallback(data); })
-						.catch(function (err) { failureCallback(err); });
-				},
+            // Charger les événements
+            events: function (info, successCallback, failureCallback) {
+                fetch('/admin/api/disponibilites/' + appartementId +
+                        '?start=' + info.startStr + '&end=' + info.endStr)
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) { successCallback(data); })
+                    .catch(function (err) { failureCallback(err); });
+            },
 
-				// Clic sur une date vide → créer
-				select: function (info) {
-					currentEventId = null;
-					modalDateDebut.value = info.startStr;
+            // Clic sur une date vide → créer
+            select: function (info) {
+                currentEventId = null;
+                modalDateDebut.value = info.startStr;
 
-					// FullCalendar end est exclusif, on recule d'un jour
-					var endDate = new Date(info.end);
-					endDate.setDate(endDate.getDate() - 1);
-					modalDateFin.value = endDate.toISOString().split('T')[0];
+                // FullCalendar end est exclusif, on recule d'un jour
+                var endDate = new Date(info.end);
+                endDate.setDate(endDate.getDate() - 1);
+                modalDateFin.value = endDate.toISOString().split('T')[0];
 
-					modalStatut.value = 'bloque';
-					modalNote.value = '';
-					btnDelete.classList.add('d-none');
-					modal.show();
-				},
+                modalStatut.value = 'bloque';
+                modalNote.value = '';
+                btnDelete.classList.add('d-none');
+                modal.show();
+            },
 
-				// Clic sur un événement → modifier/supprimer
-				eventClick: function (info) {
-					currentEventId = info.event.id;
-					modalDateDebut.value = info.event.startStr;
+            // Clic sur un événement → modifier/supprimer
+            eventClick: function (info) {
+                currentEventId = info.event.id;
+                modalDateDebut.value = info.event.startStr;
 
-					var endDate = new Date(info.event.end || info.event.start);
-					endDate.setDate(endDate.getDate() - 1);
-					modalDateFin.value = endDate.toISOString().split('T')[0];
+                var endDate = new Date(info.event.end || info.event.start);
+                endDate.setDate(endDate.getDate() - 1);
+                modalDateFin.value = endDate.toISOString().split('T')[0];
 
-					modalStatut.value = info.event.extendedProps.statut || 'bloque';
-					modalNote.value = info.event.extendedProps.note || '';
-					btnDelete.classList.remove('d-none');
-					modal.show();
-				},
-			});
+                // Récupérer le statut depuis extendedProps
+                modalStatut.value = info.event.extendedProps.statut || 'bloque';
+                modalNote.value = info.event.extendedProps.note || '';
+                btnDelete.classList.remove('d-none');
+                modal.show();
+            },
+        });
 
-			calendar.render();
+        calendar.render();
     }
 
     // Sélection d'un appartement
     select.addEventListener('change', function () {
-			var id = this.value;
-			if (id) {
-				calendarWrapper.style.display = 'block';
-				noAppartement.style.display = 'none';
-				initCalendar(id);
-			} else {
-				calendarWrapper.style.display = 'none';
-				noAppartement.style.display = 'block';
-			}
+        var id = this.value;
+        if (id) {
+            calendarWrapper.style.display = 'block';
+            noAppartement.style.display = 'none';
+            initCalendar(id);
+        } else {
+            calendarWrapper.style.display = 'none';
+            noAppartement.style.display = 'block';
+        }
     });
 
-	// Enregistrer
-	btnSave.addEventListener('click', function () {
-		var appartementId = select.value;
-		if (!appartementId) return;
+    // Enregistrer
+    btnSave.addEventListener('click', function () {
+        var appartementId = select.value;
+        if (!appartementId) return;
 
-		var payload = {
-			appartement_id: parseInt(appartementId),
-			date_debut: modalDateDebut.value,
-			date_fin: modalDateFin.value,
-			statut: modalStatut.value,
-			note: modalNote.value || null
-		};
+        var payload = {
+            appartement_id: parseInt(appartementId),
+            date_debut: modalDateDebut.value,
+            date_fin: modalDateFin.value,
+            statut: modalStatut.value,
+            note: modalNote.value || null
+        };
 
-		// Si modification, supprimer l'ancien d'abord
-		var promise = currentEventId
-    ? fetch('/admin/api/disponibilite/' + currentEventId, {
-        method: 'DELETE',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      })
-    : Promise.resolve();
+        // Si modification, supprimer l'ancien d'abord
+        var promise = currentEventId
+            ? fetch('/admin/api/disponibilite/' + currentEventId, {
+                method: 'DELETE',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+              })
+            : Promise.resolve();
 
-		promise.then(function () {
-			return fetch('/admin/api/disponibilite', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-Requested-With': 'XMLHttpRequest'
-				},
-				body: JSON.stringify(payload)
-			});
-		})
-		.then(function (r) { return r.json(); })
-		.then(function () {
-			modal.hide();
-			calendar.refetchEvents();
-		})
-		.catch(function (err) {
-			alert('Erreur: ' + err.message);
-		});
-	});
+        promise.then(function () {
+            return fetch('/admin/api/disponibilite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(payload)
+            });
+        })
+        .then(function (r) { return r.json(); })
+        .then(function () {
+            modal.hide();
+            calendar.refetchEvents();
+        })
+        .catch(function (err) {
+            alert('Erreur: ' + err.message);
+        });
+    });
 
-	// Supprimer
-	btnDelete.addEventListener('click', function () {
-		if (!currentEventId) return;
-		if (!confirm('Supprimer cette disponibilité ?')) return;
+    // Supprimer
+    btnDelete.addEventListener('click', function () {
+        if (!currentEventId) return;
+        if (!confirm('Supprimer cette disponibilité ?')) return;
 
-		fetch('/admin/api/disponibilite/' + currentEventId, {
-    method: 'DELETE',
-    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-		})
-			.then(function () {
-				modal.hide();
-				calendar.refetchEvents();
-			});
-	});
+        fetch('/admin/api/disponibilite/' + currentEventId, {
+            method: 'DELETE',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function () {
+            modal.hide();
+            calendar.refetchEvents();
+        });
+    });
 });
 </script>
 {% endblock %}
