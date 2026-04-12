@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Laisser un avis — {{ 'site.title'|trans }}{% endblock %}
+
+{% block stylesheets %}
+<style>
+  .avis-section { margin-top: 30px; padding: 20px 0; }
+  .avis-info { background: #f8f6f2; border-left: 4px solid #c8a962; padding: 15px 20px; border-radius: 0 8px 8px 0; margin-bottom: 25px; }
+  .avis-info strong { color: #1a2744; }
+  .star-rating { display: flex; gap: 8px; flex-direction: row-reverse; justify-content: flex-end; }
+  .star-rating input[type="radio"] { display: none; }
+  .star-rating label { font-size: 2rem; color: #ddd; cursor: pointer; transition: color .2s; }
+  .star-rating input:checked ~ label,
+  .star-rating label:hover,
+  .star-rating label:hover ~ label { color: #c8a962; }
+  .char-count { font-size: .8rem; color: #999; text-align: right; }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="page-header">
+  <div class="page-header-overlay"></div>
+  <div class="container">
+    <h1>{{ app.request.locale == 'fr' ? 'Laisser un avis' : 'Leave a review' }}</h1>
+  </div>
+</section>
+
+<section class="pb-5">
+  <div class="container">
+    <div class="row justify-content-center avis-section">
+      <div class="col-lg-6">
+        <div class="form-card p-4 p-md-5 rounded-4">
+
+          <div class="avis-info">
+            <strong><i class="bi bi-house-door"></i> {{ reservation.appartement.nom }}</strong><br>
+            <small class="text-muted">
+              {{ reservation.appartement.localisation.ville }}
+              — du {{ reservation.dateArrivee|date('d/m/Y') }} au {{ reservation.dateDepart|date('d/m/Y') }}
+              ({{ reservation.nombreNuits }} nuit{{ reservation.nombreNuits > 1 ? 's' : '' }})
+            </small>
+          </div>
+
+          {{ form_start(form, {'attr': {'id': 'avisForm', 'novalidate': 'novalidate'}}) }}
+
+          {# Note en étoiles #}
+          <div class="mb-4">
+            <label class="form-label fw-semibold" style="color: #1a2744;">
+              {{ app.request.locale == 'fr' ? 'Votre note' : 'Your rating' }}
+            </label>
+            <div class="star-rating">
+              {% for i in 5..1 %}
+                <input type="radio"
+                       name="{{ form.note.vars.full_name }}"
+                       id="star{{ i }}"
+                       value="{{ i }}"
+                       {% if form.note.vars.data == i %}checked{% endif %}>
+                <label for="star{{ i }}"><i class="bi bi-star-fill"></i></label>
+              {% endfor %}
+            </div>
+            {{ form_errors(form.note) }}
+          </div>
+
+          {# Commentaire #}
+          <div class="mb-4">
+            {{ form_label(form.contenu, null, {'label_attr': {'class': 'form-label fw-semibold', 'style': 'color: #1a2744;'}}) }}
+            {{ form_widget(form.contenu) }}
+            <div class="char-count">
+              <span id="charCount">0</span> / 1000 caractères
+            </div>
+            {{ form_errors(form.contenu) }}
+          </div>
+
+          <button type="submit" class="btn btn-reserve w-100">
+            <i class="bi bi-send"></i>
+            {{ app.request.locale == 'fr' ? 'Envoyer mon avis' : 'Submit my review' }}
+          </button>
+
+          {{ form_end(form) }}
+
+          <p class="text-center mt-3 text-muted" style="font-size: .85rem;">
+            <i class="bi bi-info-circle"></i>
+            {{ app.request.locale == 'fr'
+              ? 'Votre avis sera publié après validation par notre équipe.'
+              : 'Your review will be published after validation by our team.' }}
+          </p>
+
+          <div class="text-center mt-3">
+            <a href="{{ path('client_dashboard') }}" class="text-muted small">
+              <i class="bi bi-arrow-left"></i>
+              {{ app.request.locale == 'fr' ? 'Retour à mon espace' : 'Back to my account' }}
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const textarea = document.getElementById('{{ form.contenu.vars.id }}');
+  const counter  = document.getElementById('charCount');
+
+  if (textarea && counter) {
+    const update = () => { counter.textContent = textarea.value.length; };
+    textarea.addEventListener('input', update);
+    update();
+  }
+});
+</script>
+{% endblock %}

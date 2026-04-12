@@ -45,6 +45,7 @@ class AdminController extends AbstractController
 		$totalReservations = $reservationRepo->count([]);
 		$reservationsEnAttente = $reservationRepo->count(['statut' => Reservation::STATUT_EN_ATTENTE]);
 		$totalTemoignages = count($temoignageRepo->findActifs());
+		$temoignagesEnAttente = $temoignageRepo->countEnAttente();
 
 		// Paiements
 		$paiementsRecents = $paymentRepo->findRecents(5);
@@ -60,6 +61,7 @@ class AdminController extends AbstractController
 			'totalReservations'     => $totalReservations,
 			'reservationsEnAttente' => $reservationsEnAttente,
 			'totalTemoignages'      => $totalTemoignages,
+			'temoignagesEnAttente'  => $temoignagesEnAttente,
 			'paiementsRecents'      => $paiementsRecents,
 			'paiementsEnRetard'     => count($paiementsEnRetard),
 			'revenusMois'           => $revenusMois,

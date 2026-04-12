@@ -136,6 +136,12 @@
         Utilisateurs
       </a>
 
+      <a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_temoignages' %}active{% endif %}"
+         href="{{ path('admin_temoignages_index') }}">
+        <i class="bi bi-chat-quote"></i>
+        Témoignages
+      </a>
+
       <div class="nav-divider"></div>
 
       <a class="nav-link {% if app.request.attributes.get('_route') == 'client_profile_edit' %}active{% endif %}"

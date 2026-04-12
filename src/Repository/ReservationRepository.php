@@ -70,6 +70,7 @@ class ReservationRepository extends ServiceEntityRepository
 	 * @return Reservation[]
 	 */
 	public function findConfirmeesParAppartement(int $appartementId, \DateTimeInterface $start, \DateTimeInterface $end): array
+
 	{
 		return $this->createQueryBuilder('r')
 			->andWhere('r.appartement = :appartId')
@@ -81,6 +82,23 @@ class ReservationRepository extends ServiceEntityRepository
 			->setParameter('start', $start)
 			->setParameter('end', $end)
 			->orderBy('r.dateArrivee', 'ASC')
+			->getQuery()
+			->getResult();
+	}
+
+	/**
+	 * Réservations terminées sans email de demande d'avis envoyé
+	 * @return Reservation[]
+	 */
+	public function findSejoursTerminesSansDemandeAvis(\DateTimeInterface $avant): array
+	{
+		return $this->createQueryBuilder('r')
+			->andWhere('r.dateDepart <= :avant')
+			->andWhere('r.avisEmailEnvoye = false')
+			->andWhere('r.statut IN (:statuts)')
+			->andWhere('r.user IS NOT NULL')
+			->setParameter('avant', $avant)
+			->setParameter('statuts', [Reservation::STATUT_CONFIRMEE, Reservation::STATUT_TERMINEE])
 			->getQuery()
 			->getResult();
 	}

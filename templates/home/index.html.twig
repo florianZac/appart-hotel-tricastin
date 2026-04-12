@@ -144,6 +144,11 @@
                             <span>{{ temoignage.auteur|first|upper }}</span>
                         </div>
                         <h6 class="testimonial-name">{{ temoignage.auteur }}</h6>
+                        {% if temoignage.appartement %}
+                          <span class="badge mb-2" style="background:#c8a962;color:#1a2744;font-size:.7rem;">
+                            {{ temoignage.appartement.nom }}
+                          </span>
+                        {% endif %}
                         <div class="testimonial-stars">
                             {% for i in 1..temoignage.note %}
                                 <i class="bi bi-star-fill"></i>

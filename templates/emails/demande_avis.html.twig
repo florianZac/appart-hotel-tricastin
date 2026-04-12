@@ -1,0 +1,29 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block content %}
+<h2>Merci pour votre séjour, {{ user.prenom }} !</h2>
+
+<p>
+  Nous espérons que vous avez passé un excellent séjour à
+  <strong>{{ appartement.nom }}</strong>
+  ({{ appartement.localisation.ville }})
+  du {{ reservation.dateArrivee|date('d/m/Y') }} au {{ reservation.dateDepart|date('d/m/Y') }}.
+</p>
+
+<div class="info-box">
+  <strong>Votre avis compte !</strong><br>
+  Partagez votre expérience pour aider les futurs voyageurs
+  à découvrir nos appartements.
+</div>
+
+<p style="text-align: center; margin: 30px 0;">
+  <a href="{{ lien_avis }}" class="btn-gold">
+    Laisser un avis
+  </a>
+</p>
+
+<p style="color: #999; font-size: .85rem;">
+  Ce lien vous dirigera vers votre espace client où vous pourrez
+  noter votre séjour et partager vos impressions.
+</p>
+{% endblock %}

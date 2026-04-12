@@ -241,4 +241,34 @@ class MailerService
 
 		$this->mailer->send($email);
 	}
+
+	/**
+	 * Email de demande d'avis après séjour
+	 */
+	public function sendDemandeAvis(Reservation $reservation): void
+	{
+		$user = $reservation->getUser();
+		if (!$user) {
+			return;
+		}
+
+		$html = $this->twig->render('emails/demande_avis.html.twig', [
+			'user'        => $user,
+			'reservation' => $reservation,
+			'appartement' => $reservation->getAppartement(),
+			'lien_avis'   => $this->appUrl . '/espace-client/avis/nouveau/' . $reservation->getId(),
+			'app_url'     => $this->appUrl,
+		]);
+
+		$email = (new Email())
+			->from(self::NOREPLY_EMAIL)
+			->to($user->getEmail())
+			->subject(sprintf(
+				'Merci pour votre séjour à %s — Donnez-nous votre avis !',
+				$reservation->getAppartement()->getNom()
+			))
+			->html($html);
+
+		$this->mailer->send($email);
+	}
 }

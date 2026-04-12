@@ -1,0 +1,286 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des témoignages{% endblock %}
+
+{% block admin_body %}
+
+<div class="admin-topbar">
+  <h1>
+    <i class="bi bi-chat-quote"></i> Gestion des témoignages
+  </h1>
+  <span class="text-muted">{{ "now"|date("d/m/Y H:i") }}</span>
+</div>
+
+{# ================================================ #}
+{# STATISTIQUES RAPIDES                             #}
+{# ================================================ #}
+<div class="row g-3 mb-4">
+  <div class="col-sm-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center">
+        <h3 class="text-warning">{{ en_attente|length }}</h3>
+        <small class="text-muted">En attente</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center">
+        <h3 class="text-success">{{ approuves|length }}</h3>
+        <small class="text-muted">Approuvés</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center">
+        <h3 class="text-danger">{{ refuses|length }}</h3>
+        <small class="text-muted">Refusés</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ================================================ #}
+{# EN ATTENTE DE VALIDATION                         #}
+{# ================================================ #}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-header bg-warning bg-opacity-10 d-flex align-items-center gap-2">
+    <i class="bi bi-hourglass-split text-warning"></i>
+    <strong>En attente de validation ({{ en_attente|length }})</strong>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Client</th>
+          <th>Appartement</th>
+          <th>Note</th>
+          <th>Commentaire</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in en_attente %}
+        <tr>
+          <td>
+            <strong>{{ t.auteur }}</strong>
+            {% if t.user %}
+              <br><small class="text-muted">{{ t.user.email }}</small>
+            {% endif %}
+          </td>
+          <td>
+            {% if t.appartement %}
+              <span class="badge bg-info">{{ t.appartement.nom }}</span>
+              <br><small class="text-muted">{{ t.appartement.localisation.ville }}</small>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td>
+            {% for i in 1..t.note %}
+              <i class="bi bi-star-fill text-warning"></i>
+            {% endfor %}
+          </td>
+          <td style="max-width: 300px; font-size: .85rem;">
+            {{ t.contenu|length > 150 ? t.contenu|slice(0, 150) ~ '…' : t.contenu }}
+          </td>
+          <td><small>{{ t.createdAt|date('d/m/Y') }}</small></td>
+          <td>
+            <div class="d-flex gap-1">
+              <form method="post" action="{{ path('admin_temoignages_approuver', {id: t.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('approuver' ~ t.id) }}">
+                <button class="btn btn-sm btn-success" title="Approuver">
+                  <i class="bi bi-check-lg"></i>
+                </button>
+              </form>
+              <form method="post" action="{{ path('admin_temoignages_refuser', {id: t.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('refuser' ~ t.id) }}">
+                <button class="btn btn-sm btn-danger" title="Refuser">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" class="text-center py-4 text-muted">
+            Aucun témoignage en attente
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{# ================================================ #}
+{# SUIVI DES RÉSERVATIONS / AVIS                    #}
+{# ================================================ #}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-header bg-primary bg-opacity-10 d-flex align-items-center gap-2">
+    <i class="bi bi-calendar-check text-primary"></i>
+    <strong>Séjours terminés — Suivi des avis</strong>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Client</th>
+          <th>Appartement</th>
+          <th>Séjour</th>
+          <th>Avis</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in reservationsAvecAvis %}
+          {% set resa = item.reservation %}
+          {% set temo = item.temoignage %}
+        <tr>
+          <td>
+            {{ resa.prenom }} {{ resa.nom }}<br>
+            <small class="text-muted">{{ resa.email }}</small>
+          </td>
+          <td>
+            <span class="badge bg-info">{{ resa.appartement.nom }}</span>
+          </td>
+          <td>
+            {{ resa.dateArrivee|date('d/m') }} → {{ resa.dateDepart|date('d/m/Y') }}
+          </td>
+          <td>
+            {% if temo %}
+              <span class="badge bg-{{ temo.statutBadgeClass }}">
+                {{ temo.statutLabel }}
+              </span>
+              {% for i in 1..temo.note %}
+                <i class="bi bi-star-fill text-warning" style="font-size:.7rem;"></i>
+              {% endfor %}
+            {% else %}
+              <span class="badge bg-secondary">Pas d'avis</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if not temo %}
+              <form method="post" action="{{ path('admin_temoignages_relancer', {id: resa.id}) }}" class="d-inline">
+                <input type="hidden" name="_token" value="{{ csrf_token('relancer' ~ resa.id) }}">
+                <button class="btn btn-sm btn-outline-primary" title="Relancer par email">
+                  <i class="bi bi-envelope"></i> Relancer
+                </button>
+              </form>
+            {% else %}
+              <small class="text-muted">—</small>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center py-4 text-muted">
+            Aucun séjour terminé récemment
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{# ================================================ #}
+{# APPROUVÉS                                        #}
+{# ================================================ #}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-header bg-success bg-opacity-10 d-flex align-items-center gap-2">
+    <i class="bi bi-check-circle text-success"></i>
+    <strong>Approuvés ({{ approuves|length }})</strong>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Client</th>
+          <th>Appartement</th>
+          <th>Note</th>
+          <th>Commentaire</th>
+          <th>Validé le</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in approuves %}
+        <tr>
+          <td>{{ t.auteur }}</td>
+          <td>
+            {% if t.appartement %}
+              <span class="badge bg-info">{{ t.appartement.nom }}</span>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>
+            {% for i in 1..t.note %}<i class="bi bi-star-fill text-warning"></i>{% endfor %}
+          </td>
+          <td style="max-width: 300px; font-size: .85rem;">
+            {{ t.contenu|length > 150 ? t.contenu|slice(0, 150) ~ '…' : t.contenu }}
+          </td>
+          <td><small>{{ t.validatedAt ? t.validatedAt|date('d/m/Y') : '—' }}</small></td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center py-3 text-muted">Aucun témoignage approuvé</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{# ================================================ #}
+{# REFUSÉS                                          #}
+{# ================================================ #}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-header bg-danger bg-opacity-10 d-flex align-items-center gap-2">
+    <i class="bi bi-x-circle text-danger"></i>
+    <strong>Refusés ({{ refuses|length }})</strong>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Client</th>
+          <th>Appartement</th>
+          <th>Note</th>
+          <th>Commentaire</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in refuses %}
+        <tr>
+          <td>{{ t.auteur }}</td>
+          <td>
+            {% if t.appartement %}
+              <span class="badge bg-info">{{ t.appartement.nom }}</span>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>
+            {% for i in 1..t.note %}<i class="bi bi-star-fill text-warning"></i>{% endfor %}
+          </td>
+          <td style="max-width: 300px; font-size: .85rem;">
+            {{ t.contenu|length > 150 ? t.contenu|slice(0, 150) ~ '…' : t.contenu }}
+          </td>
+          <td><small>{{ t.createdAt|date('d/m/Y') }}</small></td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center py-3 text-muted">Aucun témoignage refusé</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

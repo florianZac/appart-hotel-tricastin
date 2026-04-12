@@ -88,6 +88,13 @@ class Reservation
 	#[ORM\Column(length: 255, nullable: true)]
 	private ?string $stripeSessionId = null;
 
+	#[ORM\Column(type: 'boolean')]
+	private bool $avisEmailEnvoye = false;
+
+	#[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+	private ?\DateTimeInterface $avisEmailEnvoyeAt = null;
+
+
 	public function __construct()
 	{
 		$this->createdAt = new \DateTime();
@@ -146,6 +153,12 @@ class Reservation
 
 	public function getStripeSessionId(): ?string { return $this->stripeSessionId; }
 	public function setStripeSessionId(?string $stripeSessionId): static { $this->stripeSessionId = $stripeSessionId; return $this; }
+
+	public function isAvisEmailEnvoye(): bool { return $this->avisEmailEnvoye; }
+	public function setAvisEmailEnvoye(bool $avisEmailEnvoye): static { $this->avisEmailEnvoye = $avisEmailEnvoye; return $this; }
+
+	public function getAvisEmailEnvoyeAt(): ?\DateTimeInterface { return $this->avisEmailEnvoyeAt; }
+	public function setAvisEmailEnvoyeAt(?\DateTimeInterface $avisEmailEnvoyeAt): static { $this->avisEmailEnvoyeAt = $avisEmailEnvoyeAt; return $this; }
 
 	/**
 	 * Calcule le nombre de nuits
