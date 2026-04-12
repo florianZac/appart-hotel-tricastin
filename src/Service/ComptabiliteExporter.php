@@ -71,9 +71,9 @@ class ComptabiliteExporter
                     'Client',
                     'N° Facture',
                     'Appartement',
-                    'Date début',
-                    'Date fin',
-                    'Nb jours',
+                    'Date arrivée',
+                    'Date départ',
+                    'Nb nuits',
                     'Prix unitaire (€/nuit)',
                     'Total hébergement (€)',
                 ], ';');
@@ -91,8 +91,8 @@ class ComptabiliteExporter
                             $resa['client'],
                             $resa['numFacture'],
                             $resa['appartement'],
-                            $resa['dateDebut'],
-                            $resa['dateFin'],
+                            $resa['dateArrivee'],
+                            $resa['dateDepart'],
                             $nbJours,
                             number_format($prixUnit, 2, ',', ' '),
                             number_format($totalResa, 2, ',', ' '),
@@ -117,7 +117,7 @@ class ComptabiliteExporter
                     '',
                     '',
                     '',
-                    $joursOccupesMois . ' jours',
+                    $joursOccupesMois . ' nuits',
                     'Taux occupation : ' . $tauxOccupation . ' %',
                     number_format($totalMois, 2, ',', ' ') . ' €',
                 ], ';');
@@ -130,7 +130,7 @@ class ComptabiliteExporter
             // ── RÉCAPITULATIF TAUX D'OCCUPATION ANNUEL ──────────
             fputcsv($handle, [], ';');
             $this->writeSectionHeader($handle, 'RÉCAPITULATIF TAUX D\'OCCUPATION');
-            fputcsv($handle, ['Mois', 'Jours occupés', 'Jours disponibles', 'Taux (%)'], ';');
+            fputcsv($handle, ['Mois', 'Nuits occupées', 'Jours disponibles', 'Taux (%)'], ';');
 
             for ($mois = 1; $mois <= 12; $mois++) {
                 $joursDispo   = $this->joursDisponiblesDansMois($annee, $mois);
@@ -234,17 +234,6 @@ class ComptabiliteExporter
 
     /**
      * Récupère les réservations de l'année, groupées par mois.
-     *
-     * @return array<int, array<int, array{
-     *     client: string,
-     *     numFacture: string,
-     *     appartement: string,
-     *     dateDebut: string,
-     *     dateFin: string,
-     *     nbJours: int,
-     *     prixUnitaire: float,
-     *     totalHebergement: float,
-     * }>>
      */
     private function getReservationsParMois(int $annee, ?Appartement $appartement = null): array
     {
@@ -253,12 +242,12 @@ class ComptabiliteExporter
 
         $qb = $this->reservationRepo->createQueryBuilder('r')
             ->leftJoin('r.appartement', 'a')
-            ->leftJoin('r.client', 'c')      // Adapte selon ta relation User/Client
-            ->where('r.dateDebut <= :fin')
-            ->andWhere('r.dateFin >= :debut')
+            ->leftJoin('r.user', 'u')
+            ->where('r.dateArrivee <= :fin')
+            ->andWhere('r.dateDepart >= :debut')
             ->setParameter('debut', $debut)
             ->setParameter('fin', $fin)
-            ->orderBy('r.dateDebut', 'ASC');
+            ->orderBy('r.dateArrivee', 'ASC');
 
         if ($appartement !== null) {
             $qb->andWhere('r.appartement = :appart')
@@ -272,30 +261,44 @@ class ComptabiliteExporter
 
         foreach ($reservations as $resa) {
             // Clamp aux bornes de l'année
-            $dateDebut = max($resa->getDateArrivee(), $debut);
-            $dateFin   = min($resa->getDateDepart(), $fin);
-            $nbJours   = (int) $dateDebut->diff($dateFin)->days;
+            $dateArrivee = $resa->getDateArrivee();
+            $dateDepart  = $resa->getDateDepart();
+
+            // S'assurer qu'on reste dans l'année demandée
+            if ($dateArrivee < $debut) {
+                $dateArrivee = $debut;
+            }
+            if ($dateDepart > $fin) {
+                $dateDepart = $fin;
+            }
+
+            $nbJours = (int) $dateArrivee->diff($dateDepart)->days;
 
             if ($nbJours <= 0) {
                 continue;
             }
 
-            $moisDebut = (int) $dateDebut->format('n');
+            $moisArrivee = (int) $dateArrivee->format('n');
 
-            // Prix unitaire = prix total / nb jours
-            // Adapte selon tes propriétés réelles (getPrixTotal(), getPrixNuit()…)
-            $prixTotal     = (float) ($resa->getMontantTotal() ?? 0);
-            $prixUnitaire  = $nbJours > 0 ? round($prixTotal / $nbJours, 2) : 0;
+            // Prix unitaire = montant total / nb nuits
+            $montantTotal = (float) ($resa->getMontantTotal() ?? 0);
+            $prixUnitaire = $nbJours > 0 ? round($montantTotal / $nbJours, 2) : 0;
 
-            $parMois[$moisDebut][] = [
-                'client'           => $this->getNomClient($resa),
+            // Nom du client : directement sur Reservation (prenom + nom)
+            $nomClient = trim(($resa->getPrenom() ?? '') . ' ' . ($resa->getNom() ?? ''));
+            if (empty($nomClient)) {
+                $nomClient = 'Client inconnu';
+            }
+
+            $parMois[$moisArrivee][] = [
+                'client'           => $nomClient,
                 'numFacture'       => $resa->getNumeroFacture() ?? 'N/A',
                 'appartement'      => $resa->getAppartement()?->getNom() ?? '—',
-                'dateDebut'        => $dateDebut->format('d/m/Y'),
-                'dateFin'          => $dateFin->format('d/m/Y'),
+                'dateArrivee'      => $resa->getDateArrivee()->format('d/m/Y'),
+                'dateDepart'       => $resa->getDateDepart()->format('d/m/Y'),
                 'nbJours'          => $nbJours,
                 'prixUnitaire'     => $prixUnitaire,
-                'totalHebergement' => $prixTotal,
+                'totalHebergement' => $montantTotal,
             ];
         }
 
@@ -308,26 +311,6 @@ class ComptabiliteExporter
     private function joursDisponiblesDansMois(int $annee, int $mois): int
     {
         return (int) (new \DateTimeImmutable("$annee-$mois-01"))->format('t');
-    }
-
-    /**
-     * Récupère le nom complet du client.
-     * Adapte selon ta structure : User, Client, ou champ directement sur Reservation.
-     */
-    private function getNomClient(object $reservation): string
-    {
-        // Option A : relation ManyToOne vers User
-        if (method_exists($reservation, 'getClient') && $reservation->getClient() !== null) {
-            $client = $reservation->getClient();
-            return trim(($client->getPrenom() ?? '') . ' ' . ($client->getNom() ?? '')) ?: 'Client inconnu';
-        }
-
-        // Option B : champs directement sur Reservation
-        if (method_exists($reservation, 'getNomClient')) {
-            return $reservation->getNomClient() ?: 'Client inconnu';
-        }
-
-        return 'Client inconnu';
     }
 
     private function writeSectionHeader($handle, string $titre): void

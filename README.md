@@ -484,16 +484,16 @@ RÉSULTAT NET;17 150,00 €
 ---
 ## Résultat de l'analyse des failles de sécurité 
 
-Menace Courante       ---  Statut
-Injection SQL✅      ---- Doctrine QueryBuilder partout, aucune requête raw
-XSS✅                ---- Twig auto-escape actif, aucun |raw, htmlspecialchars dans le contact
-Brute force✅        ---- login_throttling + rate limiters sur check-email, inscription, forgot
-Sessions✅           ---- cookie_httponly, cookie_secure, cookie_samesite
-Upload malveillant✅ ---- Vérif MIME + limite 5 Mo
-Headers sécurité✅   ---- Subscriber en place (X-Frame, X-Content-Type, etc.)
-LFI / RFI✅          ---- Aucun include/require dynamique
-Secrets✅            ---- .env nettoyé, .env.local dans .gitignore
-Access control✅     ---- /admin, /espace-client, /mon-profil protégés
-Stripe webhook✅     ---- Signature vérifiée
-Failles connues✅    ---- Symfony 7.4 LTS à jour
+##  Menace Courante - Statut
+- **Injection SQL✅**       : Doctrine QueryBuilder partout, aucune requête raw.             
+- **XSS✅**                 : Twig auto-escape actif, aucun |raw, htmlspecialchars dans le contact.
+- **Brute force✅**         : login_throttling + rate limiters sur check-email, inscription, forgot.
+- **Sessions✅**            : cookie_httponly, cookie_secure, cookie_samesite.
+- **Upload malveillant✅**  : Vérif MIME + limite 5 Mo.
+- **Headers sécurité✅**    : Subscriber en place (X-Frame, X-Content-Type, etc.).
+- **LFI / RFI✅**           : Aucun include/require dynamique.
+- **Secrets✅**             : .env nettoyé, .env.local dans .gitignore.
+- **Access control✅**      : /admin, /espace-client, /mon-profil protégés. 
+- **Stripe webhook✅**      : Signature vérifiée.
+- **Failles connues✅**     : Symfony 7.4 LTS à jour.
 

@@ -24,7 +24,7 @@ class ReservationController extends AbstractController
 		EntityManagerInterface $em,
 		AppartementRepository $appartementRepo,
 		MailerService $mailerService,
-		User $user
+	
 	): Response {
 		$reservation = new Reservation();
 
@@ -45,14 +45,18 @@ class ReservationController extends AbstractController
 		if ($user) {
 			$reservation->setUser($user);
 			if (method_exists($user, 'getNom')) {
+				/** @var User|null $user */
 				$reservation->setNom($user->getNom());
 			}
 			if (method_exists($user, 'getPrenom')) {
+				/** @var User|null $user */
 				$reservation->setPrenom($user->getPrenom());
 			}
 			if (method_exists($user, 'getEmail')) {
+				/** @var User|null $user */
 				$reservation->setEmail($user->getEmail());
 			}
+			/** @var User|null $user */
 			if (method_exists($user, 'getTelephone') && $user->getTelephone()) {
 				$reservation->setTelephone($user->getTelephone());
 			}
