@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -19,13 +20,21 @@ class RegistrationController extends AbstractController
 		Request $request,
 		UserPasswordHasherInterface $passwordHasher,
 		EntityManagerInterface $em,
-		MailerService $mailerService
+		MailerService $mailerService,
+    	RateLimiterFactoryInterface $registrationLimiter,
 	): Response {
 		// Redirige si déjà connecté
 		if ($this->getUser()) {
 			return $this->redirectToRoute('client_dashboard');
 		}
 
+    // Rate limit
+    $limiter = $registrationLimiter->create($request->getClientIp());
+    if (false === $limiter->consume(1)->isAccepted()) {
+        $this->addFlash('danger', 'Trop de tentatives. Réessayez plus tard.');
+        return $this->redirectToRoute('app_register');
+    }
+		
 		$user = new User();
 		$form = $this->createForm(RegistrationType::class, $user);
 		$form->handleRequest($request);

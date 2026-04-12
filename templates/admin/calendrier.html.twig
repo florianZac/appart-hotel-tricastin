@@ -198,13 +198,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		// Si modification, supprimer l'ancien d'abord
 		var promise = currentEventId
-			? fetch('/admin/api/disponibilite/' + currentEventId, { method: 'DELETE' })
-			: Promise.resolve();
+    ? fetch('/admin/api/disponibilite/' + currentEventId, {
+        method: 'DELETE',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+    : Promise.resolve();
 
 		promise.then(function () {
 			return fetch('/admin/api/disponibilite', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'X-Requested-With': 'XMLHttpRequest'
+				},
 				body: JSON.stringify(payload)
 			});
 		})
@@ -223,7 +229,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		if (!currentEventId) return;
 		if (!confirm('Supprimer cette disponibilité ?')) return;
 
-		fetch('/admin/api/disponibilite/' + currentEventId, { method: 'DELETE' })
+		fetch('/admin/api/disponibilite/' + currentEventId, {
+    method: 'DELETE',
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+		})
 			.then(function () {
 				modal.hide();
 				calendar.refetchEvents();

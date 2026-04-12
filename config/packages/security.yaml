@@ -25,7 +25,11 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
-
+            
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
+                
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800 # 1 semaine
@@ -42,8 +46,9 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
-         - { path: ^/admin, roles: ROLE_ADMIN }
-         - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/espace-client, roles: ROLE_USER }
+        - { path: ^/mon-profil, roles: ROLE_USER }
 
 when@test:
     security:

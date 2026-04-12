@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
+
 
 class SecurityController extends AbstractController
 {
@@ -43,23 +45,31 @@ class SecurityController extends AbstractController
 	// =========================================================================
 
 	#[Route('/api/check-email', name: 'api_check_email', methods: ['POST'])]
-	public function checkEmail(Request $request, UserRepository $repo): JsonResponse
-	{
-		$data  = json_decode($request->getContent(), true);
-		$email = strip_tags(trim($data['email'] ?? ''));
+	public function checkEmail(
+			Request $request,
+			UserRepository $repo,
+			RateLimiterFactoryInterface $apiCheckLimiter,
+	): JsonResponse {
+			// Rate limit par IP
+			// Ne retourner l'info que si l'utilisateur est connecté (pour le profil)
+			// OU sur la page d'inscription uniquement
+			$limiter = $apiCheckLimiter->create($request->getClientIp());
+			if (false === $limiter->consume(1)->isAccepted()) {
+					return new JsonResponse(['error' => 'Trop de requêtes'], 429);
+			}
 
-		if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			return new JsonResponse(['exists' => false]);
-		}
+			$data  = json_decode($request->getContent(), true);
+			$email = strip_tags(trim($data['email'] ?? ''));
 
-		$user   = $repo->findOneBy(['email' => $email]);
-		$exists = $user !== null;
-		$active = $exists && $user->isActive();
+			if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+					return new JsonResponse(['exists' => false]);
+			}
 
-		return new JsonResponse([
-			'exists' => $exists,
-			'active' => $active,
-		]);
+			$user = $repo->findOneBy(['email' => $email]);
+
+			return new JsonResponse([
+					'exists' => $user !== null,
+			]);
 	}
 
 	// =========================================================================
@@ -71,13 +81,22 @@ class SecurityController extends AbstractController
 		Request $request,
 		UserRepository $userRepository,
 		EntityManagerInterface $em,
-		MailerService $mailerService
+		MailerService $mailerService,
+		RateLimiterFactory $forgotPasswordLimiter
 	): Response {
 		if ($this->getUser()) {
 			return $this->redirectToRoute('client_dashboard');
 		}
 
 		if ($request->isMethod('POST')) {
+			
+		// Rate limit
+			$limiter = $forgotPasswordLimiter->create($request->getClientIp());
+			if (false === $limiter->consume(1)->isAccepted()) {
+					$this->addFlash('danger', 'Trop de tentatives. Réessayez plus tard.');
+					return $this->redirectToRoute('app_forgot_password');
+			}
+			
 			$email = strip_tags(trim($request->request->get('email', '')));
 
 			if (!$this->isCsrfTokenValid('forgot_password', $request->request->get('_token'))) {

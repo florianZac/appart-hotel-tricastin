@@ -29,6 +29,13 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class AdminController extends AbstractController
 {
 	/**
+	 * Vérifie que la requête est bien un appel AJAX interne
+	 */
+	private function isAjaxRequest(Request $request): bool
+	{
+		return $request->headers->get('X-Requested-With') === 'XMLHttpRequest';
+	}
+	/**
 	 * Dashboard admin
 	 */
 	#[Route('/', name: 'dashboard')]
@@ -157,6 +164,10 @@ class AdminController extends AbstractController
 		CloudinaryService $cloudinaryService,
 		EntityManagerInterface $em
 	): JsonResponse {
+		if (!$this->isAjaxRequest($request)) {
+			return new JsonResponse(['error' => 'Accès interdit'], 403);
+		}
+
 		$appartement = $appartementRepo->find($id);
 		if (!$appartement) {
 			return new JsonResponse(['error' => 'Appartement non trouvé'], 404);
@@ -168,10 +179,16 @@ class AdminController extends AbstractController
 			return new JsonResponse(['error' => 'Fichier invalide'], 400);
 		}
 
+		/** @var UploadedFile|null $file */
 		// Vérifier le type MIME
 		$allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
 		if (!in_array($file->getMimeType(), $allowedMimes)) {
 			return new JsonResponse(['error' => 'Format non autorisé. Utilisez JPG, PNG ou WebP.'], 400);
+		}
+		/** @var UploadedFile|null $file */
+		// Limite de taille : 5 Mo
+		if ($file->getSize() > 5 * 1024 * 1024) {
+			return new JsonResponse(['error' => 'Fichier trop volumineux (max 5 Mo).'], 400);
 		}
 
 		try {
@@ -208,6 +225,9 @@ class AdminController extends AbstractController
 		CloudinaryService $cloudinaryService,
 		EntityManagerInterface $em
 	): JsonResponse {
+		if (!$this->isAjaxRequest($request)) {
+			return new JsonResponse(['error' => 'Accès interdit'], 403);
+		}
 		$appartement = $appartementRepo->find($id);
 		if (!$appartement) {
 			return new JsonResponse(['error' => 'Appartement non trouvé'], 404);
@@ -229,6 +249,11 @@ class AdminController extends AbstractController
 
 			$allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
 			if (!in_array($file->getMimeType(), $allowedMimes)) {
+				continue;
+			}
+
+			// Limite de taille : 5 Mo
+			if ($file->getSize() > 5 * 1024 * 1024) {
 				continue;
 			}
 
@@ -262,6 +287,9 @@ class AdminController extends AbstractController
 		CloudinaryService $cloudinaryService,
 		EntityManagerInterface $em
 	): JsonResponse {
+		if (!$this->isAjaxRequest($request)) {
+			return new JsonResponse(['error' => 'Accès interdit'], 403);
+		}
 		$appartement = $appartementRepo->find($id);
 		if (!$appartement) {
 			return new JsonResponse(['error' => 'Appartement non trouvé'], 404);
@@ -343,6 +371,9 @@ class AdminController extends AbstractController
 		AppartementRepository $appartementRepo,
 		EntityManagerInterface $em
 	): JsonResponse {
+		if (!$this->isAjaxRequest($request)) {
+			return new JsonResponse(['error' => 'Accès interdit'], 403);
+		}
 		$data = json_decode($request->getContent(), true);
 
 		if (!is_array($data)) {
@@ -377,9 +408,15 @@ class AdminController extends AbstractController
 	public function deleteDisponibilite(
 		int $id,
 		DisponibiliteRepository $disponibiliteRepo,
+		Request $request,
 		EntityManagerInterface $em
 	): JsonResponse {
+		if (!$this->isAjaxRequest($request)) {
+			return new JsonResponse(['error' => 'Accès interdit'], 403);
+		}
+
 		$dispo = $disponibiliteRepo->find($id);
+
 		if (!$dispo) {
 			return new JsonResponse(['error' => 'Non trouvé'], 404);
 		}

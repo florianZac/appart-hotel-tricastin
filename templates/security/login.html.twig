@@ -185,12 +185,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const data = await res.json();
 
-        if (data.exists && data.active) {
+        if (data.exists) {
           status.textContent = 'Compte trouvé ✔';
           status.style.color = '#198754';
-        } else if (data.exists && !data.active) {
-          status.textContent = 'Compte désactivé ⚠';
-          status.style.color = '#e67e22';
         } else {
           status.textContent = 'Aucun compte associé ⚠';
           status.style.color = '#dc3545';
