@@ -4,8 +4,7 @@
 
 {% block stylesheets %}
 <style>
-  .register-section { margin-top: 100px; padding: 60px 0; }
-  .register-card { max-width: 520px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 40px; }
+  .register-card { max-width: 520px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 20px 20px; }
   .register-card h1 { font-family: 'Cormorant Garamond', serif; color: #1a2744; text-align: center; margin-bottom: 30px; }
   .register-card .form-label { font-weight: 500; color: #1a2744; font-size: .9rem; }
 
@@ -34,78 +33,127 @@
     animation: spin .8s linear infinite;
   }
   @keyframes spin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+
+  /* TOGGLE PASSWORD EYE */
+  .password-wrapper { position: relative; }
+  .password-wrapper input { padding-right: 40px; }
+  .toggle-password {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; color: #6c757d; padding: 0; font-size: 1.1rem;
+  }
 </style>
 {% endblock %}
 
 {% block body %}
-<section class="register-section">
-  <div class="container">
-    <div class="register-card">
+<section class="page-header">
+    <div class="page-header-overlay"></div>
+    <div class="container">
       <h1>{{ app.request.locale == 'fr' ? 'Créer un compte' : 'Create an account' }}</h1>
+    </div>
+</section>
 
-      {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'registerForm'}}) }}
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center register-section">
+      <div class="col-lg-6">
+        <div class="form-card p-3 p-md-5 rounded-4">
 
-        <div class="row g-3">
-          <div class="col-6">
-            {{ form_row(form.prenom) }}
-          </div>
-          <div class="col-6">
-            {{ form_row(form.nom) }}
+          <div class="text-start mb-4">
+
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'registerForm'}}) }}
+
+            <div class="row g-3">
+              <div class="col-6">
+                {{ form_row(form.prenom) }}
+              </div>
+              <div class="col-6">
+                {{ form_row(form.nom) }}
+              </div>
+            </div>
+
+            {# ===== EMAIL + AJAX CHECK ===== #}
+            <div class="mb-3">
+              {{ form_row(form.email) }}
+              <div class="d-flex align-items-center gap-2 mt-1">
+                <div id="emailSpinner" class="spinner"></div>
+                <small id="emailMsg" class="email-feedback"></small>
+              </div>
+            </div>
+
+            {{ form_row(form.telephone) }}
+
+            {# ===== ADRESSE / VILLE / CP ===== #}
+            <div class="mb-3">
+              {{ form_row(form.adresse) }}
+            </div>
+            <div class="row g-3">
+              <div class="col-8">
+                {{ form_row(form.ville) }}
+              </div>
+              <div class="col-4">
+                {{ form_row(form.codePostal) }}
+              </div>
+            </div>
+
+            {# ===== MOT DE PASSE + ŒIL ===== #}
+            <div class="row g-3">
+              <div class="col-6">
+                {{ form_label(form.plainPassword.first) }}
+                <div class="password-wrapper">
+                  {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                  <button type="button" class="toggle-password" data-target="registration_plainPassword_first">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+                {{ form_errors(form.plainPassword.first) }}
+              </div>
+              <div class="col-6">
+                {{ form_label(form.plainPassword.second) }}
+                <div class="password-wrapper">
+                  {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                  <button type="button" class="toggle-password" data-target="registration_plainPassword_second">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+                {{ form_errors(form.plainPassword.second) }}
+              </div>
+            </div>
+
+            {# Barre de force #}
+            <div class="strength-bar">
+              <div id="passwordStrength" class="strength-bar-inner"></div>
+            </div>
+
+            {# Règles temps réel #}
+            <ul class="password-rules text-center">
+              <li id="rule-length">8 caractères minimum</li>
+              <li id="rule-upper">1 lettre majuscule</li>
+              <li id="rule-lower">1 lettre minuscule</li>
+              <li id="rule-number">2 chiffres minimum</li>
+              <li id="rule-special">1 caractère spécial (!@#$%...)</li>
+            </ul>
+            <div id="matchText" class="password-match text-center"></div>
+
+            <div class="my-3">
+              {{ form_row(form.agreeTerms) }}
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-reserve w-100" disabled>
+              <i class="bi bi-person-plus"></i>
+              {{ app.request.locale == 'fr' ? "S'inscrire" : 'Sign up' }}
+            </button>
+
+            {{ form_end(form) }}
+
+            <p class="text-center mt-3 text-muted">
+              {{ app.request.locale == 'fr' ? 'Déjà un compte ?' : 'Already have an account?' }}
+              <a href="{{ path('app_login') }}" style="color: #c8a962; font-weight: 500;">
+                {{ app.request.locale == 'fr' ? 'Se connecter' : 'Sign in' }}
+              </a>
+            </p>
           </div>
         </div>
-
-        {# ===== EMAIL + AJAX CHECK ===== #}
-        <div class="mb-3">
-          {{ form_row(form.email) }}
-          <div class="d-flex align-items-center gap-2 mt-1">
-            <div id="emailSpinner" class="spinner"></div>
-            <small id="emailMsg" class="email-feedback"></small>
-          </div>
-        </div>
-
-        {{ form_row(form.telephone) }}
-
-        <div class="row g-3">
-          <div class="col-6">
-            {{ form_row(form.plainPassword.first) }}
-          </div>
-          <div class="col-6">
-            {{ form_row(form.plainPassword.second) }}
-          </div>
-        </div>
-
-        {# Barre de force #}
-        <div class="strength-bar">
-          <div id="passwordStrength" class="strength-bar-inner"></div>
-        </div>
-
-        {# Règles temps réel #}
-        <ul class="password-rules">
-          <li id="rule-length">8 caractères minimum</li>
-          <li id="rule-upper">1 lettre majuscule</li>
-          <li id="rule-lower">1 lettre minuscule</li>
-          <li id="rule-number">2 chiffres minimum</li>
-          <li id="rule-special">1 caractère spécial (!@#$%...)</li>
-        </ul>
-        <div id="matchText" class="password-match"></div>
-
-        <div class="my-3">
-          {{ form_row(form.agreeTerms) }}
-        </div>
-
-        <button type="submit" id="submitBtn" class="btn btn-reserve w-100" disabled>
-          <i class="bi bi-person-plus"></i>
-          {{ app.request.locale == 'fr' ? "S'inscrire" : 'Sign up' }}
-        </button>
-
-      {{ form_end(form) }}
-
-      <p class="text-center mt-3 text-muted">
-        {{ app.request.locale == 'fr' ? 'Déjà un compte ?' : 'Already have an account?' }}
-        <a href="{{ path('app_login') }}" style="color: #c8a962; font-weight: 500;">
-          {{ app.request.locale == 'fr' ? 'Se connecter' : 'Sign in' }}
-        </a>
-      </p>
+      </div>       
     </div>
   </div>
 </section>
@@ -174,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Correspondance
     if (pw2.value.length > 0) {
       const match = pw1.value === pw2.value;
-      matchText.textContent = match ? "✓ OK" : "✗ Pas identique";
+      matchText.textContent = match ? "✓ mot de passe identique" : "✗ mot de passe différent";
       matchText.style.color = match ? "#198754" : "#dc3545";
     } else {
       matchText.textContent = "";
@@ -250,6 +298,23 @@ document.addEventListener("DOMContentLoaded", () => {
   pw2.addEventListener("input", () => {
     updatePassword();
     validateForm();
+  });
+
+  // =========================
+  // TOGGLE PASSWORD VISIBILITY
+  // =========================
+  document.querySelectorAll(".toggle-password").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById(btn.dataset.target);
+      const icon = btn.querySelector("i");
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace("bi-eye", "bi-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.replace("bi-eye-slash", "bi-eye");
+      }
+    });
   });
 
   // Init
