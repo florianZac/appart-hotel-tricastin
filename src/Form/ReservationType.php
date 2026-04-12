@@ -61,7 +61,8 @@ class ReservationType extends AbstractType
       ])
       ->add('nombrePersonnes', IntegerType::class, [
         'label' => 'Nombre de personnes',
-        'attr' => ['min' => 1, 'max' => 8, 'placeholder' => '1'],
+        'data' => 1,
+        'attr' => ['min' => 1, 'max' => 8],
       ])
       ->add('message', TextareaType::class, [
         'label' => 'Message (optionnel)',

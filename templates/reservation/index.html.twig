@@ -334,40 +334,13 @@ document.addEventListener('DOMContentLoaded', function () {
           .catch(function(err) { failureCallback(err); });
       },
 
-      // ============================================
-      // COLORATION DES CELLULES DU CALENDRIER
-      // — Passé → gris + opacity réduite
-      // — Sans événement → vert (disponible) + barre verte en bas
-      // — Avec événement → coloré par l'événement lui-même
-      // ============================================
+      // Griser les dates passées uniquement
       dayCellDidMount: function(info) {
-        var cellDate = info.date;
         var today = new Date();
         today.setHours(0, 0, 0, 0);
-
-        // Dates passées → gris + opacity réduite
-        if (cellDate < today) {
+        if (info.date < today) {
           info.el.style.backgroundColor = '#f5f5f5';
           info.el.style.opacity = '0.5';
-          return;
-        }
-
-        // Vérifier si cette date a un événement (réservé/nettoyage/bloqué)
-        var dateStr = cellDate.toISOString().split('T')[0];
-        var hasEvent = false;
-
-        for (var i = 0; i < loadedEvents.length; i++) {
-          var ev = loadedEvents[i];
-          if (dateStr >= ev.start && dateStr < ev.end) {
-            hasEvent = true;
-            break;
-          }
-        }
-
-        // Si pas d'événement → disponible (fond vert clair + barre verte en bas)
-        if (!hasEvent) {
-          info.el.style.backgroundColor = 'rgba(39, 174, 96, 0.1)';
-          info.el.style.borderBottom = '3px solid #27ae60';
         }
       },
 
