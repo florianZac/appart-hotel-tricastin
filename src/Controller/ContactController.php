@@ -30,9 +30,9 @@ class ContactController extends AbstractController
 
             try {
                 $email = (new Email())
-                    ->from($data['email'])
+                    ->from('noreply@appart-hotel-tricastin.fr')
+                    ->replyTo($data['email'])
                     ->to($this->getParameter('contact_email'))
-                    ->subject('[Contact Appart Hôtel] ' . $data['sujet'])
                     ->html(
                         '<h3>Nouveau message de contact</h3>' .
                         '<p><strong>Nom :</strong> ' . htmlspecialchars($data['nom']) . '</p>' .

@@ -82,7 +82,7 @@ class SecurityController extends AbstractController
 		UserRepository $userRepository,
 		EntityManagerInterface $em,
 		MailerService $mailerService,
-		RateLimiterFactory $forgotPasswordLimiter
+		RateLimiterFactoryInterface $forgotPasswordLimiter
 	): Response {
 		if ($this->getUser()) {
 			return $this->redirectToRoute('client_dashboard');

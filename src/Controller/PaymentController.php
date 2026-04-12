@@ -44,8 +44,13 @@ class PaymentController extends AbstractController
 	#[IsGranted('ROLE_USER')]
 	public function reservationCheckout(
 		int $id,
-		ReservationRepository $reservationRepo
+		ReservationRepository $reservationRepo,
+		Request $request
 	): Response {
+
+		if (!$this->isCsrfTokenValid('payment_' . $id, $request->request->get('_token'))) {
+			throw $this->createAccessDeniedException('Token CSRF invalide.');
+		}
 		$user = $this->getUser();
 		$reservation = $reservationRepo->find($id);
 
@@ -103,8 +108,11 @@ class PaymentController extends AbstractController
 	 */
 	#[Route('/paiement/{id}/payer', name: 'payment_generic_checkout', methods: ['POST'])]
 	#[IsGranted('ROLE_USER')]
-	public function genericCheckout(int $id, PaymentRepository $paymentRepo): Response
+	public function genericCheckout(int $id, PaymentRepository $paymentRepo,Request $request): Response
 	{
+		if (!$this->isCsrfTokenValid('payment_' . $id, $request->request->get('_token'))) {
+			throw $this->createAccessDeniedException('Token CSRF invalide.');
+		}
 		$user = $this->getUser();
 		$payment = $paymentRepo->find($id);
 
@@ -308,6 +316,9 @@ class PaymentController extends AbstractController
 	#[IsGranted('ROLE_ADMIN')]
 	public function adminCreatePayment(Request $request): JsonResponse
 	{
+		if ($request->headers->get('X-Requested-With') !== 'XMLHttpRequest') {
+			return new JsonResponse(['error' => 'Accès interdit'], 403);
+		}
 		$data = json_decode($request->getContent(), true);
 
 		// Validation basique
@@ -369,8 +380,11 @@ class PaymentController extends AbstractController
 	 */
 	#[Route('/admin/paiement/{id}/rembourser', name: 'admin_payment_refund', methods: ['POST'])]
 	#[IsGranted('ROLE_ADMIN')]
-	public function adminRefundPayment(int $id, PaymentRepository $paymentRepo): JsonResponse
+	public function adminRefundPayment(int $id, PaymentRepository $paymentRepo, Request $request): JsonResponse
 	{
+		if ($request->headers->get('X-Requested-With') !== 'XMLHttpRequest') {
+			return new JsonResponse(['error' => 'Accès interdit'], 403);
+		}
 		$payment = $paymentRepo->find($id);
 
 		if (!$payment) {

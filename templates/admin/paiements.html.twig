@@ -108,7 +108,10 @@
 <script>
 async function refundPayment(id) {
   try {
-    const response = await fetch(`/admin/paiement/${id}/rembourser`, { method: 'POST' });
+    const response = await fetch(`/admin/paiement/${id}/rembourser`, {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    });
     const data = await response.json();
     if (response.ok) {
       alert('Remboursement effectué !');
