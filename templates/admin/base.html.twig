@@ -85,6 +85,17 @@
       padding: 24px 32px;
       min-height: 100vh;
     }
+    .btn-gold {
+      background-color: #C5A55A;
+      border-color: #C5A55A;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+    .btn-gold:hover {
+      background-color: #b8963f;
+      border-color: #b8963f;
+      color: #fff;
+    }
 
     @media (max-width: 991.98px) {
       .admin-sidebar {
@@ -153,6 +164,10 @@
       <a class="nav-link" href="{{ path('app_home') }}" target="_blank">
         <i class="bi bi-box-arrow-up-right"></i>
         {{ 'admin.sidebar.view_site'|trans }}
+      </a>
+      <a class="nav-link {{ app.request.attributes.get('_route') starts with 'admin_comptabilite' ? 'active' : '' }}" 
+        href="{{ path('admin_comptabilite') }}">
+          <i class="bi bi-file-earmark-spreadsheet"></i> Comptabilité
       </a>
 
       <a class="nav-link text-danger" href="{{ path('app_logout') }}">

@@ -184,20 +184,23 @@ appart-hotel-tricastin/
 │   │   ├── AdminController.php            # Dashboard admin, gestion réservations, calendrier, uploads
 │   │   ├── AdminTemoignageController.php  # Admin : approuver/refuser/relancer témoignages
 │   │   ├── UserController.php             # Admin : gestion des utilisateurs (liste, édition, rôles)
-│   │   └── LocaleController.php           # Switcher de langue FR/EN
+│   │   ├── LocaleController.php           # Switcher de langue FR/EN
+│   │   └── ComptabiliteController.php     # gestion de la comptabilitée du site
 │   ├── DataFixtures/
 │   │   ├── LocalisationFixtures.php       # Données initiales : 3 villes (Pierrelatte, SPTC, Montélimar)
 │   │   ├── AppartementFixtures.php        # Données initiales : appartements avec prix, équipements
 │   │   ├── TemoignageFixtures.php         # Données initiales : 6 avis approuvés liés aux appartements
-│   │   └── UserFixtures.php               # Données initiales : comptes utilisateurs de test
+│   │   ├── UserFixtures.php               # Données initiales : comptes utilisateurs de test
+│   │   └── FraisFixtures.php              # Données initiales : Données de test pour la gestion comptable
 │   ├── Entity/
 │   │   ├── Appartement.php                # Appartement : nom, type, surface, capacité, prix, galerie, localisation
 │   │   ├── Disponibilite.php              # Créneaux de disponibilité FullCalendar (disponible/réservé/ménage/bloqué)
 │   │   ├── Localisation.php               # Ville/adresse regroupant plusieurs appartements
 │   │   ├── Payment.php                    # Paiement Stripe : montant, type (acompte/solde), statut
-│   │   ├── Reservation.php               # Réservation : dates, client, appartement, statut, paiement, flag avis
-│   │   ├── Temoignage.php                # Avis client : note, commentaire, statut (en_attente/approuvé/refusé), appartement
-│   │   └── User.php                       # Utilisateur : nom, prénom, email, adresse, rôles, mot de passe
+│   │   ├── Reservation.php                # Réservation : dates, client, appartement, statut, paiement, flag avis
+│   │   ├── Temoignage.php                 # Avis client : note, commentaire, statut (en_attente/approuvé/refusé), appartement
+│   │   ├── User.php                       # Utilisateur : nom, prénom, email, adresse, rôles, mot de passe
+│   │   └── Frais.php                      # Frais : donnée pour la gestion de la comptabilité
 │   ├── EventSubscriber/                   # Subscribers Symfony (événements Kernel)
 │   ├── Form/
 │   │   ├── ContactType.php                # Formulaire de contact (sujet, email, message)
@@ -205,7 +208,9 @@ appart-hotel-tricastin/
 │   │   ├── RegistrationType.php           # Formulaire inscription (prenom, nom, email, adresse, mdp)
 │   │   ├── ReservationType.php            # Formulaire réservation (appartement, dates, personnes)
 │   │   ├── TemoignageType.php             # Formulaire avis (note en étoiles + commentaire)
-│   │   └── UserType.php                   # Formulaire admin édition utilisateur
+│   │   ├── UserType.php                   # Formulaire admin édition utilisateur
+│   │   ├── ExportComptabiliteType.php     # Formulaire admin pour l'export (année + appart)
+│   │   └── FraisType.php                  # Formulaire CRUD ( création, lecture, modification, suppresion ) des frais pour la gestion de la compta
 │   ├── Repository/
 │   │   ├── AppartementRepository.php      # Requêtes : findAllActifs()
 │   │   ├── DisponibiliteRepository.php    # Requêtes : findByAppartementAndPeriode()
@@ -213,7 +218,8 @@ appart-hotel-tricastin/
 │   │   ├── PaymentRepository.php          # Requêtes : findRecents(), findEnRetard(), getRevenusParType()
 │   │   ├── ReservationRepository.php      # Requêtes : findRecentes(), findByUser(), findSejoursTerminesSansDemandeAvis()
 │   │   ├── TemoignageRepository.php       # Requêtes : findActifs(), findByStatut(), findByUserAndReservation()
-│   │   └── UserRepository.php             # Requêtes utilisateurs
+│   │   ├── UserRepository.php             # Requêtes : utilisateurs
+│   │   └── FraisRepository.php            # Requêtes : concernant les frais de comptabilité
 │   ├── Service/
 │   │   ├── CloudinaryService.php          # Upload/suppression d'images sur Cloudinary CDN
 │   │   ├── DateService.php                # Utilitaires de manipulation de dates
@@ -223,7 +229,8 @@ appart-hotel-tricastin/
 │   │   ├── NominatimService.php           # Géocodage d'adresses via API Nominatim (OpenStreetMap)
 │   │   ├── OsrmService.php                # Calcul d'itinéraire via API OSRM
 │   │   ├── SanitizerService.php           # Nettoyage/sanitization des entrées utilisateur
-│   │   └── StripeService.php              # Création de sessions Stripe, gestion webhook paiement
+│   │   ├── StripeService.php              # Création de sessions Stripe, gestion webhook paiement
+│   │   └── ComptabiliteExporter.php       # Logique métier + génération CSV pour la gestion de la comptabilité
 │   ├── Twig/
 │   │   └── CloudinaryExtension.php        # Filtre Twig pour transformer les URLs Cloudinary (resize, format)
 │   └── Kernel.php                         # Kernel Symfony (bootstrap de l'application)
@@ -236,7 +243,9 @@ appart-hotel-tricastin/
 │   │   ├── calendrier.html.twig           # FullCalendar admin : gestion des disponibilités
 │   │   ├── users.html.twig                # Liste des utilisateurs avec édition des rôles
 │   │   ├── paiements.html.twig            # Suivi des paiements, revenus, retards
-│   │   └── ...
+│   │   └── comptabilite/
+│   │       ├── index.html.twig            # Dashboard comptabilité
+│   │       └── frais_form.html.twig       # Formulaire ajout/modif frais
 │   ├── client/
 │   │   ├── dashboard.html.twig            # Espace client : stats, dernières réservations/paiements, liens rapides
 │   │   ├── reservations.html.twig         # Historique complet des réservations du client
@@ -398,6 +407,79 @@ Mot de passe : Client@2026!
 3. **Témoignage créé** : statut `en_attente`, invisible sur le site
 4. **Admin** : depuis le dashboard témoignages, peut approuver, refuser, ou relancer un client par email
 5. **Témoignage approuvé** : s'affiche sur la page d'accueil avec le badge de l'appartement concerné
+
+
+# Export Comptable CSV — Guide d'intégration
+
+## Structure du CSV généré
+
+```
+═══════════════════════════════════════════════════
+BILAN COMPTABLE 2026 — Tous les appartements
+═══════════════════════════════════════════════════
+
+═══════════════════════════════════════════════════
+Janvier 2026
+═══════════════════════════════════════════════════
+Client;N° Facture;Appartement;Date début;Date fin;Nb jours;Prix unitaire (€/nuit);Total hébergement (€)
+Jean Dupont;FAC-2026-001;Studio Lavande;05/01/2026;12/01/2026;7;85,00;595,00
+Marie Martin;FAC-2026-002;T2 Olivier;15/01/2026;22/01/2026;7;110,00;770,00
+
+SOUS-TOTAL JANVIER;;;;;14 jours;Taux occupation : 22,6 %;1 365,00 €
+
+═══════════════════════════════════════════════════
+Février 2026
+═══════════════════════════════════════════════════
+...
+
+═══════════════════════════════════════════════════
+RÉCAPITULATIF TAUX D'OCCUPATION
+═══════════════════════════════════════════════════
+Mois;Jours occupés;Jours disponibles;Taux (%)
+Janvier;14;31;45,2 %
+Février;20;28;71,4 %
+...
+TOTAL ANNUEL;180;365;49,3 %
+
+═══════════════════════════════════════════════════
+DÉTAIL DES FRAIS — 2026
+═══════════════════════════════════════════════════
+Type;Libellé;Appartement;Périodicité;Mois;Montant (€)
+Hébergement du site;Hébergement site web + nom de domaine;Global;Annuel;—;120,00
+Nettoyage;Nettoyage annuel — Studio Lavande;Studio Lavande;Annuel;—;180,00
+Réparation;Remplacement chauffe-eau;Studio Lavande;Ponctuel;Mars;450,00
+Taxe de séjour;Forfait mensuel;Global;Mensuel;—;25,00
+
+TOTAL FRAIS ANNUELS;;;;;1 350,00 €
+
+═══════════════════════════════════════════════════
+BILAN FINANCIER — 2026
+═══════════════════════════════════════════════════
+Total revenus hébergement;18 500,00 €
+Total frais annuels;1 350,00 €
+
+RÉSULTAT NET;17 150,00 €
+```
+---
+
+## Routes créées
+
+| Route                              | Méthode | Description                    |
+|------------------------------------|---------|--------------------------------|
+| `admin_comptabilite`               | GET     | Dashboard comptabilité         |
+| `admin_comptabilite_export_csv`    | GET     | Téléchargement du CSV          |
+| `admin_frais_new`                  | GET/POST| Ajout d'un frais               |
+| `admin_frais_edit`                 | GET/POST| Modification d'un frais        |
+| `admin_frais_delete`               | POST    | Suppression d'un frais         |
+
+---
+## Notes techniques
+
+- **Séparateur CSV** : point-virgule (`;`)  :  compatible Excel FR nativement.
+- **Encodage** : UTF-8 avec BOM  :  accents corrects dans Excel.
+- **Frais mensuels** : comptés ×12 dans le total annuel automatiquement.
+- **Frais globaux** : `appartement = null`  :  apparaissent dans tous les exports.
+- **Taux d'occupation** : calculé sur le nombre de jours calendaires du mois.
 
 ---
 ## Résultat de l'analyse des failles de sécurité 

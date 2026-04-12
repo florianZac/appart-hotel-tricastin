@@ -94,6 +94,8 @@ class Reservation
 	#[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
 	private ?\DateTimeInterface $avisEmailEnvoyeAt = null;
 
+	#[ORM\Column(length: 50, nullable: true)]
+	private ?string $numeroFacture = null;
 
 	public function __construct()
 	{
@@ -160,6 +162,16 @@ class Reservation
 	public function getAvisEmailEnvoyeAt(): ?\DateTimeInterface { return $this->avisEmailEnvoyeAt; }
 	public function setAvisEmailEnvoyeAt(?\DateTimeInterface $avisEmailEnvoyeAt): static { $this->avisEmailEnvoyeAt = $avisEmailEnvoyeAt; return $this; }
 
+	public function getNumeroFacture(): ?string
+	{
+		return $this->numeroFacture;
+	}
+
+	public function setNumeroFacture(?string $numeroFacture): static
+	{
+		$this->numeroFacture = $numeroFacture;
+		return $this;
+	}
 	/**
 	 * Calcule le nombre de nuits
 	 */

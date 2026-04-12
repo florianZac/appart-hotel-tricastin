@@ -1,0 +1,67 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ titre }} — Comptabilité{% endblock %}
+
+{% block body %}
+<div class="container py-4" style="max-width: 720px;">
+
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ path('admin_comptabilite') }}">
+                    <i class="bi bi-arrow-left"></i> Comptabilité
+                </a>
+            </li>
+            <li class="breadcrumb-item active">{{ titre }}</li>
+        </ol>
+    </nav>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-cash-stack me-2"></i>{{ titre }}
+            </h5>
+        </div>
+        <div class="card-body">
+            {{ form_start(form, {'attr': {'class': 'd-flex flex-column gap-3', 'novalidate': 'novalidate'}}) }}
+
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        {{ form_row(form.typeFrais) }}
+                    </div>
+                    <div class="col-sm-6">
+                        {{ form_row(form.periodicite) }}
+                    </div>
+                </div>
+
+                {{ form_row(form.libelle) }}
+
+                <div class="row g-3">
+                    <div class="col-sm-4">
+                        {{ form_row(form.montant) }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_row(form.mois) }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_row(form.annee) }}
+                    </div>
+                </div>
+
+                {{ form_row(form.appartement) }}
+                {{ form_row(form.description) }}
+
+                <div class="d-flex gap-2 mt-2">
+                    <button type="submit" class="btn btn-gold">
+                        <i class="bi bi-check-lg"></i> Enregistrer
+                    </button>
+                    <a href="{{ path('admin_comptabilite') }}" class="btn btn-outline-secondary">
+                        Annuler
+                    </a>
+                </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

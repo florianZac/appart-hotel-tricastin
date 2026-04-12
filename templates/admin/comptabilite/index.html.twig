@@ -1,0 +1,193 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Comptabilité — Export CSV{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+
+    {# ── Flash messages ─────────────────────────────────────── #}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="row g-4">
+
+        {# ════════════════════════════════════════════════════════ #}
+        {# BLOC EXPORT CSV                                         #}
+        {# ════════════════════════════════════════════════════════ #}
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-dark text-white d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-spreadsheet fs-5"></i>
+                    <h5 class="mb-0">Export comptable CSV</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">
+                        Génère un fichier CSV complet pour votre comptable : réservations mois par mois, 
+                        taux d'occupation, détail des frais et bilan financier net.
+                    </p>
+
+                    {{ form_start(formExport, {
+                        'action': path('admin_comptabilite_export_csv'),
+                        'attr': {'class': 'd-flex flex-column gap-3'}
+                    }) }}
+
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                {{ form_row(formExport.annee) }}
+                            </div>
+                            <div class="col-sm-6">
+                                {{ form_row(formExport.appartement) }}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-gold btn-lg w-100 d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-download"></i>
+                            Télécharger le CSV
+                        </button>
+
+                    {{ form_end(formExport) }}
+                </div>
+            </div>
+        </div>
+
+        {# ════════════════════════════════════════════════════════ #}
+        {# BLOC GESTION DES FRAIS                                  #}
+        {# ════════════════════════════════════════════════════════ #}
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-dark text-white d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-cash-stack fs-5"></i>
+                        <h5 class="mb-0">Frais enregistrés ({{ annee }})</h5>
+                    </div>
+                    <a href="{{ path('admin_frais_new') }}" class="btn btn-sm btn-outline-light">
+                        <i class="bi bi-plus-lg"></i> Ajouter
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    {% if fraisList is not empty %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Libellé</th>
+                                        <th>Appartement</th>
+                                        <th>Périodicité</th>
+                                        <th class="text-end">Montant</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for frais in fraisList %}
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-{{ _self.fraisBadgeColor(frais.typeFrais) }}">
+                                                    {{ frais.typeFraisLabel }}
+                                                </span>
+                                            </td>
+                                            <td>{{ frais.libelle }}</td>
+                                            <td>{{ frais.appartement ? frais.appartement.nom : 'Global' }}</td>
+                                            <td>
+                                                {{ constant('App\\Entity\\Frais::PERIODICITE_LABELS')[frais.periodicite] ?? frais.periodicite }}
+                                                {% if frais.mois %}
+                                                    <small class="text-muted">({{ frais.mois }})</small>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-end fw-semibold">{{ frais.montant|number_format(2, ',', ' ') }} €</td>
+                                            <td class="text-center">
+                                                <a href="{{ path('admin_frais_edit', {id: frais.id}) }}" 
+                                                   class="btn btn-sm btn-outline-secondary" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form action="{{ path('admin_frais_delete', {id: frais.id}) }}" 
+                                                      method="post" class="d-inline"
+                                                      onsubmit="return confirm('Supprimer ce frais ?')">
+                                                    <input type="hidden" name="_token" 
+                                                           value="{{ csrf_token('delete_frais_' ~ frais.id) }}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Aucun frais enregistré pour {{ annee }}.
+                            <br>
+                            <a href="{{ path('admin_frais_new') }}" class="btn btn-sm btn-gold mt-3">
+                                <i class="bi bi-plus-lg"></i> Ajouter un premier frais
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>{# /row #}
+
+    {# ════════════════════════════════════════════════════════════ #}
+    {# AIDE POUR LE COMPTABLE                                      #}
+    {# ════════════════════════════════════════════════════════════ #}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title d-flex align-items-center gap-2">
+                        <i class="bi bi-info-circle text-primary"></i>
+                        Contenu du fichier CSV
+                    </h6>
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-3">
+                            <strong>Réservations</strong><br>
+                            <small class="text-muted">
+                                Client, n° facture, dates, durée, prix unitaire et total — mois par mois.
+                            </small>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Taux d'occupation</strong><br>
+                            <small class="text-muted">
+                                Jours occupés vs disponibles, pourcentage mensuel et annuel.
+                            </small>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Détail des frais</strong><br>
+                            <small class="text-muted">
+                                Hébergement site, nettoyage, réparations, assurances… par appartement.
+                            </small>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Bilan financier</strong><br>
+                            <small class="text-muted">
+                                Total revenus — total frais = résultat net de l'année.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% macro fraisBadgeColor(type) %}
+    {%- if type == 'hebergement_site' -%}primary
+    {%- elseif type == 'nettoyage' -%}info
+    {%- elseif type == 'reparation' -%}warning
+    {%- elseif type == 'assurance' -%}secondary
+    {%- elseif type == 'taxe_sejour' -%}dark
+    {%- else -%}light text-dark
+    {%- endif -%}
+{% endmacro %}
+{% endblock %}
