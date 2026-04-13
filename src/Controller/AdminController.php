@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Reservation;
 use App\Entity\Disponibilite;
 use App\Entity\Payment;
+use App\Entity\Tarif;
 
 use App\Repository\AppartementRepository;
 use App\Repository\ReservationRepository;
@@ -350,16 +351,19 @@ class AdminController extends AbstractController
 	public function getAdminDisponibilites(
 		int $appartementId,
 		Request $request,
-		DisponibiliteRepository $disponibiliteRepo
+		DisponibiliteRepository $disponibiliteRepo,
+		ReservationRepository $reservationRepo
 	): JsonResponse {
 		$startParam = $request->query->get('start');
 		$endParam = $request->query->get('end');
 		$start = $startParam ? new \DateTime(substr($startParam, 0, 10)) : new \DateTime('first day of this month');
 		$end = $endParam ? new \DateTime(substr($endParam, 0, 10)) : new \DateTime('last day of +2 months');
 
+		$events = [];
+
+		// ── 1. Disponibilités manuelles (admin) — éditables ──
 		$disponibilites = $disponibiliteRepo->findByAppartementAndPeriode($appartementId, $start, $end);
 
-		$events = [];
 		foreach ($disponibilites as $dispo) {
 			$events[] = [
 				'id'    => $dispo->getId(),
@@ -371,6 +375,45 @@ class AdminController extends AbstractController
 				'extendedProps' => [
 					'statut' => $dispo->getStatut(),
 					'note'   => $dispo->getNote(),
+					'source' => 'disponibilite',
+				],
+			];
+		}
+
+		// ── 2. Réservations confirmées (lecture seule) ──
+		$reservations = $reservationRepo->findConfirmeesParAppartement($appartementId, $start, $end);
+
+		foreach ($reservations as $reservation) {
+			// Période réservée
+			$events[] = [
+				'id'    => 'res-' . $reservation->getId(),
+				'title' => 'Réservé (Client : ' . $reservation->getPrenom() . ' ' . $reservation->getNom() . ')',
+				'start' => $reservation->getDateArrivee()->format('Y-m-d'),
+				'end'   => $reservation->getDateDepart()->format('Y-m-d'),
+				'color' => '#c0392b',
+				'allDay' => true,
+				'extendedProps' => [
+					'statut' => 'reserve',
+					'note'   => 'Réservation #' . $reservation->getId(),
+					'source' => 'reservation',
+					'readonly' => true,
+				],
+			];
+
+			// Jour de nettoyage auto après départ
+			$nettoyageEnd = (clone $reservation->getDateDepart())->modify('+1 day');
+			$events[] = [
+				'id'    => 'maint-' . $reservation->getId(),
+				'title' => 'Nettoyage (auto)',
+				'start' => $reservation->getDateDepart()->format('Y-m-d'),
+				'end'   => $nettoyageEnd->format('Y-m-d'),
+				'color' => '#95a5a6',
+				'allDay' => true,
+				'extendedProps' => [
+					'statut' => 'nettoyage',
+					'note'   => 'Nettoyage automatique après réservation #' . $reservation->getId(),
+					'source' => 'reservation',
+					'readonly' => true,
 				],
 			];
 		}
@@ -380,6 +423,7 @@ class AdminController extends AbstractController
 
 	/**
 	 * API Admin : créer/modifier une disponibilité
+	 * Découpe intelligemment les plages existantes pour éviter tout chevauchement.
 	 */
 	#[Route('/api/disponibilite', name: 'api_admin_disponibilite_create', methods: ['POST'])]
 	public function createDisponibilite(
@@ -404,21 +448,74 @@ class AdminController extends AbstractController
 
 		$dateDebut = new \DateTime($data['date_debut']);
 		$dateFin   = new \DateTime($data['date_fin']);
+		$newStatut = $data['statut'] ?? Disponibilite::STATUT_BLOQUE;
+		$newNote   = isset($data['note']) ? strip_tags(trim($data['note'])) : null;
 
-		// ── Supprimer les disponibilités qui chevauchent la période ──
+		// ── Phase 1 : Découper et supprimer les chevauchements ──
 		$chevauchements = $disponibiliteRepo->findByAppartementAndPeriode(
 			$appartement->getId(), $dateDebut, $dateFin
 		);
+
+		// Collecter les morceaux à créer AVANT de toucher aux entités
+		$morceauxACreer = [];
+
 		foreach ($chevauchements as $ancien) {
+			// Copier les dates AVANT toute modification
+			$ancienDebut  = clone $ancien->getDateDebut();
+			$ancienFin    = clone $ancien->getDateFin();
+			$ancienStatut = $ancien->getStatut();
+			$ancienNote   = $ancien->getNote();
+
+			// Partie AVANT la nouvelle plage : [ancienDebut .. dateDebut - 1j]
+			if ($ancienDebut < $dateDebut) {
+				$finAvant = (clone $dateDebut)->modify('-1 day');
+				if ($finAvant >= $ancienDebut) {
+					$morceauxACreer[] = [
+						'debut'  => clone $ancienDebut,
+						'fin'    => $finAvant,
+						'statut' => $ancienStatut,
+						'note'   => $ancienNote,
+					];
+				}
+			}
+
+			// Partie APRÈS la nouvelle plage : [dateFin + 1j .. ancienFin]
+			if ($ancienFin > $dateFin) {
+				$debutApres = (clone $dateFin)->modify('+1 day');
+				if ($debutApres <= $ancienFin) {
+					$morceauxACreer[] = [
+						'debut'  => $debutApres,
+						'fin'    => clone $ancienFin,
+						'statut' => $ancienStatut,
+						'note'   => $ancienNote,
+					];
+				}
+			}
+
+			// Supprimer l'ancienne plage
 			$em->remove($ancien);
+		}
+
+		// Flush les suppressions d'abord
+		$em->flush();
+
+		// ── Phase 2 : Créer les morceaux conservés + la nouvelle entrée ──
+		foreach ($morceauxACreer as $m) {
+			$morceau = new Disponibilite();
+			$morceau->setAppartement($appartement);
+			$morceau->setDateDebut($m['debut']);
+			$morceau->setDateFin($m['fin']);
+			$morceau->setStatut($m['statut']);
+			$morceau->setNote($m['note']);
+			$em->persist($morceau);
 		}
 
 		$dispo = new Disponibilite();
 		$dispo->setAppartement($appartement);
 		$dispo->setDateDebut($dateDebut);
 		$dispo->setDateFin($dateFin);
-		$dispo->setStatut($data['statut'] ?? Disponibilite::STATUT_BLOQUE);
-		$dispo->setNote(isset($data['note']) ? strip_tags(trim($data['note'])) : null);
+		$dispo->setStatut($newStatut);
+		$dispo->setNote($newNote);
 
 		$em->persist($dispo);
 		$em->flush();
@@ -454,4 +551,35 @@ class AdminController extends AbstractController
 
 		return new JsonResponse(['message' => 'Supprimé']);
 	}
+
+	// =========================================================================
+	// GESTION DES TARIFS
+	// =========================================================================
+
+		/**
+	 * API Admin : de gestion des tarif mensuel, journalier et semaine
+	 */
+	#[Route('/admin/appartement/{id}/tarifs', name: 'appartement_tarifs')]
+	public function tarifs(Appartement $appartement, Request $request, EntityManagerInterface $em)
+	{
+		$tarif = new Tarif();
+		$tarif->setAppartement($appartement);
+
+		$form = $this->createForm(TarifType::class, $tarif);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+			$em->persist($tarif);
+			$em->flush();
+
+			return $this->redirectToRoute('appartement_tarifs', ['id' => $appartement->getId()]);
+		}
+
+		return $this->render('admin/tarifs.html.twig', [
+		'form' => $form->createView(),
+		'appartement' => $appartement,
+		'tarifs' => $appartement->getTarifs()
+		]);
+	}
+
 }

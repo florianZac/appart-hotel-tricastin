@@ -62,6 +62,9 @@ class Appartement
 		#[ORM\JoinColumn(nullable: false)]
 		private ?Localisation $localisation = null;
 
+		#[ORM\OneToMany(mappedBy: 'appartement', targetEntity: Tarif::class, cascade: ['persist', 'remove'])]
+		private Collection $tarifs;
+
 		public function __construct()
 		{
 				$this->reservations = new ArrayCollection();

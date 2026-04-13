@@ -535,3 +535,18 @@ RÉSULTAT NET;17 150,00 €
 | **Access control** | ✅ | /admin, /espace-client, /mon-profil protégés par RBAC |
 | **Stripe webhook** | ✅ | Signature vérifiée |
 | **Failles connues** | ✅ | Symfony 7.4 LTS à jour |
+
+
+## gestion des commande est exemple 
+
+# 1. Vérifie que le fichier existe bien
+dir src\Command\CleanDisponibilitesCommand.php
+
+# 2. Vide le cache d'abord
+php bin/console cache:clear
+
+# 3. Vérifie s'il y a une erreur de syntaxe
+php -l src\Command\CleanDisponibilitesCommand.php
+
+# 4. Reliste les commandes
+php bin/console list app
