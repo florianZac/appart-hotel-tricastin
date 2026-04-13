@@ -62,12 +62,13 @@ class Appartement
 		#[ORM\JoinColumn(nullable: false)]
 		private ?Localisation $localisation = null;
 
-		#[ORM\OneToMany(mappedBy: 'appartement', targetEntity: Tarif::class, cascade: ['persist', 'remove'])]
+		#[ORM\OneToMany(mappedBy: 'appartement', targetEntity: Tarif::class)]
 		private Collection $tarifs;
 
 		public function __construct()
 		{
 				$this->reservations = new ArrayCollection();
+				$this->tarifs = new ArrayCollection();
 		}
 
 		public function getId(): ?int { return $this->id; }
@@ -147,6 +148,36 @@ class Appartement
 	public function setLocalisation(?Localisation $localisation): static
 	{
 		$this->localisation = $localisation;
+		return $this;
+	}
+
+	/**
+	 * @return Collection<int, Tarif>
+	 */
+	public function getTarifs(): Collection
+	{
+		return $this->tarifs;
+	}
+
+	public function addTarif(Tarif $tarif): static
+	{
+		if (!$this->tarifs->contains($tarif)) {
+			$this->tarifs->add($tarif);
+			$tarif->setAppartement($this);
+		}
+
+		return $this;
+	}
+
+	public function removeTarif(Tarif $tarif): static
+	{
+		if ($this->tarifs->removeElement($tarif)) {
+			// côté propriétaire
+			if ($tarif->getAppartement() === $this) {
+				$tarif->setAppartement(null);
+			}
+		}
+
 		return $this;
 	}
 

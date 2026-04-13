@@ -17,6 +17,7 @@
         "doctrine/orm": "^2.17",
         "dompdf/dompdf": "^3.1",
         "stripe/stripe-php": "^20.0",
+        "symfony/apache-pack": "*",
         "symfony/asset": "7.4.*",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",

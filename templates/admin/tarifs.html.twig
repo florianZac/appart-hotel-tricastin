@@ -1,0 +1,30 @@
+<h1>Tarifs - {{ appartement.nom }}</h1>
+
+{{ form_start(form) }}
+    {{ form_row(form.saison) }}
+    {{ form_row(form.dateDebut) }}
+    {{ form_row(form.dateFin) }}
+
+    <h3>Prix</h3>
+    {{ form_row(form.prixJour) }}
+    {{ form_row(form.prixSemaine) }}
+    {{ form_row(form.prixMois) }}
+
+    <button>Enregistrer</button>
+{{ form_end(form) }}
+
+<hr>
+
+<h2>Tarifs existants</h2>
+
+{% for tarif in tarifs %}
+    <div>
+        <strong>{{ tarif.saison }}</strong><br>
+        {{ tarif.dateDebut|date('d/m/Y') }} → {{ tarif.dateFin|date('d/m/Y') }}<br>
+        {{ tarif.prixJour }}€ / nuit |
+        {{ tarif.prixSemaine }}€ / semaine |
+        {{ tarif.prixMois }}€ / mois
+    </div>
+{% else %}
+    <p>Aucun tarif</p>
+{% endfor %}

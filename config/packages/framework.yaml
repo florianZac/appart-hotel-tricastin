@@ -11,5 +11,6 @@ framework:
     php_errors:
         log: true
     csrf_protection: true
+    http_method_override: false
     property_info:
         with_constructor_extractor: true

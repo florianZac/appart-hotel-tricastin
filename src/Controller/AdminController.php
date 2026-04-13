@@ -6,6 +6,9 @@ use App\Entity\Reservation;
 use App\Entity\Disponibilite;
 use App\Entity\Payment;
 use App\Entity\Tarif;
+use App\Entity\Appartement;
+
+use App\Form\TarifType;
 
 use App\Repository\AppartementRepository;
 use App\Repository\ReservationRepository;
@@ -20,6 +23,7 @@ use App\Service\AnalyticsService;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -556,11 +560,11 @@ class AdminController extends AbstractController
 	// GESTION DES TARIFS
 	// =========================================================================
 
-		/**
+	/**
 	 * API Admin : de gestion des tarif mensuel, journalier et semaine
-	 */
-	#[Route('/admin/appartement/{id}/tarifs', name: 'appartement_tarifs')]
-	public function tarifs(Appartement $appartement, Request $request, EntityManagerInterface $em)
+	*/
+	#[Route('/appartement/{id}/tarifs', name: 'appartement_tarifs')]
+	public function tarifs(Appartement $appartement, Request $request, EntityManagerInterface $em): Response
 	{
 		$tarif = new Tarif();
 		$tarif->setAppartement($appartement);
@@ -572,13 +576,15 @@ class AdminController extends AbstractController
 			$em->persist($tarif);
 			$em->flush();
 
-			return $this->redirectToRoute('appartement_tarifs', ['id' => $appartement->getId()]);
+			return $this->redirectToRoute('admin_appartement_tarifs', [
+				'id' => $appartement->getId()
+			]);
 		}
 
 		return $this->render('admin/tarifs.html.twig', [
-		'form' => $form->createView(),
-		'appartement' => $appartement,
-		'tarifs' => $appartement->getTarifs()
+			'form' => $form->createView(),
+			'appartement' => $appartement,
+			'tarifs' => $appartement->getTarifs()
 		]);
 	}
 
