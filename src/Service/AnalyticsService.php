@@ -26,6 +26,7 @@ class AnalyticsService
             'SELECT MONTH(p.paidAt) AS mois, SUM(p.montant) AS total
              FROM App\Entity\Payment p
              WHERE p.statut = :statut
+             AND p.paidAt IS NOT NULL
              AND YEAR(p.paidAt) = :annee
              GROUP BY mois
              ORDER BY mois ASC'
@@ -135,7 +136,7 @@ class AnalyticsService
             'SELECT r.dateArrivee, r.dateDepart
              FROM App\Entity\Reservation r
              WHERE r.statut IN (:statuts)
-             AND YEAR(r.dateArrivee) = :annee OR YEAR(r.dateDepart) = :annee'
+             AND (YEAR(r.dateArrivee) = :annee OR YEAR(r.dateDepart) = :annee)'
         )
         ->setParameter('statuts', [
             Reservation::STATUT_CONFIRMEE,
