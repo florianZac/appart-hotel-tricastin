@@ -134,6 +134,14 @@
               <i class="bi bi-check-circle"></i> Entièrement payé
             </div>
           {% endif %}
+
+          {# Bouton téléchargement facture PDF #}
+          {% if reservation.statut in ['confirmee', 'terminee'] %}
+            <a href="{{ path('client_facture_pdf', {id: reservation.id}) }}"
+               class="btn btn-outline-dark w-100 mt-3" target="_blank">
+              <i class="bi bi-file-earmark-pdf"></i> Télécharger la facture
+            </a>
+          {% endif %}
         </div>
       </div>
     </div>

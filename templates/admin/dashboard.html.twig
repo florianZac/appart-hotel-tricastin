@@ -68,24 +68,60 @@
   </div>
 
   <div class="col-sm-6 col-xl-3">
-    <a href="{{ path('admin_temoignages_index') }}" style="text-decoration:none;">
     <div class="stat-card">
       <div class="d-flex justify-content-between align-items-start">
         <div>
-          <div class="stat-value">{{ totalTemoignages }}</div>
-          <div class="stat-label">
-            {{ 'admin.dashboard.testimonials'|trans }}
-          </div>
-          {% if temoignagesEnAttente > 0 %}
-            <span class="badge bg-warning text-dark mt-1">{{ temoignagesEnAttente }} en attente</span>
-          {% endif %}
+          <div class="stat-value" style="color:#B8860B;">{{ revenusMois|number_format(0, ',', ' ') }}€</div>
+          <div class="stat-label">Revenus du mois</div>
         </div>
-        <div class="stat-icon bg-info bg-opacity-10 text-info">
-          <i class="bi bi-chat-quote"></i>
+        <div class="stat-icon bg-warning bg-opacity-10" style="color:#B8860B;">
+          <i class="bi bi-cash-stack"></i>
         </div>
       </div>
     </div>
-    </a>
+  </div>
+
+</div>
+
+{# ================================================ #}
+{# GRAPHIQUES CHART.JS                              #}
+{# ================================================ #}
+<div class="row g-4 mb-4">
+
+  {# ── Revenus mensuels (bar chart) ─────────────── #}
+  <div class="col-lg-8">
+    <div class="table-card p-3">
+      <h6 class="mb-3"><i class="bi bi-bar-chart-fill" style="color:#B8860B;"></i> Revenus mensuels {{ anneeEnCours }}</h6>
+      <canvas id="chartRevenus" height="250"></canvas>
+    </div>
+  </div>
+
+  {# ── Répartition des réservations (doughnut) ──── #}
+  <div class="col-lg-4">
+    <div class="table-card p-3">
+      <h6 class="mb-3"><i class="bi bi-pie-chart-fill" style="color:#B8860B;"></i> Réservations par statut</h6>
+      <canvas id="chartStatuts" height="250"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<div class="row g-4 mb-4">
+
+  {# ── Taux d'occupation (line chart) ───────────── #}
+  <div class="col-lg-6">
+    <div class="table-card p-3">
+      <h6 class="mb-3"><i class="bi bi-graph-up" style="color:#B8860B;"></i> Taux d'occupation {{ anneeEnCours }}</h6>
+      <canvas id="chartOccupation" height="220"></canvas>
+    </div>
+  </div>
+
+  {# ── Top appartements (horizontal bar) ────────── #}
+  <div class="col-lg-6">
+    <div class="table-card p-3">
+      <h6 class="mb-3"><i class="bi bi-trophy-fill" style="color:#B8860B;"></i> Top appartements (CA)</h6>
+      <canvas id="chartTopApparts" height="220"></canvas>
+    </div>
   </div>
 
 </div>
@@ -177,5 +213,123 @@
     </table>
   </div>
 </div>
+
+{# ================================================ #}
+{# CHART.JS                                        #}
+{# ================================================ #}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var moisLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+
+    // ── 1. Revenus mensuels (Bar Chart) ──────────
+    var revenus = {{ revenusParMois|json_encode|raw }};
+    new Chart(document.getElementById('chartRevenus'), {
+        type: 'bar',
+        data: {
+            labels: moisLabels,
+            datasets: [{
+                label: 'Revenus (€)',
+                data: revenus,
+                backgroundColor: 'rgba(184, 134, 11, 0.7)',
+                borderColor: '#B8860B',
+                borderWidth: 1,
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { callback: function(v) { return v.toLocaleString('fr-FR') + ' €'; } }
+                }
+            }
+        }
+    });
+
+    // ── 2. Réservations par statut (Doughnut) ────
+    var statuts = {{ reservationsParStatut|json_encode|raw }};
+    new Chart(document.getElementById('chartStatuts'), {
+        type: 'doughnut',
+        data: {
+            labels: ['En attente', 'Confirmées', 'Annulées', 'Terminées'],
+            datasets: [{
+                data: [statuts.en_attente, statuts.confirmee, statuts.annulee, statuts.terminee],
+                backgroundColor: ['#f39c12', '#27ae60', '#e74c3c', '#95a5a6'],
+                borderWidth: 2,
+                borderColor: '#fff',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 15, font: { size: 11 } } }
+            }
+        }
+    });
+
+    // ── 3. Taux d'occupation (Line Chart) ────────
+    var occupation = {{ tauxOccupation|json_encode|raw }};
+    new Chart(document.getElementById('chartOccupation'), {
+        type: 'line',
+        data: {
+            labels: moisLabels,
+            datasets: [{
+                label: 'Taux (%)',
+                data: occupation,
+                borderColor: '#2C3E50',
+                backgroundColor: 'rgba(44, 62, 80, 0.1)',
+                fill: true,
+                tension: 0.3,
+                pointBackgroundColor: '#B8860B',
+                pointBorderColor: '#B8860B',
+                pointRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, max: 100, ticks: { callback: function(v) { return v + ' %'; } } }
+            }
+        }
+    });
+
+    // ── 4. Top appartements (Horizontal Bar) ─────
+    var topApparts = {{ topAppartements|json_encode|raw }};
+    var topNoms = topApparts.map(function(a) { return a.nom; });
+    var topCA = topApparts.map(function(a) { return a.total; });
+
+    new Chart(document.getElementById('chartTopApparts'), {
+        type: 'bar',
+        data: {
+            labels: topNoms,
+            datasets: [{
+                label: 'CA (€)',
+                data: topCA,
+                backgroundColor: ['#B8860B', '#2C3E50', '#27ae60', '#3498db', '#e67e22'],
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { callback: function(v) { return v.toLocaleString('fr-FR') + ' €'; } }
+                }
+            }
+        }
+    });
+});
+</script>
 
 {% endblock %}

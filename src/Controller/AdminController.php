@@ -14,6 +14,7 @@ use App\Repository\PaymentRepository;
 
 use App\Service\CloudinaryService;
 use App\Service\MailerService;
+use App\Service\AnalyticsService;
 
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -43,12 +44,14 @@ class AdminController extends AbstractController
 		AppartementRepository $appartementRepo,
 		ReservationRepository $reservationRepo,
 		TemoignageRepository $temoignageRepo,
-		PaymentRepository $paymentRepo
+		PaymentRepository $paymentRepo,
+		AnalyticsService $analytics
 	): Response {
 		$reservations = $reservationRepo->findRecentes(10);
 
 		// Compteurs
-		$totalAppartements = count($appartementRepo->findAllActifs());
+		$appartements = $appartementRepo->findAllActifs();
+		$totalAppartements = count($appartements);
 		$totalReservations = $reservationRepo->count([]);
 		$reservationsEnAttente = $reservationRepo->count(['statut' => Reservation::STATUT_EN_ATTENTE]);
 		$totalTemoignages = count($temoignageRepo->findActifs());
@@ -62,6 +65,9 @@ class AdminController extends AbstractController
 			new \DateTime('last day of this month 23:59:59')
 		);
 
+		// Analytics Chart.js
+		$annee = (int) date('Y');
+
 		return $this->render('admin/dashboard.html.twig', [
 			'reservations'          => $reservations,
 			'totalAppartements'     => $totalAppartements,
@@ -72,6 +78,12 @@ class AdminController extends AbstractController
 			'paiementsRecents'      => $paiementsRecents,
 			'paiementsEnRetard'     => count($paiementsEnRetard),
 			'revenusMois'           => $revenusMois,
+			// Données Chart.js
+			'anneeEnCours'          => $annee,
+			'revenusParMois'        => $analytics->getRevenusParMois($annee),
+			'reservationsParStatut' => $analytics->getReservationsParStatut(),
+			'tauxOccupation'        => $analytics->getTauxOccupationParMois($annee, $totalAppartements),
+			'topAppartements'       => $analytics->getTopAppartements(5),
 		]);
 	}
 

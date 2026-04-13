@@ -63,6 +63,12 @@
                     </td>
                     <td>
                         <div class="btn-group btn-group-sm">
+                            {# Bouton facture PDF #}
+                            <a href="{{ path('admin_facture_pdf', {id: reservation.id}) }}"
+                               class="btn btn-sm btn-outline-dark" title="Télécharger la facture" target="_blank">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </a>
+
                             {% if reservation.statut != 'confirmee' %}
                             <form method="POST"
                                   action="{{ path('admin_reservation_statut', {id: reservation.id, statut: 'confirmee'}) }}"
