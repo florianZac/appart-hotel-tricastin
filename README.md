@@ -569,10 +569,11 @@ php vendor/bin/phpunit --testsuite Unit --coverage-html
 php vendor/bin/phpunit --testsuite Functional --coverage-html
 
 # Tout d'un coup
-php vendor/bin/phpunit --coverage-text
+php vendor/bin/phpunit --testsuite Unit --coverage-html ResultatCouvertureCode
 
 # Avec couverture de code (nécessite Xdebug)
-php vendor/bin/phpunit --coverage-text
+php vendor/bin/phpunit --testsuite Unit --coverage-html ResultatCouvertureCode
+
 
 pour generer un rapport html utiliser l'option --coverage-html
 

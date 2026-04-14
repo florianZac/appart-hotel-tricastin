@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for D:\Projet_web\Projet_mickael\appart-hotel-Tricastin\appart-hotel-tricastin\src\Repository</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=14.1.1" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=14.1.1" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">D:\Projet_web\Projet_mickael\appart-hotel-Tricastin\appart-hotel-tricastin\src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Repository</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row dashboard-row">
+    <div class="col-md-6">
+     <h3>Classes</h3>
+     <p class="text-muted small">Bubble size = executable lines. Hover for details, click to navigate.</p>
+     <div class="file-coverage-chart">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--phpunit-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--phpunit-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--phpunit-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--bs-emphasis-color); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--bs-border-color); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--bs-border-color); stroke-width: 1; }
+  .chart-label { fill: var(--bs-body-color); font-size: 11px; font-family: var(--bs-font-sans-serif, sans-serif); }
+  .chart-title { fill: var(--bs-body-color); font-size: 12px; font-family: var(--bs-font-sans-serif, sans-serif); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">5</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">15</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="PaymentRepository.php.html#13"><circle cx="525.0" cy="174.0" r="20.0" class="bubble-warning"><title>App\Repository\PaymentRepository — Coverage: 64.6% | Lines: 48 | Complexity: 8</title></circle></a>
+ <a href="ReservationRepository.php.html#13"><circle cx="412.0" cy="218.0" r="19.4" class="bubble-danger"><title>App\Repository\ReservationRepository — Coverage: 48.9% | Lines: 45 | Complexity: 6</title></circle></a>
+ <a href="TarifRepository.php.html#9"><circle cx="78.9" cy="218.0" r="17.8" class="bubble-danger"><title>App\Repository\TarifRepository — Coverage: 2.6% | Lines: 38 | Complexity: 6</title></circle></a>
+ <a href="FraisRepository.php.html#13"><circle cx="273.3" cy="108.0" r="15.0" class="bubble-danger"><title>App\Repository\FraisRepository — Coverage: 29.6% | Lines: 27 | Complexity: 11</title></circle></a>
+ <a href="DisponibiliteRepository.php.html#9"><circle cx="90.0" cy="284.0" r="14.1" class="bubble-danger"><title>App\Repository\DisponibiliteRepository — Coverage: 4.2% | Lines: 24 | Complexity: 3</title></circle></a>
+ <a href="TemoignageRepository.php.html#14"><circle cx="540.0" cy="240.0" r="13.2" class="bubble-warning"><title>App\Repository\TemoignageRepository — Coverage: 66.7% | Lines: 21 | Complexity: 5</title></circle></a>
+ <a href="AppartementRepository.php.html#12"><circle cx="780.0" cy="284.0" r="10.0" class="bubble-success"><title>App\Repository\AppartementRepository — Coverage: 100.0% | Lines: 12 | Complexity: 3</title></circle></a>
+ <a href="LocalisationRepository.php.html#17"><circle cx="780.0" cy="284.0" r="10.0" class="bubble-success"><title>App\Repository\LocalisationRepository — Coverage: 100.0% | Lines: 12 | Complexity: 3</title></circle></a>
+ <a href="UserRepository.php.html#15"><circle cx="180.0" cy="284.0" r="7.1" class="bubble-danger"><title>App\Repository\UserRepository — Coverage: 16.7% | Lines: 6 | Complexity: 3</title></circle></a>
+</svg>
+     </div>
+    </div>
+    <div class="col-md-6 dashboard-column">
+     <h3>&nbsp;</h3>
+     <p class="text-muted small">Sorted by descending CRAP (Change Risk Anti-Patterns) index.</p>
+     <div class="scrollbox">
+<table class="table">
+ <thead>
+  <tr>
+   <th>Class</th>
+   <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+   <th class="text-right">Coverage</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr><td><a href="FraisRepository.php.html#13">App\Repository\FraisRepository</a></td><td class="text-right">53.17</td><td class="text-right">29.6%</td></tr>
+  <tr><td><a href="TarifRepository.php.html#9">App\Repository\TarifRepository</a></td><td class="text-right">39.23</td><td class="text-right">2.6%</td></tr>
+  <tr><td><a href="DisponibiliteRepository.php.html#9">App\Repository\DisponibiliteRepository</a></td><td class="text-right">10.92</td><td class="text-right">4.2%</td></tr>
+  <tr><td><a href="PaymentRepository.php.html#13">App\Repository\PaymentRepository</a></td><td class="text-right">10.84</td><td class="text-right">64.6%</td></tr>
+  <tr><td><a href="ReservationRepository.php.html#13">App\Repository\ReservationRepository</a></td><td class="text-right">10.81</td><td class="text-right">48.9%</td></tr>
+  <tr><td><a href="UserRepository.php.html#15">App\Repository\UserRepository</a></td><td class="text-right">8.21</td><td class="text-right">16.7%</td></tr>
+  <tr><td><a href="TemoignageRepository.php.html#14">App\Repository\TemoignageRepository</a></td><td class="text-right">5.93</td><td class="text-right">66.7%</td></tr>
+  <tr><td><a href="AppartementRepository.php.html#12">App\Repository\AppartementRepository</a></td><td class="text-right">3</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="LocalisationRepository.php.html#17">App\Repository\LocalisationRepository</a></td><td class="text-right">3</td><td class="text-right">100.0%</td></tr>
+ </tbody>
+</table>
+     </div>
+    </div>
+   </div>
+   <div class="row dashboard-row">
+    <div class="col-md-6">
+     <h3>Methods</h3>
+     <p class="text-muted small">Bubble size = executable lines. Hover for details, click to navigate.</p>
+     <div class="file-coverage-chart">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--phpunit-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--phpunit-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--phpunit-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--bs-emphasis-color); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--bs-border-color); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--bs-border-color); stroke-width: 1; }
+  .chart-label { fill: var(--bs-body-color); font-size: 11px; font-family: var(--bs-font-sans-serif, sans-serif); }
+  .chart-title { fill: var(--bs-body-color); font-size: 12px; font-family: var(--bs-font-sans-serif, sans-serif); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">2</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">4</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">6</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">8</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="FraisRepository.php.html#48"><circle cx="60.0" cy="86.0" r="20.0" class="bubble-danger"><title>App\Repository\FraisRepository::getTotauxParMois — Coverage: 0.0% | Lines: 17 | Complexity: 8</title></circle></a>
+ <a href="DisponibiliteRepository.php.html#36"><circle cx="60.0" cy="317.0" r="17.5" class="bubble-danger"><title>App\Repository\DisponibiliteRepository::isDisponible — Coverage: 0.0% | Lines: 13 | Complexity: 1</title></circle></a>
+ <a href="ReservationRepository.php.html#72"><circle cx="60.0" cy="317.0" r="16.8" class="bubble-danger"><title>App\Repository\ReservationRepository::findConfirmeesParAppartement — Coverage: 0.0% | Lines: 12 | Complexity: 1</title></circle></a>
+ <a href="PaymentRepository.php.html#100"><circle cx="60.0" cy="284.0" r="16.1" class="bubble-danger"><title>App\Repository\PaymentRepository::getRevenusParType — Coverage: 0.0% | Lines: 11 | Complexity: 2</title></circle></a>
+ <a href="ReservationRepository.php.html#52"><circle cx="60.0" cy="317.0" r="16.1" class="bubble-danger"><title>App\Repository\ReservationRepository::findConfirmeesProchainesSemaine — Coverage: 0.0% | Lines: 11 | Complexity: 1</title></circle></a>
+ <a href="TarifRepository.php.html#49"><circle cx="60.0" cy="284.0" r="16.1" class="bubble-danger"><title>App\Repository\TarifRepository::findChevauchements — Coverage: 0.0% | Lines: 11 | Complexity: 2</title></circle></a>
+ <a href="DisponibiliteRepository.php.html#19"><circle cx="60.0" cy="317.0" r="15.3" class="bubble-danger"><title>App\Repository\DisponibiliteRepository::findByAppartementAndPeriode — Coverage: 0.0% | Lines: 10 | Complexity: 1</title></circle></a>
+ <a href="PaymentRepository.php.html#81"><circle cx="780.0" cy="317.0" r="15.3" class="bubble-success"><title>App\Repository\PaymentRepository::getTotalRevenu — Coverage: 100.0% | Lines: 10 | Complexity: 1</title></circle></a>
+ <a href="TarifRepository.php.html#19"><circle cx="60.0" cy="317.0" r="15.3" class="bubble-danger"><title>App\Repository\TarifRepository::findTarifForDate — Coverage: 0.0% | Lines: 10 | Complexity: 1</title></circle></a>
+ <a href="TarifRepository.php.html#74"><circle cx="60.0" cy="317.0" r="15.3" class="bubble-danger"><title>App\Repository\TarifRepository::findTarifsForPeriode — Coverage: 0.0% | Lines: 10 | Complexity: 1</title></circle></a>
+ <a href="FraisRepository.php.html#26"><circle cx="620.0" cy="284.0" r="14.6" class="bubble-warning"><title>App\Repository\FraisRepository::findByAnnee — Coverage: 77.8% | Lines: 9 | Complexity: 2</title></circle></a>
+ <a href="ReservationRepository.php.html#93"><circle cx="780.0" cy="317.0" r="14.6" class="bubble-success"><title>App\Repository\ReservationRepository::findSejoursTerminesSansDemandeAvis — Coverage: 100.0% | Lines: 9 | Complexity: 1</title></circle></a>
+ <a href="PaymentRepository.php.html#53"><circle cx="780.0" cy="317.0" r="13.7" class="bubble-success"><title>App\Repository\PaymentRepository::findEnRetard — Coverage: 100.0% | Lines: 8 | Complexity: 1</title></circle></a>
+ <a href="PaymentRepository.php.html#24"><circle cx="780.0" cy="317.0" r="12.8" class="bubble-success"><title>App\Repository\PaymentRepository::findByUser — Coverage: 100.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="ReservationRepository.php.html#37"><circle cx="780.0" cy="317.0" r="12.8" class="bubble-success"><title>App\Repository\ReservationRepository::findByUser — Coverage: 100.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="TemoignageRepository.php.html#52"><circle cx="60.0" cy="317.0" r="12.8" class="bubble-danger"><title>App\Repository\TemoignageRepository::findByUserAndReservation — Coverage: 0.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="AppartementRepository.php.html#23"><circle cx="780.0" cy="317.0" r="11.9" class="bubble-success"><title>App\Repository\AppartementRepository::findAllActifs — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="LocalisationRepository.php.html#28"><circle cx="780.0" cy="317.0" r="11.9" class="bubble-success"><title>App\Repository\LocalisationRepository::findAllWithAppartements — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="PaymentRepository.php.html#39"><circle cx="60.0" cy="317.0" r="11.9" class="bubble-danger"><title>App\Repository\PaymentRepository::findEnAttente — Coverage: 0.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="TarifRepository.php.html#36"><circle cx="60.0" cy="317.0" r="11.9" class="bubble-danger"><title>App\Repository\TarifRepository::findByAppartement — Coverage: 0.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="TemoignageRepository.php.html#25"><circle cx="780.0" cy="317.0" r="11.9" class="bubble-success"><title>App\Repository\TemoignageRepository::findActifs — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="TemoignageRepository.php.html#39"><circle cx="780.0" cy="317.0" r="11.9" class="bubble-success"><title>App\Repository\TemoignageRepository::findByStatut — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="AppartementRepository.php.html#36"><circle cx="780.0" cy="317.0" r="10.8" class="bubble-success"><title>App\Repository\AppartementRepository::findBySlug — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="LocalisationRepository.php.html#41"><circle cx="780.0" cy="317.0" r="10.8" class="bubble-success"><title>App\Repository\LocalisationRepository::findBySlug — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="PaymentRepository.php.html#69"><circle cx="780.0" cy="317.0" r="10.8" class="bubble-success"><title>App\Repository\PaymentRepository::findRecents — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="ReservationRepository.php.html#24"><circle cx="780.0" cy="317.0" r="10.8" class="bubble-success"><title>App\Repository\ReservationRepository::findRecentes — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="UserRepository.php.html#25"><circle cx="60.0" cy="284.0" r="10.8" class="bubble-danger"><title>App\Repository\UserRepository::upgradePassword — Coverage: 0.0% | Lines: 5 | Complexity: 2</title></circle></a>
+ <a href="AppartementRepository.php.html#14"><circle cx="780.0" cy="317.0" r="4.9" class="bubble-success"><title>App\Repository\AppartementRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="DisponibiliteRepository.php.html#11"><circle cx="780.0" cy="317.0" r="4.9" class="bubble-success"><title>App\Repository\DisponibiliteRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="FraisRepository.php.html#15"><circle cx="780.0" cy="317.0" r="4.9" class="bubble-success"><title>App\Repository\FraisRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="LocalisationRepository.php.html#19"><circle cx="780.0" cy="317.0" r="4.9" class="bubble-success"><title>App\Repository\LocalisationRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="PaymentRepository.php.html#15"><circle cx="780.0" cy="317.0" r="4.9" class="bubble-success"><title>App\Repository\PaymentRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ReservationRepository.php.html#15"><circle cx="780.0" cy="317.0" r="4.9" class="bubble-success"><title>App\Repository\ReservationRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="TarifRepository.php.html#11"><circle cx="780.0" cy="317.0" r="4.9" class="bubble-success"><title>App\Repository\TarifRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="TemoignageRepository.php.html#16"><circle cx="780.0" cy="317.0" r="4.9" class="bubble-success"><title>App\Repository\TemoignageRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="TemoignageRepository.php.html#66"><circle cx="780.0" cy="317.0" r="4.9" class="bubble-success"><title>App\Repository\TemoignageRepository::countEnAttente — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="UserRepository.php.html#17"><circle cx="780.0" cy="317.0" r="4.9" class="bubble-success"><title>App\Repository\UserRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+    </div>
+    <div class="col-md-6 dashboard-column">
+     <h3>&nbsp;</h3>
+     <p class="text-muted small">Sorted by descending CRAP (Change Risk Anti-Patterns) index.</p>
+     <div class="scrollbox">
+<table class="table">
+ <thead>
+  <tr>
+   <th>Method</th>
+   <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+   <th class="text-right">Coverage</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr><td><a href="FraisRepository.php.html#48">App\Repository\FraisRepository::getTotauxParMois</a></td><td class="text-right">72</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="PaymentRepository.php.html#100">App\Repository\PaymentRepository::getRevenusParType</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="TarifRepository.php.html#49">App\Repository\TarifRepository::findChevauchements</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="UserRepository.php.html#25">App\Repository\UserRepository::upgradePassword</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="FraisRepository.php.html#26">App\Repository\FraisRepository::findByAnnee</a></td><td class="text-right">2.04</td><td class="text-right">77.8%</td></tr>
+  <tr><td><a href="DisponibiliteRepository.php.html#19">App\Repository\DisponibiliteRepository::findByAppartementAndPeriode</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="DisponibiliteRepository.php.html#36">App\Repository\DisponibiliteRepository::isDisponible</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="PaymentRepository.php.html#39">App\Repository\PaymentRepository::findEnAttente</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="ReservationRepository.php.html#52">App\Repository\ReservationRepository::findConfirmeesProchainesSemaine</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="ReservationRepository.php.html#72">App\Repository\ReservationRepository::findConfirmeesParAppartement</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="TarifRepository.php.html#19">App\Repository\TarifRepository::findTarifForDate</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="TarifRepository.php.html#36">App\Repository\TarifRepository::findByAppartement</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="TarifRepository.php.html#74">App\Repository\TarifRepository::findTarifsForPeriode</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="TemoignageRepository.php.html#52">App\Repository\TemoignageRepository::findByUserAndReservation</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="AppartementRepository.php.html#14">App\Repository\AppartementRepository::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="AppartementRepository.php.html#23">App\Repository\AppartementRepository::findAllActifs</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="AppartementRepository.php.html#36">App\Repository\AppartementRepository::findBySlug</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="DisponibiliteRepository.php.html#11">App\Repository\DisponibiliteRepository::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="FraisRepository.php.html#15">App\Repository\FraisRepository::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="LocalisationRepository.php.html#19">App\Repository\LocalisationRepository::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="LocalisationRepository.php.html#28">App\Repository\LocalisationRepository::findAllWithAppartements</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="LocalisationRepository.php.html#41">App\Repository\LocalisationRepository::findBySlug</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="PaymentRepository.php.html#15">App\Repository\PaymentRepository::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="PaymentRepository.php.html#24">App\Repository\PaymentRepository::findByUser</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="PaymentRepository.php.html#53">App\Repository\PaymentRepository::findEnRetard</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="PaymentRepository.php.html#69">App\Repository\PaymentRepository::findRecents</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="PaymentRepository.php.html#81">App\Repository\PaymentRepository::getTotalRevenu</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="ReservationRepository.php.html#15">App\Repository\ReservationRepository::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="ReservationRepository.php.html#24">App\Repository\ReservationRepository::findRecentes</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="ReservationRepository.php.html#37">App\Repository\ReservationRepository::findByUser</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="ReservationRepository.php.html#93">App\Repository\ReservationRepository::findSejoursTerminesSansDemandeAvis</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="TarifRepository.php.html#11">App\Repository\TarifRepository::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="TemoignageRepository.php.html#16">App\Repository\TemoignageRepository::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="TemoignageRepository.php.html#25">App\Repository\TemoignageRepository::findActifs</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="TemoignageRepository.php.html#39">App\Repository\TemoignageRepository::findByStatut</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="TemoignageRepository.php.html#66">App\Repository\TemoignageRepository::countEnAttente</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="UserRepository.php.html#17">App\Repository\UserRepository::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+ </tbody>
+</table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.1.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.15</a> and <a href="https://phpunit.de/">PHPUnit 13.1.3</a> at Tue Apr 14 12:01:13 UTC 2026.</small>
+    </p>
+   </footer>
+  </div>
+ </body>
+</html>

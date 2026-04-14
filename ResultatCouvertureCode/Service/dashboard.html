@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for D:\Projet_web\Projet_mickael\appart-hotel-Tricastin\appart-hotel-tricastin\src\Service</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=14.1.1" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=14.1.1" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">D:\Projet_web\Projet_mickael\appart-hotel-Tricastin\appart-hotel-tricastin\src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Service</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row dashboard-row">
+    <div class="col-md-6">
+     <h3>Classes</h3>
+     <p class="text-muted small">Bubble size = executable lines. Hover for details, click to navigate.</p>
+     <div class="file-coverage-chart">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--phpunit-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--phpunit-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--phpunit-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--bs-emphasis-color); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--bs-border-color); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--bs-border-color); stroke-width: 1; }
+  .chart-label { fill: var(--bs-body-color); font-size: 11px; font-family: var(--bs-font-sans-serif, sans-serif); }
+  .chart-title { fill: var(--bs-body-color); font-size: 12px; font-family: var(--bs-font-sans-serif, sans-serif); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">30</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="ComptabiliteExporter.php.html#18"><circle cx="63.8" cy="75.0" r="20.0" class="bubble-danger"><title>App\Service\ComptabiliteExporter — Coverage: 0.5% | Lines: 191 | Complexity: 25</title></circle></a>
+ <a href="MailerService.php.html#25"><circle cx="65.0" cy="185.0" r="17.4" class="bubble-danger"><title>App\Service\MailerService — Coverage: 0.7% | Lines: 144 | Complexity: 15</title></circle></a>
+ <a href="TarifCalculator.php.html#13"><circle cx="719.4" cy="130.0" r="15.0" class="bubble-success"><title>App\Service\TarifCalculator — Coverage: 91.6% | Lines: 107 | Complexity: 20</title></circle></a>
+ <a href="AnalyticsService.php.html#13"><circle cx="566.7" cy="141.0" r="13.0" class="bubble-warning"><title>App\Service\AnalyticsService — Coverage: 70.4% | Lines: 81 | Complexity: 19</title></circle></a>
+ <a href="StripeService.php.html#27"><circle cx="96.5" cy="251.0" r="12.9" class="bubble-danger"><title>App\Service\StripeService — Coverage: 5.1% | Lines: 79 | Complexity: 9</title></circle></a>
+ <a href="FactureService.php.html#14"><circle cx="60.0" cy="284.0" r="10.1" class="bubble-danger"><title>App\Service\FactureService — Coverage: 0.0% | Lines: 49 | Complexity: 6</title></circle></a>
+ <a href="CloudinaryService.php.html#18"><circle cx="60.0" cy="196.0" r="9.5" class="bubble-danger"><title>App\Service\CloudinaryService — Coverage: 0.0% | Lines: 43 | Complexity: 14</title></circle></a>
+ <a href="SanitizerService.php.html#19"><circle cx="780.0" cy="218.0" r="7.4" class="bubble-success"><title>App\Service\SanitizerService — Coverage: 100.0% | Lines: 26 | Complexity: 12</title></circle></a>
+ <a href="NominatimService.php.html#25"><circle cx="60.0" cy="317.0" r="6.6" class="bubble-danger"><title>App\Service\NominatimService — Coverage: 0.0% | Lines: 21 | Complexity: 3</title></circle></a>
+ <a href="LogService.php.html#32"><circle cx="60.0" cy="251.0" r="6.1" class="bubble-danger"><title>App\Service\LogService — Coverage: 0.0% | Lines: 18 | Complexity: 9</title></circle></a>
+ <a href="OsrmService.php.html#12"><circle cx="60.0" cy="306.0" r="6.1" class="bubble-danger"><title>App\Service\OsrmService — Coverage: 0.0% | Lines: 18 | Complexity: 4</title></circle></a>
+ <a href="DistanceService.php.html#4"><circle cx="780.0" cy="339.0" r="5.0" class="bubble-success"><title>App\Service\DistanceService — Coverage: 100.0% | Lines: 12 | Complexity: 1</title></circle></a>
+ <a href="DateService.php.html#14"><circle cx="780.0" cy="317.0" r="4.1" class="bubble-success"><title>App\Service\DateService — Coverage: 100.0% | Lines: 8 | Complexity: 3</title></circle></a>
+</svg>
+     </div>
+    </div>
+    <div class="col-md-6 dashboard-column">
+     <h3>&nbsp;</h3>
+     <p class="text-muted small">Sorted by descending CRAP (Change Risk Anti-Patterns) index.</p>
+     <div class="scrollbox">
+<table class="table">
+ <thead>
+  <tr>
+   <th>Class</th>
+   <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+   <th class="text-right">Coverage</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr><td><a href="ComptabiliteExporter.php.html#18">App\Service\ComptabiliteExporter</a></td><td class="text-right">640.23</td><td class="text-right">0.5%</td></tr>
+  <tr><td><a href="MailerService.php.html#25">App\Service\MailerService</a></td><td class="text-right">235.34</td><td class="text-right">0.7%</td></tr>
+  <tr><td><a href="CloudinaryService.php.html#18">App\Service\CloudinaryService</a></td><td class="text-right">210</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="LogService.php.html#32">App\Service\LogService</a></td><td class="text-right">90</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="StripeService.php.html#27">App\Service\StripeService</a></td><td class="text-right">78.31</td><td class="text-right">5.1%</td></tr>
+  <tr><td><a href="FactureService.php.html#14">App\Service\FactureService</a></td><td class="text-right">42</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="AnalyticsService.php.html#13">App\Service\AnalyticsService</a></td><td class="text-right">28.39</td><td class="text-right">70.4%</td></tr>
+  <tr><td><a href="TarifCalculator.php.html#13">App\Service\TarifCalculator</a></td><td class="text-right">20.24</td><td class="text-right">91.6%</td></tr>
+  <tr><td><a href="OsrmService.php.html#12">App\Service\OsrmService</a></td><td class="text-right">20</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="NominatimService.php.html#25">App\Service\NominatimService</a></td><td class="text-right">12</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="SanitizerService.php.html#19">App\Service\SanitizerService</a></td><td class="text-right">12</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="DateService.php.html#14">App\Service\DateService</a></td><td class="text-right">3</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="DistanceService.php.html#4">App\Service\DistanceService</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+ </tbody>
+</table>
+     </div>
+    </div>
+   </div>
+   <div class="row dashboard-row">
+    <div class="col-md-6">
+     <h3>Methods</h3>
+     <p class="text-muted small">Bubble size = executable lines. Hover for details, click to navigate.</p>
+     <div class="file-coverage-chart">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--phpunit-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--phpunit-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--phpunit-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--bs-emphasis-color); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--bs-border-color); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--bs-border-color); stroke-width: 1; }
+  .chart-label { fill: var(--bs-body-color); font-size: 11px; font-family: var(--bs-font-sans-serif, sans-serif); }
+  .chart-title { fill: var(--bs-body-color); font-size: 12px; font-family: var(--bs-font-sans-serif, sans-serif); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">5</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">15</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="ComptabiliteExporter.php.html#35"><circle cx="60.0" cy="64.0" r="20.0" class="bubble-danger"><title>App\Service\ComptabiliteExporter::exportCsv — Coverage: 0.0% | Lines: 141 | Complexity: 13</title></circle></a>
+ <a href="ComptabiliteExporter.php.html#238"><circle cx="60.0" cy="174.0" r="10.9" class="bubble-danger"><title>App\Service\ComptabiliteExporter::getReservationsParMois — Coverage: 0.0% | Lines: 42 | Complexity: 8</title></circle></a>
+ <a href="FactureService.php.html#23"><circle cx="60.0" cy="262.0" r="10.8" class="bubble-danger"><title>App\Service\FactureService::genererFacturePdf — Coverage: 0.0% | Lines: 41 | Complexity: 4</title></circle></a>
+ <a href="StripeService.php.html#92"><circle cx="60.0" cy="306.0" r="10.1" class="bubble-danger"><title>App\Service\StripeService::createReservationCheckout — Coverage: 0.0% | Lines: 36 | Complexity: 2</title></circle></a>
+ <a href="AnalyticsService.php.html#127"><circle cx="510.0" cy="108.0" r="9.5" class="bubble-warning"><title>App\Service\AnalyticsService::getTauxOccupationParMois — Coverage: 62.5% | Lines: 32 | Complexity: 11</title></circle></a>
+ <a href="TarifCalculator.php.html#28"><circle cx="780.0" cy="306.0" r="9.1" class="bubble-success"><title>App\Service\TarifCalculator::calculerPrix — Coverage: 100.0% | Lines: 29 | Complexity: 2</title></circle></a>
+ <a href="StripeService.php.html#53"><circle cx="60.0" cy="328.0" r="8.9" class="bubble-danger"><title>App\Service\StripeService::createCheckoutSession — Coverage: 0.0% | Lines: 28 | Complexity: 1</title></circle></a>
+ <a href="TarifCalculator.php.html#176"><circle cx="780.0" cy="152.0" r="8.6" class="bubble-success"><title>App\Service\TarifCalculator::calculerOptimal — Coverage: 100.0% | Lines: 26 | Complexity: 9</title></circle></a>
+ <a href="TarifCalculator.php.html#135"><circle cx="520.8" cy="262.0" r="8.4" class="bubble-warning"><title>App\Service\TarifCalculator::regrouperParTarif — Coverage: 64.0% | Lines: 25 | Complexity: 4</title></circle></a>
+ <a href="SanitizerService.php.html#32"><circle cx="780.0" cy="130.0" r="8.3" class="bubble-success"><title>App\Service\SanitizerService::sanitize — Coverage: 100.0% | Lines: 24 | Complexity: 10</title></circle></a>
+ <a href="TarifCalculator.php.html#92"><circle cx="780.0" cy="284.0" r="8.3" class="bubble-success"><title>App\Service\TarifCalculator::construireSegments — Coverage: 100.0% | Lines: 24 | Complexity: 3</title></circle></a>
+ <a href="NominatimService.php.html#40"><circle cx="60.0" cy="306.0" r="7.5" class="bubble-danger"><title>App\Service\NominatimService::geocode — Coverage: 0.0% | Lines: 20 | Complexity: 2</title></circle></a>
+ <a href="MailerService.php.html#248"><circle cx="60.0" cy="306.0" r="7.3" class="bubble-danger"><title>App\Service\MailerService::sendDemandeAvis — Coverage: 0.0% | Lines: 19 | Complexity: 2</title></circle></a>
+ <a href="MailerService.php.html#60"><circle cx="60.0" cy="306.0" r="7.1" class="bubble-danger"><title>App\Service\MailerService::sendConfirmationReservation — Coverage: 0.0% | Lines: 18 | Complexity: 2</title></circle></a>
+ <a href="OsrmService.php.html#34"><circle cx="60.0" cy="262.0" r="7.1" class="bubble-danger"><title>App\Service\OsrmService::getRouteDistance — Coverage: 0.0% | Lines: 18 | Complexity: 4</title></circle></a>
+ <a href="MailerService.php.html#88"><circle cx="60.0" cy="306.0" r="6.9" class="bubble-danger"><title>App\Service\MailerService::sendRappelReservation — Coverage: 0.0% | Lines: 17 | Complexity: 2</title></circle></a>
+ <a href="MailerService.php.html#203"><circle cx="60.0" cy="328.0" r="6.5" class="bubble-danger"><title>App\Service\MailerService::sendNouvelleReservationAdmin — Coverage: 0.0% | Lines: 15 | Complexity: 1</title></circle></a>
+ <a href="AnalyticsService.php.html#100"><circle cx="780.0" cy="328.0" r="6.3" class="bubble-success"><title>App\Service\AnalyticsService::getTopAppartements — Coverage: 100.0% | Lines: 14 | Complexity: 1</title></circle></a>
+ <a href="MailerService.php.html#138"><circle cx="60.0" cy="328.0" r="6.3" class="bubble-danger"><title>App\Service\MailerService::sendPaiementConfirmationEmail — Coverage: 0.0% | Lines: 14 | Complexity: 1</title></circle></a>
+ <a href="MailerService.php.html#161"><circle cx="60.0" cy="328.0" r="6.3" class="bubble-danger"><title>App\Service\MailerService::sendPaiementEcheanceEmail — Coverage: 0.0% | Lines: 14 | Complexity: 1</title></circle></a>
+ <a href="AnalyticsService.php.html#50"><circle cx="724.6" cy="306.0" r="6.1" class="bubble-success"><title>App\Service\AnalyticsService::getReservationsParStatut — Coverage: 92.3% | Lines: 13 | Complexity: 2</title></circle></a>
+ <a href="MailerService.php.html#115"><circle cx="60.0" cy="306.0" r="6.1" class="bubble-danger"><title>App\Service\MailerService::sendReservationAnnuleeEmail — Coverage: 0.0% | Lines: 13 | Complexity: 2</title></circle></a>
+ <a href="DistanceService.php.html#5"><circle cx="780.0" cy="328.0" r="5.8" class="bubble-success"><title>App\Service\DistanceService::distanceHaversine — Coverage: 100.0% | Lines: 12 | Complexity: 1</title></circle></a>
+ <a href="MailerService.php.html#227"><circle cx="60.0" cy="328.0" r="5.8" class="bubble-danger"><title>App\Service\MailerService::sendPasswordResetEmail — Coverage: 0.0% | Lines: 12 | Complexity: 1</title></circle></a>
+ <a href="AnalyticsService.php.html#23"><circle cx="714.5" cy="306.0" r="5.6" class="bubble-success"><title>App\Service\AnalyticsService::getRevenusParMois — Coverage: 90.9% | Lines: 11 | Complexity: 2</title></circle></a>
+ <a href="MailerService.php.html#40"><circle cx="60.0" cy="328.0" r="5.6" class="bubble-danger"><title>App\Service\MailerService::sendContactEmail — Coverage: 0.0% | Lines: 11 | Complexity: 1</title></circle></a>
+ <a href="AnalyticsService.php.html#76"><circle cx="60.0" cy="306.0" r="5.3" class="bubble-danger"><title>App\Service\AnalyticsService::getReservationsParMois — Coverage: 0.0% | Lines: 10 | Complexity: 2</title></circle></a>
+ <a href="CloudinaryService.php.html#34"><circle cx="60.0" cy="328.0" r="5.3" class="bubble-danger"><title>App\Service\CloudinaryService::upload — Coverage: 0.0% | Lines: 10 | Complexity: 1</title></circle></a>
+ <a href="MailerService.php.html#184"><circle cx="60.0" cy="328.0" r="5.3" class="bubble-danger"><title>App\Service\MailerService::sendWelcomeEmail — Coverage: 0.0% | Lines: 10 | Complexity: 1</title></circle></a>
+ <a href="CloudinaryService.php.html#121"><circle cx="60.0" cy="328.0" r="5.1" class="bubble-danger"><title>App\Service\CloudinaryService::uploadWithPublicId — Coverage: 0.0% | Lines: 9 | Complexity: 1</title></circle></a>
+ <a href="LogService.php.html#46"><circle cx="60.0" cy="328.0" r="5.1" class="bubble-danger"><title>App\Service\LogService::log — Coverage: 0.0% | Lines: 9 | Complexity: 1</title></circle></a>
+ <a href="CloudinaryService.php.html#92"><circle cx="60.0" cy="284.0" r="4.8" class="bubble-danger"><title>App\Service\CloudinaryService::extractPublicId — Coverage: 0.0% | Lines: 8 | Complexity: 3</title></circle></a>
+ <a href="DateService.php.html#27"><circle cx="780.0" cy="284.0" r="4.8" class="bubble-success"><title>App\Service\DateService::addOpenDay — Coverage: 100.0% | Lines: 8 | Complexity: 3</title></circle></a>
+ <a href="LogService.php.html#73"><circle cx="60.0" cy="196.0" r="4.8" class="bubble-danger"><title>App\Service\LogService::genererMessage — Coverage: 0.0% | Lines: 8 | Complexity: 7</title></circle></a>
+ <a href="CloudinaryService.php.html#71"><circle cx="60.0" cy="284.0" r="4.5" class="bubble-danger"><title>App\Service\CloudinaryService::deleteByUrl — Coverage: 0.0% | Lines: 7 | Complexity: 3</title></circle></a>
+ <a href="FactureService.php.html#84"><circle cx="60.0" cy="328.0" r="4.5" class="bubble-danger"><title>App\Service\FactureService::getNomFichier — Coverage: 0.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="StripeService.php.html#167"><circle cx="60.0" cy="328.0" r="4.0" class="bubble-danger"><title>App\Service\StripeService::constructWebhookEvent — Coverage: 0.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="CloudinaryService.php.html#56"><circle cx="60.0" cy="306.0" r="4.0" class="bubble-danger"><title>App\Service\CloudinaryService::uploadMultiple — Coverage: 0.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="CloudinaryService.php.html#143"><circle cx="60.0" cy="284.0" r="4.0" class="bubble-danger"><title>App\Service\CloudinaryService::deleteByPrefix — Coverage: 0.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="StripeService.php.html#33"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>App\Service\StripeService::__construct — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="StripeService.php.html#152"><circle cx="60.0" cy="306.0" r="4.0" class="bubble-danger"><title>App\Service\StripeService::refundPayment — Coverage: 0.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="ComptabiliteExporter.php.html#316"><circle cx="60.0" cy="328.0" r="4.0" class="bubble-danger"><title>App\Service\ComptabiliteExporter::writeSectionHeader — Coverage: 0.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="ComptabiliteExporter.php.html#323"><circle cx="60.0" cy="328.0" r="4.0" class="bubble-danger"><title>App\Service\ComptabiliteExporter::slugify — Coverage: 0.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="TarifCalculator.php.html#80"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>App\Service\TarifCalculator::calculerMontantTotal — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="AnalyticsService.php.html#15"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>App\Service\AnalyticsService::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="CloudinaryService.php.html#22"><circle cx="60.0" cy="328.0" r="4.0" class="bubble-danger"><title>App\Service\CloudinaryService::__construct — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ComptabiliteExporter.php.html#27"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>App\Service\ComptabiliteExporter::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ComptabiliteExporter.php.html#311"><circle cx="60.0" cy="328.0" r="4.0" class="bubble-danger"><title>App\Service\ComptabiliteExporter::joursDisponiblesDansMois — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="FactureService.php.html#16"><circle cx="60.0" cy="328.0" r="4.0" class="bubble-danger"><title>App\Service\FactureService::__construct — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="LogService.php.html#35"><circle cx="60.0" cy="328.0" r="4.0" class="bubble-danger"><title>App\Service\LogService::__construct — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="MailerService.php.html#31"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>App\Service\MailerService::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="NominatimService.php.html#30"><circle cx="60.0" cy="328.0" r="4.0" class="bubble-danger"><title>App\Service\NominatimService::__construct — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="SanitizerService.php.html#21"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>App\Service\SanitizerService::sanitizeSpace — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="SanitizerService.php.html#89"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>App\Service\SanitizerService::escapeForHtml — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="StripeService.php.html#143"><circle cx="60.0" cy="328.0" r="4.0" class="bubble-danger"><title>App\Service\StripeService::retrieveSession — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="StripeService.php.html#179"><circle cx="60.0" cy="328.0" r="4.0" class="bubble-danger"><title>App\Service\StripeService::getPublicKey — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="TarifCalculator.php.html#15"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>App\Service\TarifCalculator::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+    </div>
+    <div class="col-md-6 dashboard-column">
+     <h3>&nbsp;</h3>
+     <p class="text-muted small">Sorted by descending CRAP (Change Risk Anti-Patterns) index.</p>
+     <div class="scrollbox">
+<table class="table">
+ <thead>
+  <tr>
+   <th>Method</th>
+   <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+   <th class="text-right">Coverage</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr><td><a href="ComptabiliteExporter.php.html#35">App\Service\ComptabiliteExporter::exportCsv</a></td><td class="text-right">182</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="ComptabiliteExporter.php.html#238">App\Service\ComptabiliteExporter::getReservationsParMois</a></td><td class="text-right">72</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="LogService.php.html#73">App\Service\LogService::genererMessage</a></td><td class="text-right">56</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="FactureService.php.html#23">App\Service\FactureService::genererFacturePdf</a></td><td class="text-right">20</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="OsrmService.php.html#34">App\Service\OsrmService::getRouteDistance</a></td><td class="text-right">20</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="AnalyticsService.php.html#127">App\Service\AnalyticsService::getTauxOccupationParMois</a></td><td class="text-right">17.38</td><td class="text-right">62.5%</td></tr>
+  <tr><td><a href="CloudinaryService.php.html#71">App\Service\CloudinaryService::deleteByUrl</a></td><td class="text-right">12</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="CloudinaryService.php.html#92">App\Service\CloudinaryService::extractPublicId</a></td><td class="text-right">12</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="CloudinaryService.php.html#143">App\Service\CloudinaryService::deleteByPrefix</a></td><td class="text-right">12</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="SanitizerService.php.html#32">App\Service\SanitizerService::sanitize</a></td><td class="text-right">10</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="TarifCalculator.php.html#176">App\Service\TarifCalculator::calculerOptimal</a></td><td class="text-right">9</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="AnalyticsService.php.html#76">App\Service\AnalyticsService::getReservationsParMois</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="CloudinaryService.php.html#56">App\Service\CloudinaryService::uploadMultiple</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#60">App\Service\MailerService::sendConfirmationReservation</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#88">App\Service\MailerService::sendRappelReservation</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#115">App\Service\MailerService::sendReservationAnnuleeEmail</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#248">App\Service\MailerService::sendDemandeAvis</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="NominatimService.php.html#40">App\Service\NominatimService::geocode</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="StripeService.php.html#92">App\Service\StripeService::createReservationCheckout</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="StripeService.php.html#152">App\Service\StripeService::refundPayment</a></td><td class="text-right">6</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="TarifCalculator.php.html#135">App\Service\TarifCalculator::regrouperParTarif</a></td><td class="text-right">4.75</td><td class="text-right">64.0%</td></tr>
+  <tr><td><a href="DateService.php.html#27">App\Service\DateService::addOpenDay</a></td><td class="text-right">3</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="TarifCalculator.php.html#92">App\Service\TarifCalculator::construireSegments</a></td><td class="text-right">3</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="AnalyticsService.php.html#23">App\Service\AnalyticsService::getRevenusParMois</a></td><td class="text-right">2.00</td><td class="text-right">90.9%</td></tr>
+  <tr><td><a href="AnalyticsService.php.html#50">App\Service\AnalyticsService::getReservationsParStatut</a></td><td class="text-right">2.00</td><td class="text-right">92.3%</td></tr>
+  <tr><td><a href="CloudinaryService.php.html#22">App\Service\CloudinaryService::__construct</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="CloudinaryService.php.html#34">App\Service\CloudinaryService::upload</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="CloudinaryService.php.html#121">App\Service\CloudinaryService::uploadWithPublicId</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="ComptabiliteExporter.php.html#311">App\Service\ComptabiliteExporter::joursDisponiblesDansMois</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="ComptabiliteExporter.php.html#316">App\Service\ComptabiliteExporter::writeSectionHeader</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="ComptabiliteExporter.php.html#323">App\Service\ComptabiliteExporter::slugify</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="FactureService.php.html#16">App\Service\FactureService::__construct</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="FactureService.php.html#84">App\Service\FactureService::getNomFichier</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="LogService.php.html#35">App\Service\LogService::__construct</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="LogService.php.html#46">App\Service\LogService::log</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#40">App\Service\MailerService::sendContactEmail</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#138">App\Service\MailerService::sendPaiementConfirmationEmail</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#161">App\Service\MailerService::sendPaiementEcheanceEmail</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#184">App\Service\MailerService::sendWelcomeEmail</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#203">App\Service\MailerService::sendNouvelleReservationAdmin</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#227">App\Service\MailerService::sendPasswordResetEmail</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="NominatimService.php.html#30">App\Service\NominatimService::__construct</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="StripeService.php.html#53">App\Service\StripeService::createCheckoutSession</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="StripeService.php.html#143">App\Service\StripeService::retrieveSession</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="StripeService.php.html#167">App\Service\StripeService::constructWebhookEvent</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="StripeService.php.html#179">App\Service\StripeService::getPublicKey</a></td><td class="text-right">2</td><td class="text-right">0.0%</td></tr>
+  <tr><td><a href="TarifCalculator.php.html#28">App\Service\TarifCalculator::calculerPrix</a></td><td class="text-right">2</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="AnalyticsService.php.html#15">App\Service\AnalyticsService::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="AnalyticsService.php.html#100">App\Service\AnalyticsService::getTopAppartements</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="ComptabiliteExporter.php.html#27">App\Service\ComptabiliteExporter::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="DistanceService.php.html#5">App\Service\DistanceService::distanceHaversine</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="MailerService.php.html#31">App\Service\MailerService::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="SanitizerService.php.html#21">App\Service\SanitizerService::sanitizeSpace</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="SanitizerService.php.html#89">App\Service\SanitizerService::escapeForHtml</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="StripeService.php.html#33">App\Service\StripeService::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="TarifCalculator.php.html#15">App\Service\TarifCalculator::__construct</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+  <tr><td><a href="TarifCalculator.php.html#80">App\Service\TarifCalculator::calculerMontantTotal</a></td><td class="text-right">1</td><td class="text-right">100.0%</td></tr>
+ </tbody>
+</table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.1.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.15</a> and <a href="https://phpunit.de/">PHPUnit 13.1.3</a> at Tue Apr 14 12:01:13 UTC 2026.</small>
+    </p>
+   </footer>
+  </div>
+ </body>
+</html>
