@@ -1,30 +1,462 @@
-<h1>Tarifs - {{ appartement.nom }}</h1>
+{% extends 'admin/base.html.twig' %}
 
-{{ form_start(form) }}
-    {{ form_row(form.saison) }}
-    {{ form_row(form.dateDebut) }}
-    {{ form_row(form.dateFin) }}
+{% block title %}Gestion des tarifs{% endblock %}
 
-    <h3>Prix</h3>
-    {{ form_row(form.prixJour) }}
-    {{ form_row(form.prixSemaine) }}
-    {{ form_row(form.prixMois) }}
+{% block admin_body %}
+<div class="admin-topbar">
+	<h1><i class="bi bi-currency-euro"></i> Gestion des tarifs saisonniers</h1>
+</div>
 
-    <button>Enregistrer</button>
-{{ form_end(form) }}
+{# Sélection de l'appartement #}
+<div class="row mb-4">
+	<div class="col-md-5">
+		<label for="selectAppartement" class="form-label fw-bold">Appartement</label>
+		<select id="selectAppartement" class="form-select">
+			<option value="">-- Choisir un appartement --</option>
+			{% for appart in appartements %}
+				<option value="{{ appart.id }}">
+					{{ appart.localisation.ville }} — {{ appart.nom }} ({{ appart.type }})
+					· {{ appart.prixParNuit }}€/nuit par défaut
+				</option>
+			{% endfor %}
+		</select>
+	</div>
+	<div class="col-md-7 d-flex align-items-end">
+		<div class="text-muted small">
+			<i class="bi bi-info-circle"></i>
+			Le prix par défaut de l'appartement s'applique quand aucun tarif saisonnier ne couvre la date.
+			Les tarifs saisonniers permettent de définir des prix jour/semaine/mois différents selon la période.
+		</div>
+	</div>
+</div>
 
-<hr>
+{# Zone des tarifs #}
+<div id="tarifsContainer" style="display:none;">
+	{# Bouton ajouter #}
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h5 class="mb-0"><i class="bi bi-list-ul"></i> Tarifs configurés</h5>
+		<button class="btn btn-gold btn-sm" id="btnAddTarif">
+			<i class="bi bi-plus-lg"></i> Ajouter un tarif saisonnier
+		</button>
+	</div>
 
-<h2>Tarifs existants</h2>
+	{# Tableau des tarifs #}
+	<div class="table-card">
+		<div class="table-responsive">
+			<table class="table table-hover mb-0">
+				<thead>
+					<tr>
+						<th>Saison</th>
+						<th>Période</th>
+						<th class="text-end">Prix / nuit</th>
+						<th class="text-end">Prix / semaine</th>
+						<th class="text-end">Prix / mois</th>
+						<th class="text-center" style="width:140px;">Actions</th>
+					</tr>
+				</thead>
+				<tbody id="tarifsBody">
+					<tr id="tarifsLoading">
+						<td colspan="6" class="text-center py-4 text-muted">
+							<i class="bi bi-arrow-repeat"></i> Chargement…
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 
-{% for tarif in tarifs %}
-    <div>
-        <strong>{{ tarif.saison }}</strong><br>
-        {{ tarif.dateDebut|date('d/m/Y') }} → {{ tarif.dateFin|date('d/m/Y') }}<br>
-        {{ tarif.prixJour }}€ / nuit |
-        {{ tarif.prixSemaine }}€ / semaine |
-        {{ tarif.prixMois }}€ / mois
-    </div>
-{% else %}
-    <p>Aucun tarif</p>
-{% endfor %}
+	{# Timeline visuelle #}
+	<div class="table-card p-3 mt-3">
+		<h6 class="mb-2"><i class="bi bi-calendar-range"></i> Vue annuelle des saisons</h6>
+		<div id="timelineContainer"></div>
+	</div>
+</div>
+
+<div id="noAppartement" class="text-center py-5 text-muted">
+	<i class="bi bi-currency-euro" style="font-size:3rem;"></i>
+	<p class="mt-2">Sélectionnez un appartement pour gérer ses tarifs</p>
+</div>
+
+{# Modal Tarif #}
+<div class="modal fade" id="tarifModal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTitle">
+					<i class="bi bi-currency-euro"></i> Ajouter un tarif
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+					<label class="form-label fw-bold">Nom de la saison</label>
+					<input type="text" id="modalSaison" class="form-control"
+						   placeholder="Ex: Été, Hiver, Haute saison, Noël…">
+				</div>
+				<div class="row mb-3">
+					<div class="col-6">
+						<label class="form-label fw-bold">Date de début</label>
+						<input type="date" id="modalDateDebut" class="form-control">
+					</div>
+					<div class="col-6">
+						<label class="form-label fw-bold">Date de fin</label>
+						<input type="date" id="modalDateFin" class="form-control">
+					</div>
+				</div>
+				<hr>
+				<h6 class="mb-3"><i class="bi bi-tag"></i> Grille tarifaire</h6>
+				<div class="row mb-3">
+					<div class="col-4">
+						<label class="form-label fw-bold">Prix / nuit</label>
+						<div class="input-group">
+							<input type="number" id="modalPrixJour" class="form-control"
+								   step="0.01" min="0" placeholder="0.00">
+							<span class="input-group-text">€</span>
+						</div>
+					</div>
+					<div class="col-4">
+						<label class="form-label fw-bold">Prix / semaine</label>
+						<div class="input-group">
+							<input type="number" id="modalPrixSemaine" class="form-control"
+								   step="0.01" min="0" placeholder="0.00">
+							<span class="input-group-text">€</span>
+						</div>
+					</div>
+					<div class="col-4">
+						<label class="form-label fw-bold">Prix / mois</label>
+						<div class="input-group">
+							<input type="number" id="modalPrixMois" class="form-control"
+								   step="0.01" min="0" placeholder="0.00">
+							<span class="input-group-text">€</span>
+						</div>
+					</div>
+				</div>
+				<div id="modalAutoCalc" class="text-muted small">
+					<i class="bi bi-calculator"></i>
+					Astuce : remplissez le prix/nuit et les prix semaine/mois se calculeront automatiquement avec une réduction.
+				</div>
+				<div id="modalError" class="alert alert-danger mt-3 d-none"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+				<button type="button" class="btn btn-primary" id="btnSaveTarif">
+					<i class="bi bi-check-lg"></i> Enregistrer
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+.season-bar {
+	height: 28px;
+	border-radius: 4px;
+	position: relative;
+	margin-bottom: 4px;
+	font-size: 0.75rem;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	padding: 0 8px;
+	font-weight: 600;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.timeline-months {
+	display: flex;
+	border-bottom: 1px solid #dee2e6;
+	margin-bottom: 8px;
+}
+.timeline-months span {
+	flex: 1;
+	text-align: center;
+	font-size: 0.7rem;
+	color: #6c757d;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+.timeline-track {
+	position: relative;
+	height: 36px;
+	background: #f8f9fa;
+	border-radius: 4px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	var select = document.getElementById('selectAppartement');
+	var container = document.getElementById('tarifsContainer');
+	var noAppartement = document.getElementById('noAppartement');
+	var tarifsBody = document.getElementById('tarifsBody');
+
+	var modal = new bootstrap.Modal(document.getElementById('tarifModal'));
+	var modalTitle = document.getElementById('modalTitle');
+	var modalSaison = document.getElementById('modalSaison');
+	var modalDateDebut = document.getElementById('modalDateDebut');
+	var modalDateFin = document.getElementById('modalDateFin');
+	var modalPrixJour = document.getElementById('modalPrixJour');
+	var modalPrixSemaine = document.getElementById('modalPrixSemaine');
+	var modalPrixMois = document.getElementById('modalPrixMois');
+	var modalError = document.getElementById('modalError');
+
+	var currentTarifId = null;
+	var currentTarifs = [];
+
+	// Couleurs pour les saisons
+	var saisonColors = [
+		'#e74c3c', '#3498db', '#2ecc71', '#f39c12',
+		'#9b59b6', '#1abc9c', '#e67e22', '#34495e'
+	];
+
+	function getColor(index) {
+		return saisonColors[index % saisonColors.length];
+	}
+
+	// Auto-calcul semaine/mois à partir du prix jour
+	modalPrixJour.addEventListener('input', function () {
+		var pj = parseFloat(this.value);
+		if (!isNaN(pj) && pj > 0) {
+			if (!modalPrixSemaine.value || modalPrixSemaine.dataset.auto === '1') {
+				modalPrixSemaine.value = (pj * 7 * 0.9).toFixed(2); // -10% semaine
+				modalPrixSemaine.dataset.auto = '1';
+			}
+			if (!modalPrixMois.value || modalPrixMois.dataset.auto === '1') {
+				modalPrixMois.value = (pj * 30 * 0.75).toFixed(2); // -25% mois
+				modalPrixMois.dataset.auto = '1';
+			}
+		}
+	});
+
+	// Si l'utilisateur saisit manuellement, désactiver l'auto-calcul
+	modalPrixSemaine.addEventListener('focus', function () { this.dataset.auto = '0'; });
+	modalPrixMois.addEventListener('focus', function () { this.dataset.auto = '0'; });
+
+	// Chargement des tarifs
+	function loadTarifs(appartementId) {
+		tarifsBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted"><i class="bi bi-arrow-repeat"></i> Chargement…</td></tr>';
+
+		fetch('/admin/api/tarifs/' + appartementId)
+			.then(function (r) { return r.json(); })
+			.then(function (data) {
+				currentTarifs = data;
+				renderTarifs(data);
+				renderTimeline(data);
+			})
+			.catch(function () {
+				tarifsBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Erreur de chargement</td></tr>';
+			});
+	}
+
+	function renderTarifs(tarifs) {
+		if (tarifs.length === 0) {
+			tarifsBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">' +
+				'<i class="bi bi-inbox"></i> Aucun tarif saisonnier configuré.<br>' +
+				'<small>Le prix par défaut de l\'appartement sera utilisé.</small></td></tr>';
+			return;
+		}
+
+		var html = '';
+		tarifs.forEach(function (t, i) {
+			var color = getColor(i);
+			var dDebut = new Date(t.dateDebut).toLocaleDateString('fr-FR');
+			var dFin = new Date(t.dateFin).toLocaleDateString('fr-FR');
+
+			html += '<tr>' +
+				'<td><span class="badge" style="background:' + color + '">' + escapeHtml(t.saison) + '</span></td>' +
+				'<td>' + dDebut + ' → ' + dFin + '</td>' +
+				'<td class="text-end fw-bold">' + parseFloat(t.prixJour).toFixed(2) + ' €</td>' +
+				'<td class="text-end">' + parseFloat(t.prixSemaine).toFixed(2) + ' €</td>' +
+				'<td class="text-end">' + parseFloat(t.prixMois).toFixed(2) + ' €</td>' +
+				'<td class="text-center">' +
+					'<button class="btn btn-sm btn-outline-primary me-1" onclick="editTarif(' + t.id + ')">' +
+						'<i class="bi bi-pencil"></i></button>' +
+					'<button class="btn btn-sm btn-outline-danger" onclick="deleteTarif(' + t.id + ', \'' + escapeHtml(t.saison) + '\')">' +
+						'<i class="bi bi-trash"></i></button>' +
+				'</td></tr>';
+		});
+
+		tarifsBody.innerHTML = html;
+	}
+
+	function renderTimeline(tarifs) {
+		var timelineContainer = document.getElementById('timelineContainer');
+		if (tarifs.length === 0) {
+			timelineContainer.innerHTML = '<p class="text-muted small mb-0">Aucun tarif à afficher.</p>';
+			return;
+		}
+
+		// Déterminer l'année
+		var year = new Date().getFullYear();
+		var yearStart = new Date(year, 0, 1);
+		var yearEnd = new Date(year, 11, 31);
+		var totalDays = (yearEnd - yearStart) / (1000 * 60 * 60 * 24) + 1;
+
+		// Mois labels
+		var months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+		var monthsHtml = '<div class="timeline-months">';
+		months.forEach(function (m) { monthsHtml += '<span>' + m + '</span>'; });
+		monthsHtml += '</div>';
+
+		// Barres
+		var barsHtml = '<div class="timeline-track">';
+		tarifs.forEach(function (t, i) {
+			var color = getColor(i);
+			var start = new Date(t.dateDebut);
+			var end = new Date(t.dateFin);
+
+			// Limiter à l'année courante
+			if (start < yearStart) start = yearStart;
+			if (end > yearEnd) end = yearEnd;
+			if (start > yearEnd || end < yearStart) return;
+
+			var startDay = (start - yearStart) / (1000 * 60 * 60 * 24);
+			var duration = (end - start) / (1000 * 60 * 60 * 24) + 1;
+			var left = (startDay / totalDays * 100).toFixed(2);
+			var width = (duration / totalDays * 100).toFixed(2);
+
+			barsHtml += '<div class="season-bar" style="position:absolute; left:' + left + '%; width:' + width + '%; background:' + color + ';" title="' +
+				escapeHtml(t.saison) + ': ' + parseFloat(t.prixJour).toFixed(0) + '€/nuit">' +
+				escapeHtml(t.saison) + '</div>';
+		});
+		barsHtml += '</div>';
+
+		timelineContainer.innerHTML = monthsHtml + barsHtml;
+	}
+
+	function escapeHtml(str) {
+		var div = document.createElement('div');
+		div.textContent = str;
+		return div.innerHTML;
+	}
+
+	// Sélection d'un appartement
+	select.addEventListener('change', function () {
+		var id = this.value;
+		if (id) {
+			container.style.display = 'block';
+			noAppartement.style.display = 'none';
+			loadTarifs(id);
+		} else {
+			container.style.display = 'none';
+			noAppartement.style.display = 'block';
+		}
+	});
+
+	// Bouton ajouter
+	document.getElementById('btnAddTarif').addEventListener('click', function () {
+		currentTarifId = null;
+		modalTitle.innerHTML = '<i class="bi bi-plus-lg"></i> Ajouter un tarif saisonnier';
+		modalSaison.value = '';
+		modalDateDebut.value = '';
+		modalDateFin.value = '';
+		modalPrixJour.value = '';
+		modalPrixSemaine.value = '';
+		modalPrixSemaine.dataset.auto = '1';
+		modalPrixMois.value = '';
+		modalPrixMois.dataset.auto = '1';
+		modalError.classList.add('d-none');
+		modal.show();
+	});
+
+	// Éditer un tarif
+	window.editTarif = function (id) {
+		var tarif = currentTarifs.find(function (t) { return t.id === id; });
+		if (!tarif) return;
+
+		currentTarifId = id;
+		modalTitle.innerHTML = '<i class="bi bi-pencil"></i> Modifier : ' + escapeHtml(tarif.saison);
+		modalSaison.value = tarif.saison;
+		modalDateDebut.value = tarif.dateDebut;
+		modalDateFin.value = tarif.dateFin;
+		modalPrixJour.value = tarif.prixJour;
+		modalPrixSemaine.value = tarif.prixSemaine;
+		modalPrixSemaine.dataset.auto = '0';
+		modalPrixMois.value = tarif.prixMois;
+		modalPrixMois.dataset.auto = '0';
+		modalError.classList.add('d-none');
+		modal.show();
+	};
+
+	// Supprimer un tarif
+	window.deleteTarif = function (id, nom) {
+		if (!confirm('Supprimer le tarif "' + nom + '" ?')) return;
+
+		fetch('/admin/api/tarif/' + id, {
+			method: 'DELETE',
+			headers: { 'X-Requested-With': 'XMLHttpRequest' }
+		})
+		.then(function (r) { return r.json(); })
+		.then(function () {
+			loadTarifs(select.value);
+		});
+	};
+
+	// Enregistrer
+	document.getElementById('btnSaveTarif').addEventListener('click', function () {
+		var appartementId = select.value;
+		if (!appartementId) return;
+
+		modalError.classList.add('d-none');
+
+		// Validation basique
+		if (!modalSaison.value.trim()) {
+			modalError.textContent = 'Le nom de la saison est requis.';
+			modalError.classList.remove('d-none');
+			return;
+		}
+		if (!modalDateDebut.value || !modalDateFin.value) {
+			modalError.textContent = 'Les dates sont requises.';
+			modalError.classList.remove('d-none');
+			return;
+		}
+		if (modalDateFin.value <= modalDateDebut.value) {
+			modalError.textContent = 'La date de fin doit être après la date de début.';
+			modalError.classList.remove('d-none');
+			return;
+		}
+		if (!modalPrixJour.value || parseFloat(modalPrixJour.value) <= 0) {
+			modalError.textContent = 'Le prix par nuit est requis et doit être positif.';
+			modalError.classList.remove('d-none');
+			return;
+		}
+
+		var payload = {
+			appartement_id: parseInt(appartementId),
+			saison: modalSaison.value.trim(),
+			date_debut: modalDateDebut.value,
+			date_fin: modalDateFin.value,
+			prix_jour: parseFloat(modalPrixJour.value),
+			prix_semaine: parseFloat(modalPrixSemaine.value) || parseFloat(modalPrixJour.value) * 7,
+			prix_mois: parseFloat(modalPrixMois.value) || parseFloat(modalPrixJour.value) * 30,
+		};
+
+		var url = currentTarifId
+			? '/admin/api/tarif/' + currentTarifId
+			: '/admin/api/tarif';
+		var method = currentTarifId ? 'PUT' : 'POST';
+
+		fetch(url, {
+			method: method,
+			headers: {
+				'Content-Type': 'application/json',
+				'X-Requested-With': 'XMLHttpRequest'
+			},
+			body: JSON.stringify(payload)
+		})
+		.then(function (r) {
+			if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || 'Erreur serveur'); });
+			return r.json();
+		})
+		.then(function () {
+			modal.hide();
+			loadTarifs(appartementId);
+		})
+		.catch(function (err) {
+			modalError.textContent = err.message;
+			modalError.classList.remove('d-none');
+		});
+	});
+});
+</script>
+{% endblock %}

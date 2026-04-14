@@ -58,9 +58,9 @@ class PaymentController extends AbstractController
 			throw $this->createNotFoundException('Réservation non trouvée.');
 		}
 
-		// Calcul du montant
-		$montant = $reservation->calculerMontantTotal();
-		if ((float) $montant <= 0) {
+		// Calcul du montant (déjà calculé lors de la création de la réservation)
+		$montant = $reservation->getMontantTotal();
+		if (!$montant || (float) $montant <= 0) {
 			$this->addFlash('danger', 'Montant de réservation invalide.');
 			return $this->redirectToRoute('client_reservation_detail', ['id' => $id]);
 		}

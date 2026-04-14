@@ -9,6 +9,7 @@ use App\Repository\UserRepository;
 use App\Repository\AppartementRepository;
 use App\Repository\LocalisationRepository;
 use App\Service\MailerService;
+use App\Service\TarifCalculator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,7 +24,8 @@ class ReservationController extends AbstractController
 		Request $request,
 		EntityManagerInterface $em,
 		AppartementRepository $appartementRepo,
-		MailerService $mailerService
+		MailerService $mailerService,
+		TarifCalculator $tarifCalculator
 	): Response {
 		$reservation = new Reservation();
 
@@ -81,8 +83,13 @@ class ReservationController extends AbstractController
 				$reservation->setUser($user);
 			}
 
-			// Calculer le montant total
-			$reservation->calculerMontantTotal();
+			// Calculer le montant total via le service de tarification
+			$montantTotal = $tarifCalculator->calculerMontantTotal(
+				$reservation->getAppartement(),
+				$reservation->getDateArrivee(),
+				$reservation->getDateDepart()
+			);
+			$reservation->setMontantTotal(number_format($montantTotal, 2, '.', ''));
 
 			$em->persist($reservation);
 			$em->flush();

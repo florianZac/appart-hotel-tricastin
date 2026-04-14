@@ -142,6 +142,12 @@
         Calendrier
       </a>
 
+      <a class="nav-link {% if app.request.attributes.get('_route') in ['admin_tarifs', 'admin_appartement_tarifs'] %}active{% endif %}"
+        href="{{ path('admin_tarifs') }}">
+          <i class="bi bi-currency-euro"></i>
+        Tarifs
+      </a>
+
       <a class="nav-link {% if app.request.attributes.get('_route') in ['admin_users', 'admin_user_edit'] %}active{% endif %}"
         href="{{ path('admin_users') }}">
           <i class="bi bi-people"></i>

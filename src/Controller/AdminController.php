@@ -15,6 +15,7 @@ use App\Repository\ReservationRepository;
 use App\Repository\TemoignageRepository;
 use App\Repository\DisponibiliteRepository;
 use App\Repository\PaymentRepository;
+use App\Repository\TarifRepository;
 
 use App\Service\CloudinaryService;
 use App\Service\MailerService;
@@ -561,11 +562,187 @@ class AdminController extends AbstractController
 	// =========================================================================
 
 	/**
-	 * API Admin : de gestion des tarif mensuel, journalier et semaine
-	*/
-	#[Route('/appartement/{id}/tarifs', name: 'appartement_tarifs')]
-	public function tarifs(Appartement $appartement, Request $request, EntityManagerInterface $em): Response
+	 * Page de gestion des tarifs d'un appartement
+	 */
+	#[Route('/tarifs', name: 'tarifs')]
+	public function tarifsIndex(AppartementRepository $appartementRepo): Response
 	{
+		return $this->render('admin/tarifs.html.twig', [
+			'appartements' => $appartementRepo->findAllActifs(),
+		]);
+	}
+
+	/**
+	 * API : récupérer les tarifs d'un appartement (JSON)
+	 */
+	#[Route('/api/tarifs/{appartementId}', name: 'api_tarifs', methods: ['GET'])]
+	public function getTarifs(int $appartementId, TarifRepository $tarifRepo): JsonResponse
+	{
+		$tarifs = $tarifRepo->findByAppartement($appartementId);
+		$data = [];
+
+		foreach ($tarifs as $tarif) {
+			$data[] = [
+				'id'          => $tarif->getId(),
+				'saison'      => $tarif->getSaison(),
+				'dateDebut'   => $tarif->getDateDebut()->format('Y-m-d'),
+				'dateFin'     => $tarif->getDateFin()->format('Y-m-d'),
+				'prixJour'    => $tarif->getPrixJour(),
+				'prixSemaine' => $tarif->getPrixSemaine(),
+				'prixMois'    => $tarif->getPrixMois(),
+			];
+		}
+
+		return new JsonResponse($data);
+	}
+
+	/**
+	 * API : créer un tarif
+	 */
+	#[Route('/api/tarif', name: 'api_tarif_create', methods: ['POST'])]
+	public function createTarif(
+		Request $request,
+		AppartementRepository $appartementRepo,
+		TarifRepository $tarifRepo,
+		EntityManagerInterface $em
+	): JsonResponse {
+		if (!$this->isAjaxRequest($request)) {
+			return new JsonResponse(['error' => 'Accès interdit'], 403);
+		}
+
+		$data = json_decode($request->getContent(), true);
+		if (!is_array($data)) {
+			return new JsonResponse(['error' => 'Données invalides'], 400);
+		}
+
+		$appartement = $appartementRepo->find((int) ($data['appartement_id'] ?? 0));
+		if (!$appartement) {
+			return new JsonResponse(['error' => 'Appartement non trouvé'], 404);
+		}
+
+		$dateDebut = new \DateTime($data['date_debut']);
+		$dateFin   = new \DateTime($data['date_fin']);
+
+		if ($dateFin <= $dateDebut) {
+			return new JsonResponse(['error' => 'La date de fin doit être après la date de début.'], 400);
+		}
+
+		// Vérification anti-chevauchement
+		$chevauchements = $tarifRepo->findChevauchements($appartement->getId(), $dateDebut, $dateFin);
+		if (!empty($chevauchements)) {
+			$noms = array_map(fn($t) => $t->getSaison() . ' (' . $t->getDateDebut()->format('d/m/Y') . ' → ' . $t->getDateFin()->format('d/m/Y') . ')', $chevauchements);
+			return new JsonResponse([
+				'error' => 'Chevauchement avec : ' . implode(', ', $noms),
+			], 409);
+		}
+
+		$tarif = new Tarif();
+		$tarif->setAppartement($appartement);
+		$tarif->setSaison(strip_tags(trim($data['saison'] ?? '')));
+		$tarif->setDateDebut($dateDebut);
+		$tarif->setDateFin($dateFin);
+		$tarif->setPrixJour((float) ($data['prix_jour'] ?? 0));
+		$tarif->setPrixSemaine((float) ($data['prix_semaine'] ?? 0));
+		$tarif->setPrixMois((float) ($data['prix_mois'] ?? 0));
+
+		$em->persist($tarif);
+		$em->flush();
+
+		return new JsonResponse([
+			'id'      => $tarif->getId(),
+			'message' => 'Tarif créé avec succès',
+		], 201);
+	}
+
+	/**
+	 * API : modifier un tarif
+	 */
+	#[Route('/api/tarif/{id}', name: 'api_tarif_update', methods: ['PUT'])]
+	public function updateTarif(
+		int $id,
+		Request $request,
+		TarifRepository $tarifRepo,
+		EntityManagerInterface $em
+	): JsonResponse {
+		if (!$this->isAjaxRequest($request)) {
+			return new JsonResponse(['error' => 'Accès interdit'], 403);
+		}
+
+		$tarif = $tarifRepo->find($id);
+		if (!$tarif) {
+			return new JsonResponse(['error' => 'Tarif non trouvé'], 404);
+		}
+
+		$data = json_decode($request->getContent(), true);
+		if (!is_array($data)) {
+			return new JsonResponse(['error' => 'Données invalides'], 400);
+		}
+
+		$dateDebut = new \DateTime($data['date_debut']);
+		$dateFin   = new \DateTime($data['date_fin']);
+
+		if ($dateFin <= $dateDebut) {
+			return new JsonResponse(['error' => 'La date de fin doit être après la date de début.'], 400);
+		}
+
+		// Vérification anti-chevauchement (en excluant le tarif courant)
+		$chevauchements = $tarifRepo->findChevauchements(
+			$tarif->getAppartement()->getId(), $dateDebut, $dateFin, $tarif->getId()
+		);
+		if (!empty($chevauchements)) {
+			$noms = array_map(fn($t) => $t->getSaison(), $chevauchements);
+			return new JsonResponse([
+				'error' => 'Chevauchement avec : ' . implode(', ', $noms),
+			], 409);
+		}
+
+		$tarif->setSaison(strip_tags(trim($data['saison'] ?? $tarif->getSaison())));
+		$tarif->setDateDebut($dateDebut);
+		$tarif->setDateFin($dateFin);
+		$tarif->setPrixJour((float) ($data['prix_jour'] ?? $tarif->getPrixJour()));
+		$tarif->setPrixSemaine((float) ($data['prix_semaine'] ?? $tarif->getPrixSemaine()));
+		$tarif->setPrixMois((float) ($data['prix_mois'] ?? $tarif->getPrixMois()));
+
+		$em->flush();
+
+		return new JsonResponse(['message' => 'Tarif mis à jour']);
+	}
+
+	/**
+	 * API : supprimer un tarif
+	 */
+	#[Route('/api/tarif/{id}', name: 'api_tarif_delete', methods: ['DELETE'])]
+	public function deleteTarif(
+		int $id,
+		TarifRepository $tarifRepo,
+		Request $request,
+		EntityManagerInterface $em
+	): JsonResponse {
+		if (!$this->isAjaxRequest($request)) {
+			return new JsonResponse(['error' => 'Accès interdit'], 403);
+		}
+
+		$tarif = $tarifRepo->find($id);
+		if (!$tarif) {
+			return new JsonResponse(['error' => 'Tarif non trouvé'], 404);
+		}
+
+		$em->remove($tarif);
+		$em->flush();
+
+		return new JsonResponse(['message' => 'Tarif supprimé']);
+	}
+
+	/**
+	 * Page de gestion des tarifs d'un appartement spécifique (ancienne route conservée)
+	 */
+	#[Route('/appartement/{id}/tarifs', name: 'appartement_tarifs')]
+	public function tarifsAppartement(
+		Appartement $appartement,
+		Request $request,
+		TarifRepository $tarifRepo,
+		EntityManagerInterface $em
+	): Response {
 		$tarif = new Tarif();
 		$tarif->setAppartement($appartement);
 
@@ -573,18 +750,31 @@ class AdminController extends AbstractController
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
-			$em->persist($tarif);
-			$em->flush();
+			// Vérification anti-chevauchement
+			$chevauchements = $tarifRepo->findChevauchements(
+				$appartement->getId(),
+				$tarif->getDateDebut(),
+				$tarif->getDateFin()
+			);
+
+			if (!empty($chevauchements)) {
+				$this->addFlash('danger', 'Ce tarif chevauche une saison existante.');
+			} else {
+				$em->persist($tarif);
+				$em->flush();
+				$this->addFlash('success', 'Tarif ajouté avec succès.');
+			}
 
 			return $this->redirectToRoute('admin_appartement_tarifs', [
-				'id' => $appartement->getId()
+				'id' => $appartement->getId(),
 			]);
 		}
 
 		return $this->render('admin/tarifs.html.twig', [
-			'form' => $form->createView(),
-			'appartement' => $appartement,
-			'tarifs' => $appartement->getTarifs()
+			'form'         => $form->createView(),
+			'appartement'  => $appartement,
+			'appartements' => [$appartement],
+			'tarifs'       => $tarifRepo->findByAppartement($appartement->getId()),
 		]);
 	}
 

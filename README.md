@@ -536,6 +536,7 @@ RÉSULTAT NET;17 150,00 €
 | **Stripe webhook** | ✅ | Signature vérifiée |
 | **Failles connues** | ✅ | Symfony 7.4 LTS à jour |
 
+---
 
 ## gestion des commande est exemple 
 
@@ -550,3 +551,58 @@ php -l src\Command\CleanDisponibilitesCommand.php
 
 # 4. Reliste les commandes
 php bin/console list app
+
+---
+
+## Instalation et mise en place des tests unitaires
+
+# 1. Instalation de PHPUnit
+composer require --dev phpunit/phpunit
+composer require --dev symfony/browser-kit symfony/css-selector
+
+# 2. Lancement des tests
+
+# Tous les tests unitaires
+php vendor/bin/phpunit --testsuite Unit --coverage-html
+
+# Tous les tests fonctionnels (nécessitent une BDD test)
+php vendor/bin/phpunit --testsuite Functional --coverage-html
+
+# Tout d'un coup
+php vendor/bin/phpunit --coverage-text
+
+# Avec couverture de code (nécessite Xdebug)
+php vendor/bin/phpunit --coverage-text
+
+pour generer un rapport html utiliser l'option --coverage-html
+
+# 3. Architecture des tests
+
+tests/
+├── Entity/
+│   ├── AppartementTest.php      (10 tests)
+│   ├── DisponibiliteTest.php    (6 tests)
+│   ├── FraisTest.php            (5 tests)
+│   ├── LocalisationTest.php     (5 tests)
+│   ├── PaymentTest.php          (7 tests)
+│   ├── ReservationTest.php      (15 tests)
+│   ├── TarifTest.php            (3 tests)
+│   ├── TemoignageTest.php       (7 tests)
+│   └── UserTest.php             (12 tests)
+├── Service/
+│   ├── SanitizerServiceTest.php (27 tests — XSS, email, tel, troncature)
+│   ├── DateServiceTest.php      (9 tests — jours ouvrés, weekends)
+│   └── DistanceServiceTest.php  (6 tests — Haversine, symétrie)
+├── Controller/
+│   ├── PublicRoutesTest.php     (9 tests — smoke test pages publiques)
+│   ├── AdminControllerTest.php  (9 tests — accès protégé + avec auth)
+│   ├── ClientControllerTest.php (6 tests — espace client)
+│   └── SecurityControllerTest.php (4 tests — login, register)
+├── Security/
+│   └── UserCheckerTest.php      (4 tests — compte actif/inactif)
+├── EventSubscriber/
+│   ├── SecurityHeadersSubscriberTest.php (2 tests)
+│   └── FormSanitizerSubscriberTest.php   (1 test)
+├── Twig/
+│   └── CloudinaryExtensionTest.php (14 tests — presets, URLs, fallback)
+└── bootstrap.php           

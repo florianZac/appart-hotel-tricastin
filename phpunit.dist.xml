@@ -15,11 +15,21 @@
         <ini name="error_reporting" value="-1" />
         <server name="APP_ENV" value="test" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
+        <server name="SYMFONY_PHPUNIT_REMOVE" value="" />
+        <server name="SYMFONY_PHPUNIT_VERSION" value="11.5" />
+        <server name="KERNEL_CLASS" value="App\Kernel" />
     </php>
 
     <testsuites>
         <testsuite name="Project Test Suite">
-            <directory>tests</directory>
+            <directory>tests/Entity</directory>
+            <directory>tests/Service</directory>
+            <directory>tests/Security</directory>
+            <directory>tests/EventSubscriber</directory>
+            <directory>tests/Twig</directory>
+        </testsuite>
+        <testsuite name="Functional">
+            <directory>tests/Controller</directory>
         </testsuite>
     </testsuites>
 
@@ -31,7 +41,10 @@
         <include>
             <directory>src</directory>
         </include>
-
+        <exclude>
+            <directory>src/DataFixtures</directory>
+            <directory>src/Command</directory>
+        </exclude>
         <deprecationTrigger>
             <method>Doctrine\Deprecations\Deprecation::trigger</method>
             <method>Doctrine\Deprecations\Deprecation::delegateTriggerToBackend</method>
