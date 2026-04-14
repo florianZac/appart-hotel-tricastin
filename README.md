@@ -607,3 +607,15 @@ tests/
 ├── Twig/
 │   └── CloudinaryExtensionTest.php (14 tests — presets, URLs, fallback)
 └── bootstrap.php           
+
+
+
+## Déploiement sur Heroku
+
+# 1. login sur heroku 
+heroku login
+# 1. login sur heroku 
+
+
+
+# 3. Vérifier les variables d'environement sur heroku 
