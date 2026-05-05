@@ -537,6 +537,391 @@ RÉSULTAT NET;17 150,00 €
 | **Failles connues** | ✅ | Symfony 7.4 LTS à jour |
 
 ---
+## gestion de démarrage Docker
+
+## Prérequis
+
+Un seul logiciel à installer : **Docker Desktop**
+
+  *   Téléchargement : https://www.docker.com/products/docker-desktop/
+  *   Version : Docker Desktop pour Windows (choisir la version Intel/AMD si vous pas sur une puce ARM)
+
+Après l'installation, lancez Docker Desktop et attendez que l'icône dans la barre des tâches soit **verte** (Running).
+
+---
+
+Remplissez les valeurs marquées `<À_REMPLIR>` :
+
+| Variable | Où la trouver |
+|---|---|
+| `APP_SECRET` | N'importe quelle chaîne de 32 caractères aléatoires |
+| `MAILER_DSN` | Votre interface Brevo → SMTP & API → Clés SMTP |
+| `CLOUDINARY_URL` | Votre tableau de bord Cloudinary → Dashboard |
+| `STRIPE_PUBLIC_KEY` | Votre compte Stripe → Développeurs → Clés API |
+| `STRIPE_SECRET_KEY` | Idem |
+| `STRIPE_WEBHOOK_SECRET` | Stripe → Développeurs → Webhooks |
+
+### Étape 2 – Ouvrir un terminal dans le dossier
+
+Faites un **clic droit** sur le dossier du projet → **Ouvrir dans le terminal**
+(ou tapez `cmd` dans la barre d'adresse de l'Explorateur Windows)
+
+### Étape 3 – Lancer l'application
+
+```
+docker compose up --build
+```
+
+Le premier démarrage prend **5 à 10 minutes** (téléchargement et compilation).
+Les démarrages suivants prennent **moins d'une minute**.
+
+Quand vous voyez `Application disponible sur http://localhost`, ouvrez votre navigateur :
+
+→ **http://localhost**
+
+---
+
+## Commandes utiles
+
+| Action | Commande |
+|---|---|
+| Démarrer | `docker compose up -d` |
+| Arrêter | `docker compose down` |
+| Voir les logs | `docker compose logs -f app` |
+| Redémarrer | `docker compose restart app` |
+| Accéder au terminal PHP | `docker compose exec app bash` |
+
+---
+
+## En cas de problème
+
+**La page ne s'affiche pas**
+→ Vérifiez que Docker Desktop est bien lancé (icône verte dans la barre des tâches)
+→ Attendez 30 secondes supplémentaires après le message "Application disponible"
+
+**Erreur "port 80 already in use"**
+→ Un autre logiciel utilise le port 80 (IIS, WAMP, etc.)
+→ Arrêtez-le ou modifiez dans `docker-compose.yml` la ligne `"80:80"` en `"8080:80"`
+→ Accédez ensuite via http://localhost:8080
+
+**Perte de données**
+→ Les données sont stockées dans un volume Docker nommé `tricastin_db_data`
+→ Elles persistent entre les redémarrages
+→ Pour une sauvegarde, contactez votre prestataire
+
+---
+
+## Sauvegarde de la base de données
+
+Pour exporter la base :
+```
+docker compose exec db mysqldump -u tricastin -pTricastinPass123! appart_hotel_tricastin > sauvegarde.sql
+```
+
+Pour restaurer :
+```
+docker compose exec -T db mysql -u tricastin -pTricastinPass123! appart_hotel_tricastin < sauvegarde.sql
+```
+
+Remplissez les valeurs marquées `<À_REMPLIR>` :
+
+| Variable | Où la trouver |
+|---|---|
+| `APP_SECRET` | N'importe quelle chaîne de 32 caractères aléatoires |
+| `MAILER_DSN` | Votre interface Brevo → SMTP & API → Clés SMTP |
+| `CLOUDINARY_URL` | Votre tableau de bord Cloudinary → Dashboard |
+| `STRIPE_PUBLIC_KEY` | Votre compte Stripe → Développeurs → Clés API |
+| `STRIPE_SECRET_KEY` | Idem |
+| `STRIPE_WEBHOOK_SECRET` | Stripe → Développeurs → Webhooks |
+
+### Étape 2 – Ouvrir un terminal dans le dossier
+
+Faites un **clic droit** sur le dossier du projet → **Ouvrir dans le terminal**
+(ou tapez `cmd` dans la barre d'adresse de l'Explorateur Windows)
+
+### Étape 3 – Lancer l'application
+
+```
+docker compose up --build
+```
+
+Le premier démarrage prend **5 à 10 minutes** (téléchargement et compilation).
+Les démarrages suivants prennent **moins d'une minute**.
+
+Quand vous voyez `Application disponible sur http://localhost`, ouvrez votre navigateur :
+
+→ **http://localhost**
+
+---
+
+## Commandes utiles
+
+| Action | Commande |
+|---|---|
+| Démarrer | `docker compose up -d` |
+| Arrêter | `docker compose down` |
+| Voir les logs | `docker compose logs -f app` |
+| Redémarrer | `docker compose restart app` |
+| Accéder au terminal PHP | `docker compose exec app bash` |
+
+---
+
+## En cas de problème
+
+**La page ne s'affiche pas**
+→ Vérifiez que Docker Desktop est bien lancé (icône verte dans la barre des tâches)
+→ Attendez 30 secondes supplémentaires après le message "Application disponible"
+
+**Erreur "port 80 already in use"**
+→ Un autre logiciel utilise le port 80 (IIS, WAMP, etc.)
+→ Arrêtez-le ou modifiez dans `docker-compose.yml` la ligne `"80:80"` en `"8080:80"`
+→ Accédez ensuite via http://localhost:8080
+
+**Perte de données**
+→ Les données sont stockées dans un volume Docker nommé `tricastin_db_data`
+→ Elles persistent entre les redémarrages
+→ Pour une sauvegarde, contactez votre prestataire
+
+---
+
+## Sauvegarde de la base de données
+
+Pour exporter la base :
+```
+docker compose exec db mysqldump -u tricastin -pTricastinPass123! appart_hotel_tricastin > sauvegarde.sql
+```
+
+Pour restaurer :
+```
+docker compose exec -T db mysql -u tricastin -pTricastinPass123! appart_hotel_tricastin < sauvegarde.sql
+```
+
+Remplissez les valeurs marquées `<À_REMPLIR>` :
+
+| Variable | Où la trouver |
+|---|---|
+| `APP_SECRET` | N'importe quelle chaîne de 32 caractères aléatoires |
+| `MAILER_DSN` | Votre interface Brevo → SMTP & API → Clés SMTP |
+| `CLOUDINARY_URL` | Votre tableau de bord Cloudinary → Dashboard |
+| `STRIPE_PUBLIC_KEY` | Votre compte Stripe → Développeurs → Clés API |
+| `STRIPE_SECRET_KEY` | Idem |
+| `STRIPE_WEBHOOK_SECRET` | Stripe → Développeurs → Webhooks |
+
+### Étape 2 – Ouvrir un terminal dans le dossier
+
+Faites un **clic droit** sur le dossier du projet → **Ouvrir dans le terminal**
+(ou tapez `cmd` dans la barre d'adresse de l'Explorateur Windows)
+
+### Étape 3 – Lancer l'application
+
+```
+docker compose up --build
+```
+
+Le premier démarrage prend **5 à 10 minutes** (téléchargement et compilation).
+Les démarrages suivants prennent **moins d'une minute**.
+
+Quand vous voyez `Application disponible sur http://localhost`, ouvrez votre navigateur :
+
+→ **http://localhost**
+
+---
+
+## Commandes utiles
+
+| Action | Commande |
+|---|---|
+| Démarrer | `docker compose up -d` |
+| Arrêter | `docker compose down` |
+| Voir les logs | `docker compose logs -f app` |
+| Redémarrer | `docker compose restart app` |
+| Accéder au terminal PHP | `docker compose exec app bash` |
+
+---
+
+## En cas de problème
+
+**La page ne s'affiche pas**
+→ Vérifiez que Docker Desktop est bien lancé (icône verte dans la barre des tâches)
+→ Attendez 30 secondes supplémentaires après le message "Application disponible"
+
+**Erreur "port 80 already in use"**
+→ Un autre logiciel utilise le port 80 (IIS, WAMP, etc.)
+→ Arrêtez-le ou modifiez dans `docker-compose.yml` la ligne `"80:80"` en `"8080:80"`
+→ Accédez ensuite via http://localhost:8080
+
+**Perte de données**
+→ Les données sont stockées dans un volume Docker nommé `tricastin_db_data`
+→ Elles persistent entre les redémarrages
+→ Pour une sauvegarde, contactez votre prestataire
+
+---
+
+## Sauvegarde de la base de données
+
+Pour exporter la base :
+```
+docker compose exec db mysqldump -u tricastin -pTricastinPass123! appart_hotel_tricastin > sauvegarde.sql
+```
+
+Pour restaurer :
+```
+docker compose exec -T db mysql -u tricastin -pTricastinPass123! appart_hotel_tricastin < sauvegarde.sql
+```
+
+Remplissez les valeurs marquées `<À_REMPLIR>` :
+
+| Variable | Où la trouver |
+|---|---|
+| `APP_SECRET` | N'importe quelle chaîne de 32 caractères aléatoires |
+| `MAILER_DSN` | Votre interface Brevo → SMTP & API → Clés SMTP |
+| `CLOUDINARY_URL` | Votre tableau de bord Cloudinary → Dashboard |
+| `STRIPE_PUBLIC_KEY` | Votre compte Stripe → Développeurs → Clés API |
+| `STRIPE_SECRET_KEY` | Idem |
+| `STRIPE_WEBHOOK_SECRET` | Stripe → Développeurs → Webhooks |
+
+### Étape 2 – Ouvrir un terminal dans le dossier
+
+Faites un **clic droit** sur le dossier du projet → **Ouvrir dans le terminal**
+(ou tapez `cmd` dans la barre d'adresse de l'Explorateur Windows)
+
+### Étape 3 – Lancer l'application
+
+```
+docker compose up --build
+```
+
+Le premier démarrage prend **5 à 10 minutes** (téléchargement et compilation).
+Les démarrages suivants prennent **moins d'une minute**.
+
+Quand vous voyez `Application disponible sur http://localhost`, ouvrez votre navigateur :
+
+→ **http://localhost**
+
+---
+
+## Commandes utiles
+
+| Action | Commande |
+|---|---|
+| Démarrer | `docker compose up -d` |
+| Arrêter | `docker compose down` |
+| Voir les logs | `docker compose logs -f app` |
+| Redémarrer | `docker compose restart app` |
+| Accéder au terminal PHP | `docker compose exec app bash` |
+
+---
+
+## En cas de problème
+
+**La page ne s'affiche pas**
+→ Vérifiez que Docker Desktop est bien lancé (icône verte dans la barre des tâches)
+→ Attendez 30 secondes supplémentaires après le message "Application disponible"
+
+**Erreur "port 80 already in use"**
+→ Un autre logiciel utilise le port 80 (IIS, WAMP, etc.)
+→ Arrêtez-le ou modifiez dans `docker-compose.yml` la ligne `"80:80"` en `"8080:80"`
+→ Accédez ensuite via http://localhost:8080
+
+**Perte de données**
+→ Les données sont stockées dans un volume Docker nommé `tricastin_db_data`
+→ Elles persistent entre les redémarrages
+→ Pour une sauvegarde, contactez votre prestataire
+
+---
+
+## Sauvegarde de la base de données
+
+Pour exporter la base :
+```
+docker compose exec db mysqldump -u tricastin -pTricastinPass123! appart_hotel_tricastin > sauvegarde.sql
+```
+
+Pour restaurer :
+```
+docker compose exec -T db mysql -u tricastin -pTricastinPass123! appart_hotel_tricastin < sauvegarde.sql
+```
+
+Remplissez les valeurs marquées `<À_REMPLIR>` :
+
+| Variable | Où la trouver |
+|---|---|
+| `APP_SECRET` | N'importe quelle chaîne de 32 caractères aléatoires |
+| `MAILER_DSN` | Votre interface Brevo → SMTP & API → Clés SMTP |
+| `CLOUDINARY_URL` | Votre tableau de bord Cloudinary → Dashboard |
+| `STRIPE_PUBLIC_KEY` | Votre compte Stripe → Développeurs → Clés API |
+| `STRIPE_SECRET_KEY` | Idem |
+| `STRIPE_WEBHOOK_SECRET` | Stripe → Développeurs → Webhooks |
+
+### Étape 2 – Ouvrir un terminal dans le dossier
+
+Faites un **clic droit** sur le dossier du projet → **Ouvrir dans le terminal**
+(ou tapez `cmd` dans la barre d'adresse de l'Explorateur Windows)
+
+### Étape 3 – Lancer l'application
+
+```
+docker compose up --build
+```
+
+Le premier démarrage prend **5 à 10 minutes** (téléchargement et compilation).
+Les démarrages suivants prennent **moins d'une minute**.
+
+Quand vous voyez `Application disponible sur http://localhost`, ouvrez votre navigateur :
+
+→ **http://localhost**
+
+---
+
+## Commandes utiles
+
+| Action | Commande |
+|---|---|
+| Démarrer | `docker compose up -d` |
+| Arrêter | `docker compose down` |
+| Voir les logs | `docker compose logs -f app` |
+| Redémarrer | `docker compose restart app` |
+| Accéder au terminal PHP | `docker compose exec app bash` |
+
+---
+
+## En cas de problème
+
+**La page ne s'affiche pas**
+→ Vérifiez que Docker Desktop est bien lancé (icône verte dans la barre des tâches)
+→ Attendez 30 secondes supplémentaires après le message "Application disponible"
+
+**Erreur "port 80 already in use"**
+→ Un autre logiciel utilise le port 80 (IIS, WAMP, etc.)
+→ Arrêtez-le ou modifiez dans `docker-compose.yml` la ligne `"80:80"` en `"8080:80"`
+→ Accédez ensuite via http://localhost:8080
+
+**Perte de données**
+→ Les données sont stockées dans un volume Docker nommé `tricastin_db_data`
+→ Elles persistent entre les redémarrages
+→ Pour une sauvegarde, contactez votre prestataire
+
+---
+
+## Sauvegarde de la base de données
+
+Pour exporter la base :
+```
+docker compose exec db mysqldump -u tricastin -pTricastinPass123! appart_hotel_tricastin > sauvegarde.sql
+```
+
+Pour restaurer :
+```
+docker compose exec -T db mysql -u tricastin -pTricastinPass123! appart_hotel_tricastin < sauvegarde.sql
+```
+
+## Démarrage en 3 étapes
+
+### Étape 1 – Configurer vos clés
+
+Ouvrez le fichier `.env.docker`
+
+# 1. Vérifie que le fichier existe bien
 
 ## gestion des commande est exemple 
 
@@ -551,6 +936,80 @@ php -l src\Command\CleanDisponibilitesCommand.php
 
 # 4. Reliste les commandes
 php bin/console list app
+
+
+Remplissez les valeurs marquées `<À_REMPLIR>` :
+
+| Variable | Où la trouver |
+|---|---|
+| `APP_SECRET` | N'importe quelle chaîne de 32 caractères aléatoires |
+| `MAILER_DSN` | Votre interface Brevo   *   SMTP & API   *   Clés SMTP |
+| `CLOUDINARY_URL` | Votre tableau de bord Cloudinary   *   Dashboard |
+| `STRIPE_PUBLIC_KEY` | Votre compte Stripe   *   Développeurs   *   Clés API |
+| `STRIPE_SECRET_KEY` | Idem |
+| `STRIPE_WEBHOOK_SECRET` | Stripe   *   Développeurs   *   Webhooks |
+
+### Étape 2 – Ouvrir un terminal dans le dossier
+
+Faites un **clic droit** sur le dossier du projet   *   **Ouvrir dans le terminal**
+(ou tapez `cmd` dans la barre d'adresse de l'Explorateur Windows)
+
+### Étape 3 – Lancer l'application
+
+```
+docker compose up --build
+```
+
+Le premier démarrage prend **5 à 10 minutes** (téléchargement et compilation).
+Les démarrages suivants prennent **moins d'une minute**.
+
+Quand vous voyez `Application disponible sur http://localhost`, ouvrez votre navigateur :
+
+  *   **http://localhost**
+
+---
+
+## Commandes utiles
+
+| Action | Commande |
+|---|---|
+| Démarrer | `docker compose up -d` |
+| Arrêter | `docker compose down` |
+| Voir les logs | `docker compose logs -f app` |
+| Redémarrer | `docker compose restart app` |
+| Accéder au terminal PHP | `docker compose exec app bash` |
+
+---
+
+## En cas de problème
+
+**La page ne s'affiche pas**
+  *   Vérifiez que Docker Desktop est bien lancé (icône verte dans la barre des tâches)
+  *   Attendez 30 secondes supplémentaires après le message "Application disponible"
+
+**Erreur "port 80 already in use"**
+  *   Un autre logiciel utilise le port 80 (IIS, WAMP, etc.)
+  *   Arrêtez-le ou modifiez dans `docker-compose.yml` la ligne `"80:80"` en `"8080:80"`
+  *   Accédez ensuite via http://localhost:8080
+
+**Perte de données**
+  *   Les données sont stockées dans un volume Docker nommé `tricastin_db_data`
+  *   Elles persistent entre les redémarrages
+  *   Pour une sauvegarde, contactez votre prestataire
+
+---
+
+## Sauvegarde de la base de données
+
+Pour exporter la base :
+```
+docker compose exec db mysqldump -u tricastin -pTricastinPass123! appart_hotel_tricastin > sauvegarde.sql
+```
+
+Pour restaurer :
+```
+docker compose exec -T db mysql -u tricastin -pTricastinPass123! appart_hotel_tricastin < sauvegarde.sql
+```
 
 ---
 
@@ -573,7 +1032,6 @@ php vendor/bin/phpunit --testsuite Unit --coverage-html ResultatCouvertureCode
 
 # Avec couverture de code (nécessite Xdebug)
 php vendor/bin/phpunit --testsuite Unit --coverage-html ResultatCouvertureCode
-
 
 pour generer un rapport html utiliser l'option --coverage-html
 
@@ -608,14 +1066,16 @@ tests/
 │   └── CloudinaryExtensionTest.php (14 tests — presets, URLs, fallback)
 └── bootstrap.php           
 
-
-
-## Déploiement sur Heroku
+## Déploiement sur de l'application sur Heroku
 
 # 1. login sur heroku 
 heroku login
-# 1. login sur heroku 
 
+# 2. Vérifier les variables d'environement sur heroku du projet ciblé
+heroku run printenv
 
+# 3. Mise à jour des variables d'environement sur heroku 
+heroku config:set MODE=PRODUCTION
 
-# 3. Vérifier les variables d'environement sur heroku 
+# 4. Déploiment de heroku
+git push heroku main

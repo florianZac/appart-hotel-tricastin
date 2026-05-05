@@ -1,0 +1,22 @@
+.git
+.gitignore
+node_modules
+var/cache
+var/log
+vendor
+public/build
+OLDcompose.yaml
+OLDcompose.override.yaml
+compose.yaml
+compose.override.yaml
+ResultatCouvertureCode
+.phpunit.cache
+tests/
+phpunit.dist.xml
+doc/
+
+# CRITIQUE : exclure TOUS les .env du projet
+# Symfony les lirait dans l'image et écraserait les variables Docker
+.env
+.env.*
+!.env.docker

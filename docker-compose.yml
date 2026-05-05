@@ -1,0 +1,54 @@
+services:
+
+  # -------------------------------------------------------
+  # Application Symfony 7.4
+  # -------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    container_name: tricastin_app
+    restart: on-failure
+    ports:
+      - "8080:80"
+    env_file:
+      - .env.docker
+    environment:
+      # DATABASE_URL défini ici en dur — écrase toute autre source
+      # (évite le problème des variables littérales dans env_file)
+      DATABASE_URL: "mysql://tricastin:TricastinPass123!@db:3306/appart_hotel_tricastin?serverVersion=8.0.46&charset=utf8mb4"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - app_logs:/var/www/html/var/log
+
+  # -------------------------------------------------------
+  # Base de données MySQL 8.0
+  # -------------------------------------------------------
+  db:
+    image: mysql:8.0
+    container_name: tricastin_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "RootSecret123!"
+      MYSQL_DATABASE: "appart_hotel_tricastin"
+      MYSQL_USER: "tricastin"
+      MYSQL_PASSWORD: "TricastinPass123!"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=RootSecret123!"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    # ports:
+    #   - "3307:3306"   # Décommenter pour accéder depuis DBeaver
+
+volumes:
+  db_data:
+    driver: local
+  app_logs:
+    driver: local
