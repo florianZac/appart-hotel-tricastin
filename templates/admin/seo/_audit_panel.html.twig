@@ -1,0 +1,38 @@
+{# templates/admin/seo/_audit_panel.html.twig #}
+{# Inclus dans edit.html.twig et potentiellement rechargé via AJAX #}
+
+<div class="text-center mb-3">
+  <div class="display-5 fw-bold text-{{ audit.scoreColor }}">{{ audit.score }}</div>
+  <div class="text-muted small">/ 100</div>
+  <div class="progress mt-2" style="height:8px">
+    <div class="progress-bar bg-{{ audit.scoreColor }}" style="width:{{ audit.score }}%"></div>
+  </div>
+  <div class="mt-1 small">
+    {% if audit.score >= 80 %}
+      <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Bon référencement</span>
+    {% elseif audit.score >= 50 %}
+      <span class="text-warning"><i class="bi bi-exclamation-circle-fill me-1"></i>À améliorer</span>
+    {% else %}
+      <span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i>Optimisation requise</span>
+    {% endif %}
+  </div>
+</div>
+
+<ul class="list-unstyled" style="font-size:.8rem">
+  {% for key, criterion in audit.criteria %}
+    <li class="mb-2 d-flex gap-2">
+      <span class="flex-shrink-0">
+        {% if criterion.ok %}
+          <i class="bi bi-check-circle-fill text-success"></i>
+        {% elseif criterion.warning %}
+          <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+        {% else %}
+          <i class="bi bi-x-circle-fill text-danger"></i>
+        {% endif %}
+      </span>
+      <span class="{{ criterion.ok ? '' : (criterion.warning ? 'text-warning' : 'text-danger') }}">
+        {{ criterion.message }}
+      </span>
+    </li>
+  {% endfor %}
+</ul>

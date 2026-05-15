@@ -3,27 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}{{ 'site.title'|trans }}{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}{{ 'site.title'|trans }} : 12 appartements meublés dans trois destinations. Réservez votre séjour idéal.{% endblock %}">
-  <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
-  <link rel="icon" href="{{ asset('favicon-192.png') }}" type="image/png" sizes="192x192">
-  {# Bootstrap 5 CSS #}
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  {# Bootstrap Icons #}
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  {# Google Fonts #}
+
+  {# =================================================================== #}
+  {# SEO — Résolution automatique (DB > defaults)                        #}
+  {# Les templates enfants passent leurs données contextuelles via :     #}
+  {#   {% set seoOverride = {'titre': '...', 'h1': '...', ...} %}        #}
+  {# Ref: Andrieu "Réussir son référencement web" 2022-2023              #}
+  {# =================================================================== #}
+  {% set _seo = seo_resolve(seoOverride ?? {}) %}
+
+  {# ── Balise <title> ─────────────────────────────────────────────────  #}
+  {# Andrieu ch.5 : mot-clé cible en début, marque en fin, 55-65 chars   #}
+  {# DIFFÉRENTE du H1 — ce sont deux balises distinctes et complémentaires#}
+  <title>{% block seo_title %}{{ _seo.titre ?? 'Appart Hôtel Tricastin' }}{% endblock %}</title>
+
+  {# ── Meta description ───────────────────────────────────────────────  #}
+  {# Andrieu ch.5 : 120-160 car., mot-clé inclus, appel à l'action (CTA) #}
+  <meta name="description"
+        content="{% block seo_description %}{{ _seo.description }}{% endblock %}">
+
+  {# ── Robots ─────────────────────────────────────────────────────────  #}
+  <meta name="robots" content="{{ _seo.robots }}">
+
+  {# ── Canonical ──────────────────────────────────────────────────────  #}
+  {# Andrieu ch.8 : éviter le contenu dupliqué, une URL par contenu       #}
+  <link rel="canonical" href="{{ _seo.canonical }}">
+
+  {# ── Hreflang ───────────────────────────────────────────────────────  #}
+  {# Andrieu ch.12 : signaux multilingues pour Google                    #}
+  {% if _seo.hreflangFr %}
+  <link rel="alternate" hreflang="fr" href="{{ _seo.hreflangFr }}">
+  {% endif %}
+  {% if _seo.hreflangEn %}
+  <link rel="alternate" hreflang="en" href="{{ _seo.hreflangEn }}">
+  {% endif %}
+  {% if _seo.hreflangFr or _seo.hreflangEn %}
+  <link rel="alternate" hreflang="x-default" href="{{ _seo.hreflangFr ?? _seo.canonical }}">
+  {% endif %}
+
+  {# ── Open Graph ─────────────────────────────────────────────────────  #}
+  {# Andrieu ch.11 : optimiser le partage réseaux sociaux = signaux CTR  #}
+  <meta property="og:site_name"    content="Appart Hôtel Tricastin">
+  <meta property="og:locale"       content="{{ app.request.locale == 'en' ? 'en_GB' : 'fr_FR' }}">
+  <meta property="og:locale:alternate" content="{{ app.request.locale == 'en' ? 'fr_FR' : 'en_GB' }}">
+  <meta property="og:type"         content="{% block og_type %}{{ _seo.ogType }}{% endblock %}">
+  <meta property="og:url"          content="{{ _seo.canonical }}">
+  <meta property="og:title"        content="{{ _seo.titre ?? 'Appart Hôtel Tricastin' }}">
+  <meta property="og:description"  content="{{ _seo.description }}">
+  {% if _seo.ogImage %}
+  <meta property="og:image"        content="{{ _seo.ogImage }}">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt"    content="{{ _seo.titre ?? 'Appart Hôtel Tricastin' }}">
+  <meta property="og:image:type"   content="image/jpeg">
+  {% endif %}
+
+  {# ── Twitter Card ────────────────────────────────────────────────────  #}
+  <meta name="twitter:card"         content="summary_large_image">
+  <meta name="twitter:title"        content="{{ _seo.titre ?? 'Appart Hôtel Tricastin' }}">
+  <meta name="twitter:description"  content="{{ _seo.description }}">
+  {% if _seo.ogImage %}
+  <meta name="twitter:image"        content="{{ _seo.ogImage }}">
+  <meta name="twitter:image:alt"    content="{{ _seo.titre ?? 'Appart Hôtel Tricastin' }}">
+  {% endif %}
+
+  {# ── JSON-LD Schema.org ─────────────────────────────────────────────  #}
+  {# Andrieu ch.10 : données structurées = rich snippets + EAT           #}
+  {# Peut contenir plusieurs schémas concaténés (WebSite + LodgingBusiness #}
+  {# + BreadcrumbList) séparés par des newlines                          #}
+  {% if _seo.jsonLd %}
+    {% for schema in _seo.jsonLd|split('\n') %}
+      {% if schema|trim starts with '{' %}
+      <script type="application/ld+json">{{ schema|raw }}</script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {# ── Bloc SEO libre ─────────────────────────────────────────────────  #}
+  {# Les templates enfants peuvent injecter des schémas supplémentaires  #}
+  {% block seo_extra %}{% endblock %}
+
+  {# =================================================================== #}
+  {# PERFORMANCES — Andrieu ch.9 : vitesse = facteur de positionnement   #}
+  {# =================================================================== #}
+
+  {# Preconnect domaines tiers critiques (Google Fonts, CDN) #}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://res.cloudinary.com">
 
-  {# Custom CSS #}
+  {# Favicons #}
+  <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+  <link rel="icon" href="{{ asset('favicon-192.png') }}" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="{{ asset('favicon-192.png') }}">
+
+  {# ── CSS ─────────────────────────────────────────────────────────── #}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   {% block stylesheets %}{% endblock %}
 </head>
 <body>
-    {# ========================================= #}
-    {# NAVBAR                                    #}
-    {# ========================================= #}
+
+  {# ================================================================== #}
+  {# NAVBAR                                                              #}
+  {# ================================================================== #}
   <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
     <div class="container">
       <a class="navbar-brand" href="{{ path('app_home') }}">
@@ -35,7 +121,8 @@
         <i class="bi bi-star-fill"></i> {{ 'nav.book'|trans }}
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -43,30 +130,31 @@
         <ul class="navbar-nav ms-auto align-items-center">
           <li class="nav-item">
             <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}"
-                href="{{ path('app_home') }}">{{ 'nav.home'|trans }}</a>
+               href="{{ path('app_home') }}">{{ 'nav.home'|trans }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if app.request.attributes.get('_route') starts with 'app_appartement' %}active{% endif %}"
-                href="{{ path('app_appartements') }}">{{ 'nav.apartments'|trans }}</a>
+               href="{{ path('app_appartements') }}">{{ 'nav.apartments'|trans }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}"
-              href="{{ path('app_contact') }}">{{ 'nav.contact'|trans }}</a>
+               href="{{ path('app_contact') }}">{{ 'nav.contact'|trans }}</a>
           </li>
 
           {# Drapeaux FR / EN #}
           <li class="nav-item ms-lg-2 d-flex align-items-center gap-1">
             <a href="{{ path('app_change_locale', {locale: 'fr'}) }}"
-              class="locale-flag {% if app.request.locale == 'fr' %}active{% endif %}" title="Français">
-              <img src="https://flagcdn.com/w20/fr.png" width="20" height="15" alt="FR">
+               class="locale-flag {% if app.request.locale == 'fr' %}active{% endif %}" title="Français"
+               hreflang="fr">
+              <img src="https://flagcdn.com/w20/fr.png" width="20" height="15" alt="FR" loading="lazy">
             </a>
             <a href="{{ path('app_change_locale', {locale: 'en'}) }}"
-              class="locale-flag {% if app.request.locale == 'en' %}active{% endif %}" title="English">
-              <img src="https://flagcdn.com/w20/gb.png" width="20" height="15" alt="EN">
+               class="locale-flag {% if app.request.locale == 'en' %}active{% endif %}" title="English"
+               hreflang="en">
+              <img src="https://flagcdn.com/w20/gb.png" width="20" height="15" alt="EN" loading="lazy">
             </a>
           </li>
-          
-          {# Bouton Espace client / Admin / Login #}
+
           <li class="nav-item ms-lg-3 d-none d-lg-block">
             {% if is_granted('ROLE_ADMIN') %}
               <a class="btn btn-reserve" href="{{ path('admin_dashboard') }}">
@@ -76,7 +164,6 @@
               <a class="btn btn-reserve" href="{{ path('client_dashboard') }}">
                 <i class="bi bi-person"></i> Mon espace
               </a>
-              {# Bouton déconnection desktop #}
               <a href="{{ path('app_logout') }}" class="btn btn-reserve">
                 <i class="bi bi-box-arrow-right"></i> Déconnexion
               </a>
@@ -85,78 +172,75 @@
                 <i class="bi bi-box-arrow-in-right"></i> {{ app.request.locale == 'fr' ? 'Connexion' : 'Login' }}
               </a>
             {% endif %}
-
           </li>
-
         </ul>
       </div>
     </div>
   </nav>
 
-  {# ========================================= #}
-  {# FLASH MESSAGES                            #}
-  {# ========================================= #}
+  {# ================================================================== #}
+  {# FLASH MESSAGES                                                      #}
+  {# ================================================================== #}
   {% for label, messages in app.flashes %}
     {% for message in messages %}
       <div class="alert alert-{{ label }} alert-dismissible fade show flash-message" role="alert">
         <div class="container">
           <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
         </div>
       </div>
     {% endfor %}
   {% endfor %}
 
-  {# ========================================= #}
-  {# MAIN CONTENT                              #}
-  {# ========================================= #}
+  {# ================================================================== #}
+  {# MAIN                                                                #}
+  {# ================================================================== #}
   <main id="main">
     {% block body %}{% endblock %}
   </main>
 
-  {# ========================================= #}
-  {# FOOTER                                    #}
-  {# ========================================= #}
+  {# ================================================================== #}
+  {# FOOTER                                                              #}
+  {# ================================================================== #}
   <footer class="site-footer">
     <div class="container">
       <div class="row g-4">
-        {# Colonne infos #}
         <div class="col-lg-4">
           <h5 class="footer-brand">{{ 'footer.title'|trans }}</h5>
           <address class="footer-address">
-              <p><i class="bi bi-geo-alt"></i> {{ site_address }}</p>
-              <p><i class="bi bi-telephone"></i>
-                <a href="tel:{{ site_phone|replace({' ': ''}) }}">{{ site_phone }}</a>
-              </p>
-              <p><i class="bi bi-envelope"></i>
-                <a href="mailto:{{ site_email }}">{{ site_email }}</a>
-              </p>
+            <p><i class="bi bi-geo-alt"></i> {{ site_address }}</p>
+            <p><i class="bi bi-telephone"></i>
+              <a href="tel:{{ site_phone|replace({' ': ''}) }}">{{ site_phone }}</a></p>
+            <p><i class="bi bi-envelope"></i>
+              <a href="mailto:{{ site_email }}">{{ site_email }}</a></p>
           </address>
         </div>
 
-        {# Colonne localisations #}
         <div class="col-lg-4">
           <h5>{{ 'footer.locations'|trans }}</h5>
+          {# Andrieu ch.6 : liens de maillage interne dans le footer avec ancres optimisées #}
           <ul class="footer-links">
-            <li><a href="{{ path('app_appartements_localisation', {slug: 'pont-saint-esprit'}) }}"> Pont-Saint-Esprit (3 apparts)</a></li>
-            <li><a href="{{ path('app_appartements_localisation', {slug: 'saint-paul-trois-chateaux'}) }}"> Saint-Paul-Trois-Châteaux (3 apparts)</a></li>
-            <li><a href="{{ path('app_appartements_localisation', {slug: 'tulette'}) }}"> Tulette (6 apparts)</a></li>
+            <li><a href="{{ path('app_appartements_localisation', {slug: 'pont-saint-esprit'}) }}"
+                   title="Appartements meublés à Pont-Saint-Esprit">
+              Pont-Saint-Esprit <small>(3 apparts)</small></a></li>
+            <li><a href="{{ path('app_appartements_localisation', {slug: 'saint-paul-trois-chateaux'}) }}"
+                   title="Appartements meublés à Saint-Paul-Trois-Châteaux">
+              Saint-Paul-Trois-Châteaux <small>(3 apparts)</small></a></li>
+            <li><a href="{{ path('app_appartements_localisation', {slug: 'tulette'}) }}"
+                   title="Appartements meublés à Tulette">
+              Tulette <small>(6 apparts)</small></a></li>
           </ul>
         </div>
 
-        {# Colonne réseaux sociaux #}
         <div class="col-lg-4">
           <h5>{{ 'footer.follow'|trans }}</h5>
           <div class="social-links">
-            <a href="#" target="_blank" rel="noopener" aria-label="Facebook">
-              <i class="bi bi-facebook"></i>
-            </a>
-            <a href="#" target="_blank" rel="noopener" aria-label="Instagram">
-              <i class="bi bi-instagram"></i>
-            </a>
-            <a href="#" target="_blank" rel="noopener" aria-label="Google">
-              <i class="bi bi-google"></i>
-            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <i class="bi bi-facebook"></i></a>
+            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <i class="bi bi-instagram"></i></a>
+            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Google">
+              <i class="bi bi-google"></i></a>
           </div>
         </div>
       </div>
@@ -169,14 +253,17 @@
         </div>
         <div class="col-md-6 text-center text-md-end">
           <a href="{{ path('app_mentions_legales') }}">{{ 'footer.legal'|trans }}</a>
+          {# Lien sitemap HTML (Andrieu : aide le crawl) #}
+          <span class="mx-1">·</span>
+          <a href="{{ path('app_sitemap_html') }}">Plan du site</a>
         </div>
       </div>
     </div>
   </footer>
 
-  {# ========================================= #}
-  {# SCRIPTS                                   #}
-  {# ========================================= #}
+  {# ================================================================== #}
+  {# SCRIPTS                                                             #}
+  {# ================================================================== #}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/js/main.js"></script>
   {% block javascripts %}{% endblock %}

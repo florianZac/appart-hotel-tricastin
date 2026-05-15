@@ -1,0 +1,79 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Nouveau cocon sémantique — SEO Admin{% endblock %}
+
+{% block admin_body %}
+<div class="container-fluid py-4">
+
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="{{ path('admin_seo_index') }}">SEO</a></li>
+      <li class="breadcrumb-item"><a href="{{ path('admin_seo_cocons') }}">Cocons</a></li>
+      <li class="breadcrumb-item active">Nouveau cocon</li>
+    </ol>
+  </nav>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold">
+          <i class="bi bi-diagram-3 me-2 text-primary"></i>Nouveau cocon sémantique
+        </div>
+        <div class="card-body">
+
+          <div class="alert alert-light border small mb-4">
+            <strong>Andrieu ch.7 :</strong> Un cocon regroupe des pages partageant un même champ sémantique.
+            Définissez d'abord le cocon, puis assignez-y des pages depuis l'interface SEO.
+          </div>
+
+          <form method="post" action="{{ path('admin_seo_cocon_new') }}">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Nom du cocon <span class="text-danger">*</span></label>
+              <input type="text" name="nom" class="form-control"
+                     placeholder="ex : Séjour & Appartements" required
+                     value="{{ cocon ? cocon.nom : '' }}">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Mot-clé principal du cocon</label>
+              <input type="text" name="motCleCocon" class="form-control"
+                     placeholder="ex : appartement meublé Tricastin"
+                     value="{{ cocon ? cocon.motCleCocon : '' }}">
+              <div class="form-text">
+                Andrieu ch.7 : le mot-clé thématique qui unit toutes les pages du cocon.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Description</label>
+              <textarea name="description" class="form-control" rows="2"
+                        placeholder="Décrivez le thème central de ce cocon…">{{ cocon ? cocon.description : '' }}</textarea>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Couleur d'identification</label>
+              <div class="d-flex align-items-center gap-3">
+                <input type="color" name="couleur" class="form-control form-control-color"
+                       value="{{ cocon ? cocon.couleur : '#3b82f6' }}" style="width:60px">
+                <span class="text-muted small">Utilisée pour identifier le cocon dans l'interface admin</span>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <a href="{{ path('admin_seo_cocons') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Annuler
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-floppy me-1"></i>Créer le cocon
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

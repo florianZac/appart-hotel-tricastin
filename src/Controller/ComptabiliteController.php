@@ -7,6 +7,7 @@ use App\Form\ExportComptabiliteType;
 use App\Form\FraisType;
 use App\Repository\FraisRepository;
 use App\Service\ComptabiliteExporter;
+use App\Service\ComptabiliteExporterXlsx;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,19 +20,21 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ComptabiliteController extends AbstractController
 {
     public function __construct(
-        private readonly ComptabiliteExporter  $exporter,
-        private readonly FraisRepository       $fraisRepo,
-        private readonly EntityManagerInterface $em,
+        private readonly ComptabiliteExporter     $exporter,
+        private readonly ComptabiliteExporterXlsx $exporterXlsx,
+        private readonly FraisRepository          $fraisRepo,
+        private readonly EntityManagerInterface   $em,
     ) {}
 
-    // ── Page principale : formulaire d'export ───────────────────
+    // ── Page principale ─────────────────────────────────────────
+
     #[Route('', name: 'admin_comptabilite', methods: ['GET'])]
     public function index(Request $request): Response
     {
         $formExport = $this->createForm(ExportComptabiliteType::class);
         $formExport->handleRequest($request);
 
-        $annee = (int) date('Y');
+        $annee     = (int) date('Y');
         $fraisList = $this->fraisRepo->findByAnnee($annee);
 
         return $this->render('admin/comptabilite/index.html.twig', [
@@ -41,7 +44,8 @@ class ComptabiliteController extends AbstractController
         ]);
     }
 
-    // ── Téléchargement CSV ──────────────────────────────────────
+    // ── Export CSV (ancien format, conservé) ────────────────────
+
     #[Route('/export-csv', name: 'admin_comptabilite_export_csv', methods: ['GET'])]
     public function exportCsv(Request $request): Response
     {
@@ -55,7 +59,23 @@ class ComptabiliteController extends AbstractController
         return $this->exporter->exportCsv($annee, $appartement);
     }
 
-    // ── CRUD frais : Ajout ──────────────────────────────────────
+    // ── Export Excel multi-onglets (nouveau) ────────────────────
+
+    #[Route('/export-xlsx', name: 'admin_comptabilite_export_xlsx', methods: ['GET'])]
+    public function exportXlsx(Request $request): Response
+    {
+        $formExport = $this->createForm(ExportComptabiliteType::class);
+        $formExport->handleRequest($request);
+
+        $data         = $formExport->getData();
+        $annee        = $data['annee'] ?? (int) date('Y');
+        $localisation = $data['localisation'] ?? null;
+
+        return $this->exporterXlsx->exportXlsx($annee, $localisation);
+    }
+
+    // ── CRUD frais ──────────────────────────────────────────────
+
     #[Route('/frais/nouveau', name: 'admin_frais_new', methods: ['GET', 'POST'])]
     public function newFrais(Request $request): Response
     {
@@ -66,7 +86,6 @@ class ComptabiliteController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($frais);
             $this->em->flush();
-
             $this->addFlash('success', 'Frais ajouté avec succès.');
             return $this->redirectToRoute('admin_comptabilite');
         }
@@ -77,7 +96,6 @@ class ComptabiliteController extends AbstractController
         ]);
     }
 
-    // ── CRUD frais : Modification ───────────────────────────────
     #[Route('/frais/{id}/modifier', name: 'admin_frais_edit', methods: ['GET', 'POST'])]
     public function editFrais(Frais $frais, Request $request): Response
     {
@@ -86,7 +104,6 @@ class ComptabiliteController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->flush();
-
             $this->addFlash('success', 'Frais modifié avec succès.');
             return $this->redirectToRoute('admin_comptabilite');
         }
@@ -97,7 +114,6 @@ class ComptabiliteController extends AbstractController
         ]);
     }
 
-    // ── CRUD frais : Suppression ────────────────────────────────
     #[Route('/frais/{id}/supprimer', name: 'admin_frais_delete', methods: ['POST'])]
     public function deleteFrais(Frais $frais, Request $request): Response
     {

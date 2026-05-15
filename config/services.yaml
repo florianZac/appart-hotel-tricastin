@@ -3,6 +3,7 @@ parameters:
     contact_email: '%env(CONTACT_EMAIL)%'
     stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
     stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+    app.env: '%env(APP_ENV)%'
 
 services:
     _defaults:
@@ -39,3 +40,12 @@ services:
             $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
             $stripeWebhookSecret: '%env(STRIPE_WEBHOOK_SECRET)%'
             $appUrl: '%env(APP_URL)%'
+            
+    # ── SEO : injection de APP_ENV ──────────────────────────────────
+    App\Controller\SitemapController:
+        arguments:
+            $appEnv: '%env(APP_ENV)%'
+
+    App\Service\SeoService:
+        arguments:
+            $appEnv: '%env(APP_ENV)%'      

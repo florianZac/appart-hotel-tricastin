@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% set seoOverride = {
+    titre: 'Plan du site — Appart Hôtel Tricastin',
+    h1: 'Plan du site',
+    description: 'Retrouvez toutes les pages du site Appart Hôtel Tricastin : appartements meublés par localisation, réservation en ligne, contact et informations légales.',
+    robots: 'index, follow'
+} %}
+
+{% block body %}
+<section class="page-header">
+  <div class="page-header-overlay"></div>
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-light">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+        <li class="breadcrumb-item active">Plan du site</li>
+      </ol>
+    </nav>
+    {# H1 distinct du title — Andrieu ch.5 #}
+    <h1>Plan du site</h1>
+    <p class="lead">Toutes les pages de l'Appart Hôtel Tricastin</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-5">
+
+      {# ── Navigation principale ── #}
+      <div class="col-md-4">
+        <h2 class="h5 border-bottom pb-2 mb-3">
+          <i class="bi bi-house me-2 text-primary"></i>Navigation
+        </h2>
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <a href="{{ path('app_home') }}"
+               title="Page d'accueil Appart Hôtel Tricastin">
+              <i class="bi bi-chevron-right me-1 small"></i>Accueil
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="{{ path('app_appartements') }}"
+               title="Tous nos appartements meublés dans le Tricastin">
+              <i class="bi bi-chevron-right me-1 small"></i>Nos appartements
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="{{ path('app_reservation') }}"
+               title="Réserver un appartement meublé">
+              <i class="bi bi-chevron-right me-1 small"></i>Réservation
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="{{ path('app_contact') }}"
+               title="Nous contacter">
+              <i class="bi bi-chevron-right me-1 small"></i>Contact
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="{{ path('app_mentions_legales') }}">
+              <i class="bi bi-chevron-right me-1 small"></i>Mentions légales
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {# ── Appartements par localisation — Andrieu ch.6 : maillage interne structuré #}
+      {% for localisation in localisations %}
+      <div class="col-md-4">
+        <h2 class="h5 border-bottom pb-2 mb-3">
+          <i class="bi bi-geo-alt me-2 text-primary"></i>
+          <a href="{{ path('app_appartements_localisation', {slug: localisation.slug}) }}"
+             title="Appartements meublés à {{ localisation.ville }}">
+            {{ localisation.ville }}
+          </a>
+        </h2>
+        <ul class="list-unstyled">
+          {% for appartement in localisation.appartements %}
+            {% if appartement.actif %}
+            <li class="mb-2">
+              <a href="{{ path('app_appartement_detail', {slug: appartement.slug}) }}"
+                 title="{{ appartement.nom }} — appartement meublé à {{ localisation.ville }}">
+                <i class="bi bi-chevron-right me-1 small"></i>
+                {{ appartement.nom }}
+                <small class="text-muted">({{ appartement.type }}, {{ appartement.surface }} m²)</small>
+              </a>
+            </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+
+    </div>
+
+    {# ── Lien sitemap XML pour les robots — Andrieu ch.4 #}
+    <div class="mt-5 pt-4 border-top">
+      <p class="text-muted small">
+        <i class="bi bi-file-code me-1"></i>
+        Fichier sitemap XML pour les moteurs de recherche :
+        <a href="{{ path('app_sitemap') }}" rel="nofollow">sitemap.xml</a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

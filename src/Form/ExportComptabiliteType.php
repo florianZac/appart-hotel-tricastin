@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Appartement;
+use App\Entity\Localisation;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -16,7 +17,6 @@ class ExportComptabiliteType extends AbstractType
     {
         $anneeActuelle = (int) date('Y');
 
-        // Plage d'années : de anneeActuelle-5 à anneeActuelle+1
         $choixAnnees = [];
         for ($a = $anneeActuelle - 5; $a <= $anneeActuelle + 1; $a++) {
             $choixAnnees[$a] = $a;
@@ -29,16 +29,29 @@ class ExportComptabiliteType extends AbstractType
                 'data'    => $anneeActuelle,
                 'attr'    => ['class' => 'form-select'],
             ])
+            // ── Filtre localisation (pour export Excel multi-onglets) ──
+            ->add('localisation', EntityType::class, [
+                'class'        => Localisation::class,
+                'choice_label' => 'ville',
+                'label'        => 'Localisation (Excel)',
+                'required'     => false,
+                'placeholder'  => '— Toutes les localisations —',
+                'query_builder' => fn(EntityRepository $er) =>
+                    $er->createQueryBuilder('l')->orderBy('l.ville', 'ASC'),
+                'attr'    => ['class' => 'form-select'],
+                'help'    => 'Pour l\'export Excel uniquement. Vide = 1 onglet par localisation + récapitulatif.',
+            ])
+            // ── Filtre appartement (pour export CSV historique) ──────
             ->add('appartement', EntityType::class, [
                 'class'        => Appartement::class,
                 'choice_label' => 'nom',
-                'label'        => 'Appartement',
+                'label'        => 'Appartement (CSV)',
                 'required'     => false,
                 'placeholder'  => '— Tous les appartements —',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('a')->orderBy('a.nom', 'ASC');
-                },
-                'attr' => ['class' => 'form-select'],
+                'query_builder' => fn(EntityRepository $er) =>
+                    $er->createQueryBuilder('a')->orderBy('a.nom', 'ASC'),
+                'attr'    => ['class' => 'form-select'],
+                'help'    => 'Pour l\'export CSV uniquement.',
             ])
         ;
     }
@@ -46,8 +59,8 @@ class ExportComptabiliteType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'method' => 'GET',
-            'csrf_protection' => false, // GET request, pas besoin de CSRF
+            'method'          => 'GET',
+            'csrf_protection' => false,
         ]);
     }
 }

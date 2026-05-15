@@ -1,20 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'apartment.detail_title'|trans({'%name%': appartement.nom}) }}{% endblock %}
+{# ============================================================ #}
+{# SEO — Données injectées par AppartementController::detail()  #}
+{# via $seoService->buildForAppartement($appartement, $temos)   #}
+{# Title, H1, description, canonical, Apartment schema,         #}
+{# AggregateRating et BreadcrumbList générés automatiquement    #}
+{# ============================================================ #}
 
 {% block body %}
 <section class="page-header">
   <div class="page-header-overlay"></div>
   <div class="container">
+    {# Fil d'Ariane visible — Andrieu ch.6 + BreadcrumbList JSON-LD #}
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb breadcrumb-light">
-        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">{{ 'nav.home'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('app_appartements') }}">{{ 'nav.apartments'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('app_appartements_localisation', {slug: appartement.localisation.slug}) }}">{{ appartement.localisation.ville }}</a></li>
+        <li class="breadcrumb-item">
+          <a href="{{ path('app_home') }}" title="Accueil Appart Hôtel Tricastin">{{ 'nav.home'|trans }}</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="{{ path('app_appartements') }}" title="Tous nos appartements">{{ 'nav.apartments'|trans }}</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="{{ path('app_appartements_localisation', {slug: appartement.localisation.slug}) }}"
+             title="Appartements à {{ appartement.localisation.ville }}">
+            {{ appartement.localisation.ville }}
+          </a>
+        </li>
         <li class="breadcrumb-item active">{{ appartement.nom }}</li>
       </ol>
     </nav>
-    <h1>{{ appartement.nom }}</h1>
+    {# H1 généré par SeoService — différent du title (Andrieu ch.5) #}
+    {# ex title: "Studio Les Lavandes à Tulette — Appart Hôtel Tricastin" #}
+    {# ex H1:    "Votre studio meublé à Tulette"                          #}
+    <h1>{{ seoOverride.h1 ?? appartement.nom }}</h1>
     <p class="lead">{{ 'apartment.header_subtitle'|trans({'%type%': appartement.type, '%surface%': appartement.surface, '%min%': appartement.capaciteMin, '%max%': appartement.capaciteMax}) }}</p>
   </div>
 </section>
@@ -33,8 +51,8 @@
             <div class="carousel-item active">
               <img src="{{ appartement.imagePrincipale|image_url('carousel') }}"
                 class="d-block w-100 detail-carousel-img"
-                alt="{{ appartement.nom }}"
-                loading="lazy"
+                alt="{{ appartement.nom }} — {{ appartement.type }} meublé à {{ appartement.localisation.ville }}"
+                loading="eager"
                 onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=500&fit=crop'">
             </div>
             {# Images de la galerie #}
@@ -43,7 +61,7 @@
               <div class="carousel-item">
                 <img src="{{ image|image_url('carousel') }}"
                   class="d-block w-100 detail-carousel-img"
-                  alt="{{ appartement.nom }}"
+                  alt="{{ appartement.nom }} — vue {{ loop.index + 1 }}"
                   loading="lazy"
                   onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop'">
               </div>
@@ -76,7 +94,7 @@
             <div class="col-3">
               <img src="{{ appartement.imagePrincipale|image_url('thumb') }}"
                     class="img-fluid rounded-3 gallery-thumb active-thumb"
-                    alt="{{ appartement.nom }}"
+                    alt="{{ appartement.nom }} — miniature principale"
                     loading="lazy"
                     data-bs-target="#carouselAppart" data-bs-slide-to="0"
                     role="button"
@@ -86,7 +104,7 @@
             <div class="col-3">
               <img src="{{ image|image_url('thumb') }}"
                     class="img-fluid rounded-3 gallery-thumb"
-                    alt="{{ appartement.nom }}"
+                    alt="{{ appartement.nom }} — photo {{ loop.index + 1 }}"
                     loading="lazy"
                     data-bs-target="#carouselAppart" data-bs-slide-to="{{ loop.index }}"
                     role="button"
@@ -195,16 +213,19 @@
   </div>
 </section>
 
-{# CTA retour #}
+{# CTA retour — Andrieu ch.6 : maillage interne vers page satellite #}
 <section class="py-4">
   <div class="container text-center">
-    <a href="{{ path('app_appartements_localisation', {slug: appartement.localisation.slug}) }}" class="btn btn-outline-dark">
+    <a href="{{ path('app_appartements_localisation', {slug: appartement.localisation.slug}) }}"
+       class="btn btn-outline-dark"
+       title="Voir tous les appartements à {{ appartement.localisation.ville }}">
       <i class="bi bi-arrow-left"></i>
       {{ app.request.locale == 'fr' ? 'Retour aux appartements de' : 'Back to apartments in' }} {{ appartement.localisation.ville }}
     </a>
   </div>
 </section>
 {% endblock %}
+
 {% block javascripts %}
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/fr.global.min.js"></script>
@@ -215,7 +236,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var calEl = document.getElementById('calendarPublic');
     if (!calEl) return;
 
-    // Stocker les événements chargés pour la coloration
     var loadedEvents = [];
 
     var cal = new FullCalendar.Calendar(calEl, {
@@ -234,7 +254,6 @@ document.addEventListener('DOMContentLoaded', function () {
             start: new Date().toISOString().split('T')[0]
         },
 
-        // Charger les événements (réservations + blocages)
         events: function (info, successCallback, failureCallback) {
             fetch('/api/disponibilites/{{ appartement.id }}?start=' + info.startStr + '&end=' + info.endStr)
                 .then(function (r) { return r.json(); })
@@ -245,7 +264,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 .catch(function (err) { failureCallback(err); });
         },
 
-        // Griser les dates passées uniquement
         dayCellDidMount: function (info) {
             var today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -255,7 +273,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
 
-        // Tooltip au survol des événements
         eventDidMount: function (info) {
             var note = info.event.extendedProps.note;
             if (note) {

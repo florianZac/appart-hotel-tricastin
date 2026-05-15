@@ -1,11 +1,10 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}Comptabilité — Export CSV{% endblock %}
+{% block title %}Comptabilité — Export{% endblock %}
 
 {% block admin_body %}
 <div class="container-fluid py-4">
 
-    {# ── Flash messages ─────────────────────────────────────── #}
     {% for type, messages in app.flashes %}
         {% for message in messages %}
             <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
@@ -16,7 +15,111 @@
     {% endfor %}
 
     {# ════════════════════════════════════════════════════════ #}
-    {# 1. FRAIS ENREGISTRÉS                                    #}
+    {# 1. EXPORT EXCEL MULTI-ONGLETS (nouveau)                 #}
+    {# ════════════════════════════════════════════════════════ #}
+    <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #B8860B !important;">
+        <div class="card-header text-white d-flex align-items-center gap-2"
+             style="background:#1A2744;">
+            <i class="bi bi-file-earmark-excel fs-5 text-success"></i>
+            <h5 class="mb-0">Export Excel — Multi-onglets par localisation</h5>
+            <span class="badge bg-success ms-2">Nouveau</span>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-3">
+                Génère un fichier <strong>.xlsx</strong> avec
+                <strong>1 onglet par localisation</strong> + <strong>1 onglet Récapitulatif global</strong>.
+                Chaque onglet contient : réservations mois par mois, taux d'occupation, frais et bilan financier.
+            </p>
+
+            <div class="row g-3 mb-3 small text-muted">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge" style="background:#C8A962; color:#1A2744; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; border-radius:4px;">1</span>
+                        <strong>Onglet Pont-Saint-Esprit</strong> — réservations + frais + bilan
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge" style="background:#C8A962; color:#1A2744; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; border-radius:4px;">2</span>
+                        <strong>Onglet Tulette</strong> — réservations + frais + bilan
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge" style="background:#2C3E50; color:#fff; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; border-radius:4px;">∑</span>
+                        <strong>Onglet Récapitulatif</strong> — comparatif consolidé
+                    </div>
+                </div>
+            </div>
+
+            {{ form_start(formExport, {
+                'action': path('admin_comptabilite_export_xlsx'),
+                'attr': {'class': ''}
+            }) }}
+
+                <div class="d-flex flex-wrap gap-3 align-items-end">
+                    <div style="min-width: 160px;">
+                        {{ form_row(formExport.annee) }}
+                    </div>
+                    <div style="min-width: 260px;">
+                        {{ form_row(formExport.localisation) }}
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-success btn-lg d-flex align-items-center gap-2">
+                            <i class="bi bi-file-earmark-excel"></i>
+                            Télécharger le fichier Excel
+                        </button>
+                    </div>
+                </div>
+
+            {{ form_end(formExport) }}
+        </div>
+    </div>
+
+    {# ════════════════════════════════════════════════════════ #}
+    {# 2. EXPORT CSV (historique)                              #}
+    {# ════════════════════════════════════════════════════════ #}
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white d-flex align-items-center gap-2"
+             data-bs-toggle="collapse" data-bs-target="#csvSection"
+             style="cursor:pointer;">
+            <i class="bi bi-filetype-csv fs-5"></i>
+            <h5 class="mb-0">Export CSV (format legacy)</h5>
+            <i class="bi bi-chevron-down ms-auto"></i>
+        </div>
+        <div class="collapse" id="csvSection">
+            <div class="card-body">
+                <p class="text-muted mb-3">
+                    Format texte CSV — filtre par appartement. Conservé pour compatibilité.
+                </p>
+
+                {{ form_start(formExport, {
+                    'action': path('admin_comptabilite_export_csv'),
+                    'attr': {'class': ''}
+                }) }}
+
+                    <div class="d-flex flex-wrap gap-3 align-items-end">
+                        <div style="min-width: 160px;">
+                            {{ form_row(formExport.annee) }}
+                        </div>
+                        <div style="min-width: 260px;">
+                            {{ form_row(formExport.appartement) }}
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                                <i class="bi bi-download"></i>
+                                Télécharger le CSV
+                            </button>
+                        </div>
+                    </div>
+
+                {{ form_end(formExport) }}
+            </div>
+        </div>
+    </div>
+
+    {# ════════════════════════════════════════════════════════ #}
+    {# 3. FRAIS ENREGISTRÉS                                    #}
     {# ════════════════════════════════════════════════════════ #}
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-dark text-white d-flex align-items-center justify-content-between">
@@ -93,58 +196,35 @@
     </div>
 
     {# ════════════════════════════════════════════════════════ #}
-    {# 2. EXPORT COMPTABLE CSV                                 #}
-    {# ════════════════════════════════════════════════════════ #}
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-dark text-white d-flex align-items-center gap-2">
-            <i class="bi bi-file-earmark-spreadsheet fs-5"></i>
-            <h5 class="mb-0">Export comptable CSV</h5>
-        </div>
-        <div class="card-body">
-            <p class="text-muted mb-3">
-                Génère un fichier CSV complet pour votre comptable : réservations mois par mois,
-                taux d'occupation, détail des frais et bilan financier net.
-            </p>
-
-            {{ form_start(formExport, {
-                'action': path('admin_comptabilite_export_csv'),
-                'attr': {'class': ''}
-            }) }}
-
-                <div class="d-flex flex-wrap gap-3 align-items-end">
-                    <div style="min-width: 200px;">
-                        {{ form_row(formExport.annee) }}
-                    </div>
-                    <div style="min-width: 250px;">
-                        {{ form_row(formExport.appartement) }}
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-gold btn-lg d-flex align-items-center gap-2">
-                            <i class="bi bi-download"></i>
-                            Télécharger le CSV
-                        </button>
-                    </div>
-                </div>
-
-            {{ form_end(formExport) }}
-        </div>
-    </div>
-
-    {# ════════════════════════════════════════════════════════ #}
-    {# 3. AIDE                                                 #}
+    {# 4. AIDE                                                 #}
     {# ════════════════════════════════════════════════════════ #}
     <div class="card border-0 bg-light">
         <div class="card-body">
             <h6 class="card-title d-flex align-items-center gap-2">
                 <i class="bi bi-info-circle text-primary"></i>
-                Contenu du fichier CSV
+                Structure du fichier Excel généré
             </h6>
-            <p class="text-muted mb-0">
-                <strong>Réservations</strong> (client, n° facture, dates, durée, prix unitaire et total — mois par mois) ·
-                <strong>Taux d'occupation</strong> (jours occupés vs disponibles, pourcentage mensuel et annuel) ·
-                <strong>Détail des frais</strong> (hébergement site, nettoyage, réparations, assurances… par appartement) ·
-                <strong>Bilan financier</strong> (total revenus — total frais = résultat net)
-            </p>
+            <div class="row g-3 small text-muted">
+                <div class="col-md-6">
+                    <strong>Chaque onglet localisation contient :</strong>
+                    <ul class="mb-0 mt-1">
+                        <li>Réservations mois par mois (client, facture, durée, prix, total)</li>
+                        <li>Sous-total mensuel avec taux d'occupation</li>
+                        <li>Récapitulatif annuel taux d'occupation</li>
+                        <li>Détail des frais de la localisation</li>
+                        <li>Bilan financier (revenus — frais = résultat net)</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <strong>Onglet Récapitulatif :</strong>
+                    <ul class="mb-0 mt-1">
+                        <li>Tableau comparatif par localisation</li>
+                        <li>Taux d'occupation, revenus, frais, résultat net</li>
+                        <li>Bilan consolidé global</li>
+                        <li>Résultats en vert (bénéfice) ou rouge (perte)</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 

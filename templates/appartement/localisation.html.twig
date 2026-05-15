@@ -1,19 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'apartments.page_title_city'|trans({'%ville%': localisation.ville}) }}{% endblock %}
+{# ============================================================ #}
+{# SEO — Données injectées par AppartementController            #}
+{# via $seoService->buildForLocalisation($localisation)         #}
+{# Title, H1, description, canonical, JSON-LD LocalBusiness     #}
+{# sont générés automatiquement depuis la BDD localisation      #}
+{# ============================================================ #}
 
 {% block body %}
 <section class="page-header">
   <div class="page-header-overlay"></div>
   <div class="container">
+    {# Fil d'Ariane — Andrieu ch.6 + BreadcrumbList schema #}
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb breadcrumb-light">
-        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">{{ 'nav.home'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('app_appartements') }}">{{ 'apartments.page_title'|trans }}</a></li>
+        <li class="breadcrumb-item">
+          <a href="{{ path('app_home') }}" title="Accueil Appart Hôtel Tricastin">{{ 'nav.home'|trans }}</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="{{ path('app_appartements') }}" title="Tous nos appartements meublés">{{ 'apartments.page_title'|trans }}</a>
+        </li>
         <li class="breadcrumb-item active">{{ localisation.ville }}</li>
       </ol>
     </nav>
-    <h1>{{ localisation.ville }}</h1>
+    {# H1 généré par SeoService::buildForLocalisation() via seoOverride.h1 #}
+    {# ex: "Nos 4 appartements meublés à Pont-Saint-Esprit"                #}
+    <h1>{{ seoOverride.h1 ?? localisation.ville }}</h1>
     <p class="lead"><i class="bi bi-geo-alt"></i> {{ localisation.adresse }} — {{ localisation.codePostal }}</p>
   </div>
 </section>
@@ -27,10 +39,16 @@
         {% if localisation.telephone or localisation.email %}
         <div class="mt-3">
           {% if localisation.telephone %}
-            <span class="me-4"><i class="bi bi-telephone text-primary"></i> <a href="tel:{{ localisation.telephone|replace({' ': ''}) }}">{{ localisation.telephone }}</a></span>
+            <span class="me-4">
+              <i class="bi bi-telephone text-primary"></i>
+              <a href="tel:{{ localisation.telephone|replace({' ': ''}) }}">{{ localisation.telephone }}</a>
+            </span>
           {% endif %}
           {% if localisation.email %}
-            <span><i class="bi bi-envelope text-primary"></i> <a href="mailto:{{ localisation.email }}">{{ localisation.email }}</a></span>
+            <span>
+              <i class="bi bi-envelope text-primary"></i>
+              <a href="mailto:{{ localisation.email }}">{{ localisation.email }}</a>
+            </span>
           {% endif %}
         </div>
         {% endif %}
@@ -41,7 +59,9 @@
 {% endif %}
 
 {# ================================================ #}
-{# CARDS APPARTEMENTS CLIQUABLES                    #}
+{# CARDS APPARTEMENTS                               #}
+{# Andrieu ch.6 : maillage interne — chaque carte  #}
+{# pointe vers une page satellite du cocon          #}
 {# ================================================ #}
 <section class="py-5">
   <div class="container">
@@ -53,11 +73,13 @@
     <div class="row g-4">
       {% for appartement in appartements %}
       <div class="col-md-6 col-lg-4">
-          <a href="{{ path('app_appartement_detail', {slug: appartement.slug}) }}" class="appart-card-link">
+          <a href="{{ path('app_appartement_detail', {slug: appartement.slug}) }}"
+             class="appart-card-link"
+             title="{{ appartement.nom }} — {{ appartement.type }}, {{ appartement.surface }} m² à {{ localisation.ville }}">
             <div class="appart-card">
               <div class="appart-card-img">
                 <img src="{{ appartement.imagePrincipale|image_url('card') }}"
-                  alt="{{ appartement.nom }}"
+                  alt="{{ appartement.nom }} — {{ appartement.type }} meublé à {{ localisation.ville }}"
                   loading="lazy"
                   onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop'">
                 <div class="appart-card-badge">{{ appartement.type }} — {{ appartement.surface }}{{ 'common.surface'|trans }}</div>
@@ -74,7 +96,7 @@
                 <div class="mt-2">
                   <span class="btn btn-primary btn-sm w-100">
                     <i class="bi bi-eye"></i>
-                      {{ app.request.locale == 'fr' ? 'Voir le détail & disponibilités' : 'View details & availability' }}
+                    {{ app.request.locale == 'fr' ? 'Voir le détail & disponibilités' : 'View details & availability' }}
                   </span>
                 </div>
               </div>

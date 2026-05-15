@@ -1,6 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ app.request.locale == 'fr' ? 'Mentions légales' : 'Legal notice' }} — {{ 'site.title'|trans }}{% endblock %}
+{% set seoOverride = {
+    titre: 'Mentions légales — Appart Hôtel Tricastin',
+    description: 'Mentions légales et informations juridiques du site Appart Hôtel Tricastin.',
+    robots: 'noindex, follow'
+} %}
 
 {% block body %}
 <section class="page-header">

@@ -1,6 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'site.title'|trans }} — {{ 'hero.subtitle'|trans }}{% endblock %}
+{# ============================================================ #}
+{# SEO — Andrieu ch.5 : title ≠ H1                             #}
+{# Ces valeurs sont des DÉFAUTS — la DB (/admin/seo/)           #}
+{# route: app_home a la priorité absolue                        #}
+{# ============================================================ #}
+{% set seoOverride = {
+    titre: 'Appart Hôtel Tricastin — Appartements meublés de standing en Drôme Provençale',
+    description: 'Séjournez dans l\'un de nos 12 appartements meublés à Pont-Saint-Esprit, Saint-Paul-Trois-Châteaux et Tulette. WiFi inclus, parking gratuit. Réservation en ligne 24h/24.',
+    ogType: 'website'
+} %}
 
 {% block body %}
 {# ================================================ #}
@@ -9,6 +18,7 @@
 <section class="hero-section" id="accueil">
     <div class="hero-overlay"></div>
     <div class="container hero-content">
+        {# H1 ≠ title — Andrieu ch.5 principe fondamental #}
         <h1 class="hero-title">{{ 'hero.welcome'|trans }}<br><span>{{ 'hero.name'|trans }}</span></h1>
         <p class="hero-subtitle">{{ 'hero.subtitle'|trans }}</p>
         <a href="{{ path('app_appartements') }}" class="btn btn-hero">
@@ -22,6 +32,8 @@
 
 {# ================================================ #}
 {# CHOIX DE LA LOCALISATION                         #}
+{# Andrieu ch.6 : ancres descriptives + attribut    #}
+{# title sur chaque lien interne                    #}
 {# ================================================ #}
 <section class="appartements-section py-5" id="localisations">
     <div class="container">
@@ -34,11 +46,16 @@
         <div class="row g-4">
             {% for localisation in localisations %}
             <div class="col-md-4">
-                <a href="{{ path('app_appartements_localisation', {slug: localisation.slug}) }}" class="appart-card-link">
+                <a href="{{ path('app_appartements_localisation', {slug: localisation.slug}) }}"
+                   class="appart-card-link"
+                   title="Appartements meublés à {{ localisation.ville }} — {{ localisation.appartements|length }} logements disponibles">
                     <div class="appart-card text-center">
                         <div class="appart-card-img">
+                            {# alt descriptif — Andrieu ch.9 : images optimisées #}
                             <img src="/images/Ville/{{ localisation.slug }}.webp"
-                                 alt="{{ localisation.ville }}"
+                                 alt="Appartements meublés à {{ localisation.ville }}, {{ localisation.codePostal }}"
+                                 loading="lazy"
+                                 width="600" height="400"
                                  onerror="this.src='https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop'">
                             <div class="appart-card-badge">{{ localisation.appartements|length }} {{ 'loc.apartments_count'|trans }}</div>
                         </div>
@@ -103,8 +120,10 @@
         <div class="row align-items-center g-5">
             <div class="col-lg-6 order-lg-2">
                 <div class="about-image">
-                    <img src="/images/tricastin.webp" alt="Tricastin"
-                         class="img-fluid rounded-4">
+                    <img src="/images/tricastin.webp"
+                         alt="Le Tricastin, région d'implantation de l'Appart Hôtel Tricastin"
+                         class="img-fluid rounded-4"
+                         loading="lazy">
                 </div>
             </div>
             <div class="col-lg-6 order-lg-1">

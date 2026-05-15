@@ -42,6 +42,12 @@ Projet privé — Tous droits réservés. Projet utilisable que par un AIZAC tou
 - **Factures PDF** : génération et téléchargement de factures pour chaque réservation
 - **Upload images** : image principale + galerie via Cloudinary
 
+# Système SEO — Appart Hôtel Tricastin
+## Basé sur Andrieu, "Réussir son référencement web" (Eyrolles, 2022-2023)
+
+
+
+
 ### Système d'emails (10 templates)
 - Bienvenue à l'inscription
 - Confirmation de réservation
@@ -171,6 +177,7 @@ appart-hotel-tricastin/
 │   └── index.php                          # Point d'entrée unique Symfony (front controller)
 ├── src/
 │   ├── Command/
+│   │   ├── CleanDisponibilitesCommand.php # Nettoie les chevauchements entre Disponibilités et Réservations/autres statuts
 │   │   ├── CreateAdminCommand.php         # Création d'un compte admin en CLI
 │   │   ├── SendRappelsReservationsCommand.php  # CRON : rappel J-3 avant arrivée
 │   │   ├── SendDemandeAvisCommand.php     # CRON : email demande d'avis post-séjour
@@ -191,7 +198,11 @@ appart-hotel-tricastin/
 │   │   ├── AdminTemoignageController.php  # Admin : approuver/refuser/relancer témoignages
 │   │   ├── UserController.php             # Admin : gestion des utilisateurs (liste, édition, rôles)
 │   │   ├── ComptabiliteController.php     # Gestion de la comptabilité du site + export CSV
+│   │   ├── AdminSeoController.php         # CRUD admin + audit AJAX
+│   │   ├── AppartementController.php      # Injecte SeoService pour pages dynamiques (SeoService,SeoAuditService)
+│   │   ├── SitemapController.php          # /sitemap.xml, /plan-du-site, /robots.txt 
 │   │   └── LocaleController.php           # Switcher de langue FR/EN
+
 │   ├── DataFixtures/
 │   │   ├── LocalisationFixtures.php       # Données initiales : 3 villes (Pierrelatte, SPTC, Montélimar)
 │   │   ├── AppartementFixtures.php        # Données initiales : appartements avec prix, équipements
@@ -206,6 +217,8 @@ appart-hotel-tricastin/
 │   │   ├── Reservation.php                # Réservation : dates, client, appartement, statut, paiement, numéro facture
 │   │   ├── Temoignage.php                 # Avis client : note, commentaire, statut, appartement
 │   │   ├── User.php                       # Utilisateur : nom, prénom, email, adresse, rôles, mot de passe
+│   │   ├── SeoPage.php                    # Entity principale (1 row = 1 route Symfony)
+│   │   ├── SeoCocon.php                   # Cocon sémantique (ch.7)
 │   │   └── Frais.php                      # Frais : type, montant, périodicité, appartement (comptabilité)
 │   ├── EventSubscriber/
 │   │   ├── LocaleSubscriber.php           # Gestion de la langue en session
@@ -218,6 +231,7 @@ appart-hotel-tricastin/
 │   │   ├── ReservationType.php            # Formulaire réservation (appartement, dates, personnes)
 │   │   ├── TemoignageType.php             # Formulaire avis (note en étoiles + commentaire)
 │   │   ├── UserType.php                   # Formulaire admin édition utilisateur
+│   │   ├── SeoPageType.php                # Formulaire seo
 │   │   ├── ExportComptabiliteType.php     # Formulaire admin export comptable (année + appartement)
 │   │   ├── FraisType.php                  # Formulaire CRUD des frais comptables
 │   │   └── Extension/
@@ -230,6 +244,8 @@ appart-hotel-tricastin/
 │   │   ├── ReservationRepository.php      # Requêtes : findRecentes(), findByUser(), findConfirmeesParAppartement()
 │   │   ├── TemoignageRepository.php       # Requêtes : findActifs(), findByStatut(), findByUserAndReservation()
 │   │   ├── UserRepository.php             # Requêtes : utilisateurs
+│   │   ├── SeoCoconRepository.php         # Requêtes : seo
+│   │   ├── SeoPageRepository.php          # Requêtes : page seo
 │   │   └── FraisRepository.php            # Requêtes : frais par année, totaux par mois
 │   ├── Service/
 │   │   ├── AnalyticsService.php           # Données analytiques Chart.js : revenus, occupation, top appartements
@@ -243,8 +259,11 @@ appart-hotel-tricastin/
 │   │   ├── NominatimService.php           # Géocodage d'adresses via API Nominatim
 │   │   ├── OsrmService.php                # Calcul d'itinéraire via API OSRM
 │   │   ├── SanitizerService.php           # Nettoyage/sanitisation des entrées utilisateur (XSS)
+│   │   ├── SeoService.php                 # Résolution SEO + tous les schémas JSON-LD
+│   │   ├── SeoAuditService.php            # Score on-page (critères Andrieu)
 │   │   └── StripeService.php              # Création de sessions Stripe, gestion webhook paiement
 │   ├── Twig/
+│   │   ├── SeoExtension.php               # Fonctions Twig : seo_resolve(), seo_breadcrumb_list()
 │   │   └── CloudinaryExtension.php        # Filtre Twig pour transformer les URLs Cloudinary
 │   └── Kernel.php                         # Kernel Symfony
 ├── templates/
@@ -261,6 +280,17 @@ appart-hotel-tricastin/
 │   │   └── comptabilite/
 │   │       ├── index.html.twig            # Dashboard comptabilité + export CSV
 │   │       └── frais_form.html.twig       # Formulaire ajout/modif frais
+│   ├── admin/
+│   │   ├── seo/
+│   │   │   ├── index.html.twig            # Dashboard avec scores Andrieu
+│   │   │   ├── edit.html.twig             # Formulaire avec audit en temps réel
+│   │   │   ├── _audit_panel.html.twig     # Partial score réutilisable
+│   │   │   ├── cocons.html.twig           # Liste des cocons sémantiques
+│   │   │   └── cocon_form.html.twig       # Formulaire création cocon
+│   │   ├── sitemap/
+│   │       ├── index.xml.twig            # Sitemap XML
+│   │       └── index.html.twig           # Plan du site HTML (/plan-du-site)
+
 │   ├── client/
 │   │   ├── dashboard.html.twig            # Espace client : stats, réservations/paiements récents
 │   │   ├── reservations.html.twig         # Historique complet des réservations du client
@@ -294,7 +324,7 @@ appart-hotel-tricastin/
 │   ├── payment/                           # Pages Stripe (succès, annulation)
 │   ├── bundles/TwigBundle/Exception/
 │   │   └── error404.html.twig             # Page 404 personnalisée
-│   └── base.html.twig                     # Layout principal
+│   └── base.html.twig                     # Layout principal Head SEO complet
 ├── translations/
 │   ├── messages.fr.yaml                   # Traductions françaises
 │   └── messages.en.yaml                   # Traductions anglaises
@@ -1079,3 +1109,82 @@ heroku config:set MODE=PRODUCTION
 
 # 4. Déploiment de heroku
 git push heroku main
+
+
+
+## Stratégies Andrieu implémentées
+
+| Chapitre | Stratégie | Implémentation |
+|----------|-----------|----------------|
+| Ch.3 | robots.txt crawl budget | `SitemapController::robots()` — bloque /admin/, /mon-espace/, bots scrapers |
+| Ch.4 | Sitemap XML + HTML | `/sitemap.xml` (priorités différenciées) + `/plan-du-site` (maillage) |
+| Ch.5 | **Title ≠ H1** | `SeoPage.titre` ≠ `SeoPage.h1` — principe fondamental |
+| Ch.5 | Title 55-65 car. + mot-clé en tête | `SeoAuditService` + compteur admin |
+| Ch.5 | Meta description 120-160 car. + CTA | Champ + compteur + audit |
+| Ch.6 | Fil d'Ariane + BreadcrumbList | `SeoService::buildBreadcrumbList()` + `base.html.twig` |
+| Ch.7 | Cocon sémantique | Entity `SeoCocon`, `SeoPage.cocon`, page pivot/satellites |
+| Ch.7 | Mot-clé cible (1 par page) | `SeoPage.focusKeyword` + mots-clés LSI secondaires |
+| Ch.8 | Canonical par page | `SeoPage.canonical` ou URL courante auto |
+| Ch.9 | Performances | `preconnect`, `dns-prefetch` dans `base.html.twig` |
+| Ch.10 | Données structurées | LodgingBusiness + WebSite/SearchAction, Apartment, BreadcrumbList, ContactPage, FAQPage, AggregateRating |
+| Ch.10 | E-E-A-T | `schemaExtra` JSON (téléphone, sameAs, horaires) |
+| Ch.11 | Open Graph + Twitter Card | `base.html.twig` — og:image 1200×630, og:type, og:locale |
+| Ch.12 | Hreflang FR/EN + x-default | Génération auto ou manuelle, `base.html.twig` |
+
+---
+
+## Utilisation dans les templates enfants
+
+### Surcharge SEO contextuelle (pages dynamiques)
+Le controller passe `seoOverride` à la vue :
+```php
+// Dans un controller
+$seoOverride = $seoService->buildForAppartement($appartement, $temoignages);
+return $this->render('appartement/detail.html.twig', [
+    'appartement' => $appartement,
+    'seoOverride' => $seoOverride,  // ← transmis à base.html.twig
+]);
+```
+`base.html.twig` appelle automatiquement `seo_resolve(seoOverride ?? {})`.
+
+### Surcharge légère depuis un template Twig
+```twig
+{% extends 'base.html.twig' %}
+{% set seoOverride = {
+    titre: 'Mon titre custom',
+    description: 'Ma description',
+    robots: 'noindex, follow'
+} %}
+```
+
+### Injection d'un schéma JSON-LD supplémentaire
+```twig
+{% block seo_extra %}
+<script type="application/ld+json">
+{{ seo_breadcrumb_list([
+    {label: 'Accueil', url: url('app_home')},
+    {label: 'Ma page', url: app.request.uri}
+])|raw }}
+</script>
+{% endblock %}
+```
+
+---
+
+## Configuration initiale recommandée (admin)
+
+Accédez à `/admin/seo` et complétez :
+
+1. **Cocons** (`/admin/seo/cocons`) :
+   - Vérifiez que les 2 cocons sont bien créés
+   - Assignez chaque page à son cocon
+
+2. **Page d'accueil** (`app_home`) :
+   - Schéma : `LodgingBusiness`
+   - Renseignez `schemaExtra` avec le numéro de téléphone réel et les réseaux sociaux
+
+3. **Appartements** : SEO généré automatiquement depuis la BDD — aucune config requise
+
+4. **Images OG** :
+   - Créez `public/images/og-default.jpg` (1200×630 px) pour le fallback
+   - Renseignez une image par page dans le champ "Image Open Graph"

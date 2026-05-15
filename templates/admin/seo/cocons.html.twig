@@ -1,0 +1,117 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Cocons sémantiques — SEO Admin{% endblock %}
+
+{% block admin_body %}
+<div class="container-fluid py-4">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h1 class="h3 mb-1">
+        <i class="bi bi-diagram-3 me-2 text-primary"></i>Cocons sémantiques
+      </h1>
+      <p class="text-muted mb-0 small">
+        Andrieu ch.7 — Groupez les pages par thème pour renforcer le maillage interne
+      </p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ path('admin_seo_index') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Retour SEO
+      </a>
+      <a href="{{ path('admin_seo_cocon_new') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>Nouveau cocon
+      </a>
+    </div>
+  </div>
+
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      <div class="alert alert-{{ label }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endfor %}
+
+  {# ── Explication Andrieu ── #}
+  <div class="alert alert-info d-flex gap-2 mb-4">
+    <i class="bi bi-book mt-1 flex-shrink-0"></i>
+    <div class="small">
+      <strong>Andrieu ch.7 — Cocon sémantique :</strong>
+      Chaque cocon regroupe des pages autour d'un thème central.
+      La <strong>page pivot</strong> (hub) concentre le PageRank — les pages satellites doivent toutes pointer vers elle.
+      Structure recommandée pour ce site :
+      <em>Cocon "Séjour"</em> (pivot = /les-appartements) et
+      <em>Cocon "Informations"</em> (pivot = /).
+    </div>
+  </div>
+
+  {% if cocons is empty %}
+    <div class="text-center py-5">
+      <i class="bi bi-diagram-3 fs-1 text-muted"></i>
+      <p class="mt-3 text-muted">Aucun cocon créé.</p>
+      <a href="{{ path('admin_seo_cocon_new') }}" class="btn btn-primary mt-2">
+        Créer le premier cocon
+      </a>
+    </div>
+  {% else %}
+    <div class="row g-4">
+      {% for cocon in cocons %}
+      <div class="col-lg-6">
+        <div class="card h-100 shadow-sm" style="border-left: 4px solid {{ cocon.couleur }}">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge rounded-pill" style="background:{{ cocon.couleur }}">
+                {{ cocon.pages|length }} page{{ cocon.pages|length > 1 ? 's' : '' }}
+              </span>
+              <strong>{{ cocon.nom }}</strong>
+            </div>
+            <form method="post"
+                  action="{{ path('admin_seo_cocon_delete', {id: cocon.id}) }}"
+                  onsubmit="return confirm('Supprimer le cocon « {{ cocon.nom }} » ? Les pages resteront mais seront détachées.')">
+              <input type="hidden" name="_token" value="{{ csrf_token('del_cocon_' ~ cocon.id) }}">
+              <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+          </div>
+          <div class="card-body">
+            {% if cocon.motCleCocon %}
+              <p class="small text-muted mb-2">
+                <i class="bi bi-key me-1"></i>Mot-clé cocon : <strong>{{ cocon.motCleCocon }}</strong>
+              </p>
+            {% endif %}
+            {% if cocon.description %}
+              <p class="small text-muted mb-3">{{ cocon.description }}</p>
+            {% endif %}
+
+            {# Pages du cocon #}
+            <ul class="list-unstyled mb-0">
+              {% for page in cocon.pages %}
+              <li class="d-flex align-items-center justify-content-between py-1 border-bottom">
+                <div class="d-flex align-items-center gap-2">
+                  {% if page.isCoconPivot %}
+                    <span class="badge bg-warning text-dark" title="Page pivot — concentre le PageRank">
+                      <i class="bi bi-star-fill"></i> Pivot
+                    </span>
+                  {% else %}
+                    <span class="badge bg-secondary">Satellite</span>
+                  {% endif %}
+                  <span class="small">{{ page.label }}</span>
+                  <code class="small text-muted">{{ page.route }}</code>
+                </div>
+                <a href="{{ path('admin_seo_edit', {id: page.id}) }}"
+                   class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-pencil"></i>
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

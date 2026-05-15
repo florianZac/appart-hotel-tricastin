@@ -15,6 +15,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^2.17",
         "dompdf/dompdf": "^3.1",
+        "phpoffice/phpspreadsheet": "^5.7",
         "stripe/stripe-php": "^20.0",
         "symfony/apache-pack": "*",
         "symfony/asset": "7.4.*",
@@ -24,6 +25,7 @@
         "symfony/form": "7.4.*",
         "symfony/framework-bundle": "7.4.*",
         "symfony/mailer": "7.4.*",
+        "symfony/monolog-bundle": "^3.0|^4.0",
         "symfony/rate-limiter": "7.4.*",
         "symfony/runtime": "7.4.*",
         "symfony/security-bundle": "7.4.*",
@@ -35,8 +37,7 @@
         "symfony/yaml": "7.4.*",
         "twig/extra-bundle": "^3.24",
         "twig/inky-extra": "^3.24",
-        "twig/twig": "^2.12|^3.0",
-        "symfony/monolog-bundle": "^3.0|^4.0"
+        "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3",

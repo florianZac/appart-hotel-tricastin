@@ -1,0 +1,248 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Référencement SEO — Admin{% endblock %}
+
+{% block admin_body %}
+<div class="container-fluid py-4">
+
+  {# ── En-tête ── #}
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h1 class="h3 mb-1"><i class="bi bi-search me-2 text-primary"></i>Référencement (SEO)</h1>
+      <p class="text-muted mb-0 small">
+        Stratégies Andrieu — titre ≠ H1, cocon sémantique, JSON-LD, hreflang, BreadcrumbList
+      </p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ path('admin_seo_cocons') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-diagram-3 me-1"></i>Cocons
+      </a>
+      <a href="{{ path('admin_seo_new') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>Nouvelle page
+      </a>
+    </div>
+  </div>
+
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      <div class="alert alert-{{ label }} alert-dismissible fade show">{{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    {% endfor %}
+  {% endfor %}
+
+  {# ── Statistiques globales ── #}
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card text-center border-0 bg-light">
+        <div class="card-body py-3">
+          <div class="fs-2 fw-bold text-primary">{{ stats.total }}</div>
+          <div class="small text-muted">Pages configurées</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center border-0 bg-success bg-opacity-10">
+        <div class="card-body py-3">
+          <div class="fs-2 fw-bold text-success">{{ stats.vert }}</div>
+          <div class="small text-muted">Score ≥ 80 <i class="bi bi-check-circle-fill text-success"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center border-0 bg-warning bg-opacity-10">
+        <div class="card-body py-3">
+          <div class="fs-2 fw-bold text-warning">{{ stats.orange }}</div>
+          <div class="small text-muted">Score 50-79 <i class="bi bi-exclamation-circle-fill text-warning"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center border-0 bg-danger bg-opacity-10">
+        <div class="card-body py-3">
+          <div class="fs-2 fw-bold text-danger">{{ stats.rouge }}</div>
+          <div class="small text-muted">Score &lt; 50 <i class="bi bi-x-circle-fill text-danger"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Cocons sémantiques ── #}
+  {% if cocons is not empty %}
+  <div class="mb-4">
+    <h6 class="text-uppercase text-muted small fw-semibold mb-2">
+      <i class="bi bi-diagram-3 me-1"></i>Cocons sémantiques (Andrieu ch.7)
+    </h6>
+    <div class="d-flex flex-wrap gap-2">
+      {% for cocon in cocons %}
+        <span class="badge rounded-pill px-3 py-2 fs-6"
+              style="background-color: {{ cocon.couleur }}20; color: {{ cocon.couleur }}; border: 1px solid {{ cocon.couleur }}40;">
+          <i class="bi bi-circle-fill me-1" style="font-size:.5rem"></i>
+          {{ cocon.nom }}
+          <span class="opacity-75">({{ cocon.pages|length }} pages)</span>
+          {% set pivot = cocon.pagePivot %}
+          {% if pivot %}<small class="ms-1 opacity-60">— pivot: {{ pivot.label }}</small>{% endif %}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# ── Tableau des pages ── #}
+  {% if pages is empty %}
+    <div class="text-center py-5">
+      <i class="bi bi-search fs-1 text-muted"></i>
+      <p class="mt-3 text-muted">Aucune page SEO configurée.</p>
+      <a href="{{ path('admin_seo_new') }}" class="btn btn-primary mt-2">Commencer</a>
+    </div>
+  {% else %}
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0 small">
+            <thead class="table-light">
+              <tr>
+                <th>Score</th>
+                <th>Page</th>
+                <th>Route</th>
+                <th>Mot-clé cible</th>
+                <th>Title / H1</th>
+                <th>Robots</th>
+                <th>Schéma</th>
+                <th>Cocon</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for page in pages %}
+              {% set audit = audits[page.id] %}
+              <tr>
+                {# Score #}
+                <td class="text-center">
+                  <div class="d-flex align-items-center gap-1">
+                    <div class="progress flex-grow-1" style="height:6px; min-width:40px">
+                      <div class="progress-bar bg-{{ audit.scoreColor }}"
+                           style="width:{{ audit.score }}%"></div>
+                    </div>
+                    <span class="fw-bold text-{{ audit.scoreColor }}" style="min-width:30px">
+                      {{ audit.score }}
+                    </span>
+                  </div>
+                </td>
+                {# Label #}
+                <td>
+                  <strong>{{ page.label }}</strong>
+                  {% if page.isCoconPivot %}<span class="badge bg-info text-dark ms-1 small">pivot</span>{% endif %}
+                </td>
+                {# Route #}
+                <td><code>{{ page.route }}</code></td>
+                {# Mot-clé #}
+                <td>
+                  {% if page.focusKeyword %}
+                    <span class="text-truncate d-block" style="max-width:130px" title="{{ page.focusKeyword }}">
+                      {{ page.focusKeyword }}
+                    </span>
+                  {% else %}
+                    <span class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> Manquant</span>
+                  {% endif %}
+                </td>
+                {# Title / H1 #}
+                <td>
+                  <div class="small">
+                    {% if page.titre %}
+                      <div class="text-truncate" style="max-width:200px" title="{{ page.titre }}">
+                        <i class="bi bi-fonts text-muted me-1"></i>{{ page.titre|slice(0, 40) }}…
+                      </div>
+                    {% else %}
+                      <span class="text-muted fst-italic">Titre (défaut)</span>
+                    {% endif %}
+                    {% if page.h1 %}
+                      <div class="text-truncate text-secondary" style="max-width:200px" title="{{ page.h1 }}">
+                        <i class="bi bi-type-h1 text-muted me-1"></i>{{ page.h1|slice(0, 40) }}…
+                      </div>
+                    {% else %}
+                      <span class="text-warning small"><i class="bi bi-exclamation-triangle"></i> H1 manquant</span>
+                    {% endif %}
+                  </div>
+                </td>
+                {# Robots #}
+                <td>
+                  {% set robotsClass = page.robots starts with 'noindex' ? 'danger' : 'success' %}
+                  <span class="badge bg-{{ robotsClass }}">{{ page.robots }}</span>
+                </td>
+                {# Schéma #}
+                <td>
+                  {% if page.schemaType %}
+                    <span class="badge bg-info text-dark">{{ page.schemaType }}</span>
+                  {% else %}
+                    <span class="text-muted">—</span>
+                  {% endif %}
+                </td>
+                {# Cocon #}
+                <td>
+                  {% if page.cocon %}
+                    <span class="badge rounded-pill"
+                          style="background-color:{{ page.cocon.couleur }}20; color:{{ page.cocon.couleur }}; border:1px solid {{ page.cocon.couleur }}40">
+                      {{ page.cocon.nom }}
+                    </span>
+                  {% else %}
+                    <span class="text-muted small">—</span>
+                  {% endif %}
+                </td>
+                {# Actions #}
+                <td class="text-end">
+                  <a href="{{ path('admin_seo_edit', {id: page.id}) }}"
+                     class="btn btn-sm btn-outline-primary me-1">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <form method="post" action="{{ path('admin_seo_delete', {id: page.id}) }}"
+                        class="d-inline"
+                        onsubmit="return confirm('Supprimer « {{ page.label }} » ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_seo_' ~ page.id) }}">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {# ── Guide Andrieu rapide ── #}
+  <div class="card mt-4 border-0 bg-light">
+    <div class="card-body">
+      <h6 class="fw-semibold mb-3"><i class="bi bi-book me-2"></i>Rappels Andrieu — Réussir son référencement web 2022-2023</h6>
+      <div class="row g-2 small">
+        <div class="col-md-4">
+          <div class="fw-semibold text-primary">Ch.5 — Balises</div>
+          <ul class="mb-0 ps-3">
+            <li>Title : 55-65 car., mot-clé en tête</li>
+            <li>H1 : <strong>différent</strong> du title</li>
+            <li>Meta desc : 120-160 car. + CTA</li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <div class="fw-semibold text-success">Ch.7 — Cocon sémantique</div>
+          <ul class="mb-0 ps-3">
+            <li>1 mot-clé cible par page</li>
+            <li>Pages satellites → pivot</li>
+            <li>Maillage interne thématique</li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <div class="fw-semibold text-warning">Ch.10 — Données structurées</div>
+          <ul class="mb-0 ps-3">
+            <li>BreadcrumbList : toutes pages</li>
+            <li>FAQPage → featured snippets</li>
+            <li>AggregateRating → étoiles SERP</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,6 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'reservation.title'|trans }} — {{ 'site.title'|trans }}{% endblock %}
+{% set seoOverride = {
+    titre: 'Réserver un appartement meublé dans le Tricastin — Disponibilités en ligne',
+    description: 'Vérifiez les disponibilités et réservez votre appartement meublé dans le Tricastin. Confirmation instantanée, paiement sécurisé en ligne. Studios, T2 et T4 disponibles.',
+    robots: 'index, follow'
+} %}
 
 {# ================================================ #}
 {# STYLES SPÉCIFIQUES À LA PAGE RÉSERVATION         #}

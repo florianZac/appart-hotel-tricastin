@@ -1,11 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'apartments.page_title'|trans }} — {{ 'site.title'|trans }}{% endblock %}
+{# ============================================================ #}
+{# SEO — Page pivot du cocon "Séjour & Appartements"            #}
+{# Andrieu ch.7 : cette page concentre le maillage interne      #}
+{# route: app_appartements                                      #}
+{# ============================================================ #}
+{% set seoOverride = {
+    titre: 'Appartements meublés dans le Tricastin — 12 logements disponibles',
+    description: 'Découvrez nos 12 appartements meublés à Pont-Saint-Esprit, Saint-Paul-Trois-Châteaux et Tulette. Studios, T2 et T4 disponibles à la semaine ou au mois. Réservation en ligne.',
+    ogType: 'website'
+} %}
 
 {% block body %}
 <section class="page-header">
     <div class="page-header-overlay"></div>
     <div class="container">
+        {# Fil d'Ariane — Andrieu ch.6 #}
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-light">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_home') }}" title="Retour à l'accueil">{{ 'nav.home'|trans }}</a>
+                </li>
+                <li class="breadcrumb-item active">{{ 'apartments.page_title'|trans }}</li>
+            </ol>
+        </nav>
+        {# H1 ≠ title — Andrieu ch.5 #}
         <h1>{{ 'apartments.page_title'|trans }}</h1>
         <p class="lead">{{ 'apartments.page_subtitle'|trans }}</p>
     </div>
@@ -16,11 +35,15 @@
         <div class="row g-4">
             {% for localisation in localisations %}
             <div class="col-md-4">
-                <a href="{{ path('app_appartements_localisation', {slug: localisation.slug}) }}" class="appart-card-link">
+                {# Andrieu ch.6 : ancres descriptives avec title #}
+                <a href="{{ path('app_appartements_localisation', {slug: localisation.slug}) }}"
+                   class="appart-card-link"
+                   title="Appartements meublés à {{ localisation.ville }} — {{ localisation.appartements|length }} logements">
                     <div class="appart-card">
                         <div class="appart-card-img">
                             <img src="/images/Ville/{{ localisation.slug }}.webp"
-                                 alt="{{ localisation.ville }}"
+                                 alt="Appartements meublés à {{ localisation.ville }}, {{ localisation.codePostal }}"
+                                 loading="lazy"
                                  onerror="this.src='https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop'">
                             <div class="appart-card-badge">{{ localisation.appartements|length }} {{ 'loc.apartments_count'|trans }}</div>
                         </div>

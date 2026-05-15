@@ -1,0 +1,297 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ is_new ? 'Nouvelle page SEO' : 'Éditer : ' ~ seoPage.label }} — Admin{% endblock %}
+
+{% block admin_body %}
+<div class="container-fluid py-4">
+
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="{{ path('admin_seo_index') }}">SEO</a></li>
+      <li class="breadcrumb-item active">{{ is_new ? 'Nouvelle page' : seoPage.label }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+
+    {# ── Formulaire (col gauche) ── #}
+    <div class="col-xl-8">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold d-flex align-items-center gap-2">
+          <i class="bi bi-{{ is_new ? 'plus-circle' : 'pencil' }} text-primary"></i>
+          {{ is_new ? 'Nouvelle page SEO' : 'Modifier : ' ~ seoPage.label }}
+        </div>
+        <div class="card-body">
+
+          {{ form_start(form, {attr: {novalidate: 'novalidate', id: 'seo-form'}}) }}
+
+          {# ── Identification ── #}
+          <h6 class="section-heading">
+            <i class="bi bi-tag-fill me-1"></i>Identification
+          </h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">{{ form_row(form.label) }}</div>
+            <div class="col-md-6">{{ form_row(form.route) }}</div>
+          </div><hr>
+
+          {# ── Balises (Andrieu ch.5) ── #}
+          <h6 class="section-heading">
+            <i class="bi bi-fonts me-1"></i>Balises Title & H1
+            <small class="text-muted fw-normal">(Andrieu ch.5 — title ≠ H1)</small>
+          </h6>
+          <div class="mb-3">
+            {{ form_label(form.titre) }}
+            {{ form_widget(form.titre) }}
+            <div class="d-flex justify-content-between">
+              {{ form_help(form.titre) }}
+              <small id="titre-counter" class="text-muted">0 / 65</small>
+            </div>
+            {{ form_errors(form.titre) }}
+          </div>
+          <div class="mb-4">
+            {{ form_label(form.h1) }}
+            {{ form_widget(form.h1) }}
+            <div class="d-flex justify-content-between">
+              {{ form_help(form.h1) }}
+              <small id="h1-counter" class="text-muted">0 / 70</small>
+            </div>
+            {{ form_errors(form.h1) }}
+          </div><hr>
+
+          {# ── Sémantique / Cocon (Andrieu ch.7) ── #}
+          <h6 class="section-heading">
+            <i class="bi bi-diagram-3 me-1"></i>Sémantique & Cocon
+            <small class="text-muted fw-normal">(Andrieu ch.7)</small>
+          </h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">{{ form_row(form.focusKeyword) }}</div>
+            <div class="col-md-6">{{ form_row(form.secondaryKeywords) }}</div>
+          </div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">{{ form_row(form.cocon) }}</div>
+            <div class="col-md-6 d-flex align-items-center">{{ form_row(form.isCoconPivot) }}</div>
+          </div><hr>
+
+          {# ── Meta description (Andrieu ch.5) ── #}
+          <h6 class="section-heading">
+            <i class="bi bi-card-text me-1"></i>Meta description
+          </h6>
+          <div class="mb-4">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description) }}
+            <div class="d-flex justify-content-between align-items-center mt-1">
+              {{ form_help(form.description) }}
+              <div class="text-end">
+                <small id="desc-count" class="fw-bold">0</small>
+                <small class="text-muted"> / 160</small>
+                <span id="desc-ok" class="d-none text-success small ms-2"><i class="bi bi-check-circle-fill"></i> Optimal</span>
+                <span id="desc-warn" class="d-none text-warning small ms-2"><i class="bi bi-exclamation-triangle-fill"></i> Trop long</span>
+              </div>
+            </div>
+            {{ form_errors(form.description) }}
+          </div><hr>
+
+          {# ── Technique ── #}
+          <h6 class="section-heading"><i class="bi bi-gear me-1"></i>Technique</h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">{{ form_row(form.robots) }}</div>
+            <div class="col-md-4">{{ form_row(form.breadcrumbLabel) }}</div>
+            <div class="col-md-4">{{ form_row(form.canonical) }}</div>
+          </div><hr>
+
+          {# ── Open Graph (Andrieu ch.11) ── #}
+          <h6 class="section-heading">
+            <i class="bi bi-share me-1"></i>Open Graph
+            <small class="text-muted fw-normal">(Andrieu ch.11)</small>
+          </h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-8">{{ form_row(form.ogImage) }}</div>
+            <div class="col-md-4">{{ form_row(form.ogType) }}</div>
+          </div><hr>
+
+          {# ── Hreflang (Andrieu ch.12) ── #}
+          <h6 class="section-heading">
+            <i class="bi bi-translate me-1"></i>Hreflang FR/EN
+            <small class="text-muted fw-normal">(Andrieu ch.12)</small>
+          </h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">{{ form_row(form.hreflangFr) }}</div>
+            <div class="col-md-6">{{ form_row(form.hreflangEn) }}</div>
+          </div><hr>
+
+          {# ── JSON-LD / Schéma (Andrieu ch.10) ── #}
+          <h6 class="section-heading">
+            <i class="bi bi-code-slash me-1"></i>Données structurées (JSON-LD)
+            <small class="text-muted fw-normal">(Andrieu ch.10)</small>
+          </h6>
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">{{ form_row(form.schemaType) }}</div>
+            <div class="col-md-8">{{ form_row(form.schemaExtra) }}</div>
+          </div>
+          <div class="mb-4">
+            {{ form_row(form.faqItems) }}
+            <button type="button" class="btn btn-sm btn-outline-secondary mt-1" id="validate-json">
+              <i class="bi bi-check2-circle me-1"></i>Valider les JSON
+            </button>
+            <span id="json-ok" class="d-none ms-2 text-success small"><i class="bi bi-check-circle-fill"></i> Valide</span>
+            <span id="json-ko" class="d-none ms-2 text-danger small"><i class="bi bi-x-circle-fill"></i> Invalide</span>
+          </div>
+
+          {# ── Actions ── #}
+          <hr>
+          <div class="d-flex justify-content-between">
+            <a href="{{ path('admin_seo_index') }}" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-1"></i>Annuler
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-floppy me-1"></i>
+              {{ is_new ? 'Créer' : 'Enregistrer' }}
+            </button>
+          </div>
+
+          {{ form_end(form) }}
+        </div>
+      </div>
+    </div>{# /col formulaire #}
+
+    {# ── Panneau audit SEO (col droite) ── #}
+    <div class="col-xl-4">
+      <div class="card shadow-sm sticky-top" style="top: 80px">
+        <div class="card-header fw-semibold d-flex align-items-center justify-content-between">
+          <span><i class="bi bi-speedometer2 me-1"></i>Score SEO Andrieu</span>
+          {% if not is_new %}
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="refresh-audit">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+          {% endif %}
+        </div>
+        <div class="card-body" id="audit-panel">
+
+          {% if audit %}
+            {% include 'admin/seo/_audit_panel.html.twig' with {audit: audit} %}
+          {% else %}
+            <p class="text-muted text-center small py-3">
+              <i class="bi bi-info-circle me-1"></i>
+              Sauvegardez la page pour voir l'audit.
+            </p>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>{# /row #}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<style>
+.section-heading {
+  text-transform: uppercase;
+  font-size: .7rem;
+  font-weight: 600;
+  color: #6c757d;
+  letter-spacing: .05em;
+  margin-bottom: .75rem;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // ── Compteurs de caractères ────────────────────────────────────────
+  function initCounter(inputSel, counterId, min, max) {
+    const el = document.querySelector(inputSel);
+    const counter = document.getElementById(counterId);
+    if (!el || !counter) return;
+    const update = () => {
+      const len = el.value.length;
+      let color = 'text-muted';
+      if (max && len > max)      color = 'text-danger fw-bold';
+      else if (min && len >= min) color = 'text-success';
+      counter.className = `small ${color}`;
+      counter.textContent = `${len} / ${max || '∞'}`;
+    };
+    el.addEventListener('input', update);
+    update();
+  }
+
+  initCounter('[name$="[titre]"]',      'titre-counter', 50, 65);
+  initCounter('[name$="[h1]"]',         'h1-counter',    0,  70);
+
+  // Description avec indicateurs OK/Warn
+  const descEl    = document.querySelector('[name$="[description]"]');
+  const descCount = document.getElementById('desc-count');
+  const descOk    = document.getElementById('desc-ok');
+  const descWarn  = document.getElementById('desc-warn');
+  if (descEl) {
+    const updateDesc = () => {
+      const len = descEl.value.length;
+      descCount.textContent = len;
+      descCount.className = len > 160 ? 'fw-bold text-danger' : (len >= 120 ? 'fw-bold text-success' : 'fw-bold');
+      descOk?.classList.toggle('d-none', len < 120 || len > 160);
+      descWarn?.classList.toggle('d-none', len <= 160);
+    };
+    descEl.addEventListener('input', updateDesc);
+    updateDesc();
+  }
+
+  // ── Validation JSON ────────────────────────────────────────────────
+  document.getElementById('validate-json')?.addEventListener('click', () => {
+    const jsonOk = document.getElementById('json-ok');
+    const jsonKo = document.getElementById('json-ko');
+    jsonOk?.classList.add('d-none');
+    jsonKo?.classList.add('d-none');
+    const fields = [
+      document.querySelector('[name$="[schemaExtra]"]'),
+      document.querySelector('[name$="[faqItems]"]'),
+    ];
+    let allValid = true;
+    fields.forEach(f => {
+      if (!f || !f.value.trim()) return;
+      try { JSON.parse(f.value); }
+      catch (e) {
+        allValid = false;
+        f.classList.add('border-danger');
+        setTimeout(() => f.classList.remove('border-danger'), 3000);
+      }
+    });
+    (allValid ? jsonOk : jsonKo)?.classList.remove('d-none');
+  });
+
+  // ── Rafraîchissement audit AJAX ───────────────────────────────────
+  {% if not is_new %}
+  document.getElementById('refresh-audit')?.addEventListener('click', () => {
+    fetch('{{ path('admin_seo_audit', {id: seoPage.id}) }}')
+      .then(r => r.json())
+      .then(data => {
+        const panel = document.getElementById('audit-panel');
+        if (!panel) return;
+        // Reconstruit le panneau d'audit simplifié
+        const color = data.scoreColor;
+        let html = `
+          <div class="text-center mb-3">
+            <div class="display-5 fw-bold text-${color}">${data.score}</div>
+            <div class="text-muted small">/ 100</div>
+            <div class="progress mt-2" style="height:8px">
+              <div class="progress-bar bg-${color}" style="width:${data.score}%"></div>
+            </div>
+          </div>
+          <ul class="list-unstyled small">`;
+        for (const [key, c] of Object.entries(data.criteria)) {
+          const icon = c.ok ? '✅' : (c.warning ? '⚠️' : '❌');
+          html += `<li class="mb-1">${icon} ${c.message}</li>`;
+        }
+        html += '</ul>';
+        panel.innerHTML = html;
+      })
+      .catch(() => {
+        document.getElementById('audit-panel').innerHTML =
+          '<p class="text-danger small">Erreur lors du chargement de l\'audit.</p>';
+      });
+  });
+  {% endif %}
+
+});
+</script>
+{% endblock %}
